@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminar Usuario</title>
+</head>
+<body>
+    <h1>Eliminar Usuario</h1>
+    <form method="POST" action="{{ url_for('eliminar_usuario') }}">
+        <label for="id_usuario">User ID:</label>
+        <input type="text" id="id_usuario" name="id_usuario"><br>
+        <input type="submit" value="Eliminar Usuario">
+    </form>
+</body>
+</html>

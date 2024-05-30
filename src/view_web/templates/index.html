@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<meta charset="UTF-8">
+<style>
+    .flash-message {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        background-color: #f8f8f8;
+    }
+    .flash-success {
+        border-color: #4CAF50;
+        color: #4CAF50;
+    }
+    .flash-error {
+        border-color: #f44336;
+        color: #f44336;
+    }
+</style>
+</head>
+<body>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li class="flash-message {% if 'exitosamente' in message %}flash-success{% else %}flash-error{% endif %}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+        
+
+<body>
+    <h1>Bienvenido a la calculadora de liquidacion definitiva</h1>
+    <ul>
+        <li><a href="{{ url_for('agregar_usuario') }}">Agregar Usuario</a></li>
+        <li><a href="{{ url_for('agregar_liquidacion') }}">Agregar Liquidacion</a></li>
+        <li><a href="{{ url_for('consultar_usuario') }}">Consultar Usuario</a></li>
+        <li><a href="{{ url_for('eliminar_usuario') }}">Eliminar Usuario</a></li>
+        <li><a href="{{ url_for('eliminar_liquidacion') }}">Eliminar Liquidacion</a></li>
+    </ul>
+</body>
+</html>

@@ -1,0 +1,11 @@
+CREATE TABLE usuarios (
+ID_Usuario INT PRIMARY KEY,
+Nombre VARCHAR(50) NOT NULL,
+Apellido VARCHAR(50) NOT NULL,
+Documento_Identidad VARCHAR(20) NOT NULL UNIQUE,
+Correo_Electronico VARCHAR(100) NOT NULL UNIQUE,
+Telefono VARCHAR(20) NOT NULL,
+Fecha_Ingreso DATE NOT NULL,
+Fecha_Salida DATE,
+Salario DECIMAL(10,2) NOT NULL
+);

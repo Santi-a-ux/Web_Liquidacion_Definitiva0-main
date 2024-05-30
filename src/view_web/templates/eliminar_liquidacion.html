@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminar Liquidacion</title>
+</head>
+<body>
+    <h1>Eliminar Liquidacion</h1>
+    <form method="POST" action="{{ url_for('eliminar_liquidacion') }}">
+        <label for="id_liquidacion">Liquidation ID:</label>
+        <input type="text" id="id_liquidacion" name="id_liquidacion"><br>
+        <input type="submit" value="Eliminar Liquidacion">
+    </form>
+</body>
+</html>

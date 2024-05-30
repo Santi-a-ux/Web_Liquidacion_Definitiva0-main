@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Agregar Usuario</title>
+    <style>
+        .flash-message {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background-color: #f8f8f8;
+        }
+        .flash-success {
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+        .flash-error {
+            border-color: #f44336;
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <h1>Agregar Usuario</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li class="flash-message {% if 'exitosamente' in message %}flash-success{% else %}flash-error{% endif %}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('agregar_usuario') }}">
+        <label for="nombre">Name:</label>
+        <input type="text" id="nombre" name="nombre" required><br>
+        <label for="apellido">Last Name:</label>
+        <input type="text" id="apellido" name="apellido" required><br>
+        <label for="documento_identidad">ID Document:</label>
+        <input type="text" id="documento_identidad" name="documento_identidad" required><br>
+        <label for="correo_electronico">Email:</label>
+        <input type="email" id="correo_electronico" name="correo_electronico" required><br>
+        <label for="telefono">Phone:</label>
+        <input type="text" id="telefono" name="telefono" required><br>
+        <label for="fecha_ingreso">Entry Date:</label>
+        <input type="date" id="fecha_ingreso" name="fecha_ingreso" required><br>
+        <label for="fecha_salida">Exit Date:</label>
+        <input type="date" id="fecha_salida" name="fecha_salida"><br>
+        <label for="salario">Salary:</label>
+        <input type="number" id="salario" name="salario" required><br>
+        <label for="id_usuario">User ID:</label>
+        <input type="text" id="id_usuario" name="id_usuario" required><br>
+        <input type="submit" value="Agregar Usuario">
+    </form>
+</body>
+</html>

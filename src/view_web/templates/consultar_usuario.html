@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta de Usuario</title>
+</head>
+<body>
+    <form method="POST" action="{{ url_for('consultar_usuario') }}">
+        <h1>Consulta de Usuario</h1>
+        <label for="id_usuario">ID del Usuario:</label>
+        <input type="text" id="id_usuario" name="id_usuario" required>
+        <button type="submit">Consultar</button>
+    </form>
+
+    {% if usuario %}
+        <h1>Datos del Usuario</h1>
+        <p>ID_Usuario: {{ usuario[0] }}</p>
+        <p>Nombre: {{ usuario[1] }}</p>
+        <p>Apellido: {{ usuario[2] }}</p>
+        <p>Documento_Identidad: {{ usuario[3] }}</p>
+        <p>Correo_Electronico: {{ usuario[4] }}</p>
+        <p>Telefono: {{ usuario[5] }}</p>
+        <p>Fecha_Ingreso: {{ usuario[6] }}</p>
+        <p>Fecha_Salida: {{ usuario[7] }}</p>
+        <p>Salario: {{ usuario[8] }}</p>
+
+        {% if liquidacion %}
+            <h1>Datos de la Liquidación</h1>
+            <p>Id de la liquidacion: {{ liquidacion[0] }}</p>
+            <p>Indemnización: {{ liquidacion[1] }}</p>
+            <p>Vacaciones: {{ liquidacion[2] }}</p>
+            <p>Cesantías: {{ liquidacion[3] }}</p>
+            <p>Intereses sobre cesantías: {{ liquidacion[4] }}</p>
+            <p>Prima de servicios: {{ liquidacion[5] }}</p>
+            <p>Retención en la fuente: {{ liquidacion[6] }}</p>
+            <p>Total a pagar: {{ liquidacion[7] }}</p>
+        {% else %}
+            <p>No hay datos de liquidación para este usuario.</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
