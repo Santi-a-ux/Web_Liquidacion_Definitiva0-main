@@ -1,59 +1,125 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Agregar Usuario</title>
-    <style>
-        .flash-message {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            background-color: #f8f8f8;
-        }
-        .flash-success {
-            border-color: #4CAF50;
-            color: #4CAF50;
-        }
-        .flash-error {
-            border-color: #f44336;
-            color: #f44336;
-        }
-    </style>
-</head>
-<body>
-    <h1>Agregar Usuario</h1>
+{% extends "base.html" %}
 
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul>
-                {% for message in messages %}
-                    <li class="flash-message {% if 'exitosamente' in message %}flash-success{% else %}flash-error{% endif %}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+{% block title %}Agregar Usuario{% endblock %}
 
-    <form method="POST" action="{{ url_for('agregar_usuario') }}">
-        <label for="nombre">Name:</label>
-        <input type="text" id="nombre" name="nombre" required><br>
-        <label for="apellido">Last Name:</label>
-        <input type="text" id="apellido" name="apellido" required><br>
-        <label for="documento_identidad">ID Document:</label>
-        <input type="text" id="documento_identidad" name="documento_identidad" required><br>
-        <label for="correo_electronico">Email:</label>
-        <input type="email" id="correo_electronico" name="correo_electronico" required><br>
-        <label for="telefono">Phone:</label>
-        <input type="text" id="telefono" name="telefono" required><br>
-        <label for="fecha_ingreso">Entry Date:</label>
-        <input type="date" id="fecha_ingreso" name="fecha_ingreso" required><br>
-        <label for="fecha_salida">Exit Date:</label>
-        <input type="date" id="fecha_salida" name="fecha_salida"><br>
-        <label for="salario">Salary:</label>
-        <input type="number" id="salario" name="salario" required><br>
-        <label for="id_usuario">User ID:</label>
-        <input type="text" id="id_usuario" name="id_usuario" required><br>
-        <input type="submit" value="Agregar Usuario">
-    </form>
-</body>
-</html>
+{% block content %}
+<!-- Botón de regreso -->
+<div class="mb-3">
+    <a href="{{ url_for('index') }}" class="btn btn-back">
+        <i class="fas fa-arrow-left"></i> Volver al Inicio
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h4><i class="fas fa-user-plus"></i> Agregar Nuevo Usuario</h4>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('agregar_usuario') }}">
+            <div class="row">
+                <!-- Columna izquierda -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="id_usuario" class="form-label">
+                            <i class="fas fa-hashtag"></i> ID de Usuario *
+                        </label>
+                        <input type="number" class="form-control" id="id_usuario" name="id_usuario" 
+                               placeholder="Ej: 123" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nombre" class="form-label">
+                            <i class="fas fa-user"></i> Nombre *
+                        </label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" 
+                               placeholder="Nombre del empleado" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apellido" class="form-label">
+                            <i class="fas fa-user"></i> Apellido *
+                        </label>
+                        <input type="text" class="form-control" id="apellido" name="apellido" 
+                               placeholder="Apellido del empleado" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="documento_identidad" class="form-label">
+                            <i class="fas fa-id-card"></i> Documento de Identidad *
+                        </label>
+                        <input type="text" class="form-control" id="documento_identidad" name="documento_identidad" 
+                               placeholder="Número de documento" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono" class="form-label">
+                            <i class="fas fa-phone"></i> Teléfono *
+                        </label>
+                        <input type="tel" class="form-control" id="telefono" name="telefono" 
+                               placeholder="Número de teléfono" required>
+                    </div>
+                </div>
+
+                <!-- Columna derecha -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="correo_electronico" class="form-label">
+                            <i class="fas fa-envelope"></i> Correo Electrónico *
+                        </label>
+                        <input type="email" class="form-control" id="correo_electronico" name="correo_electronico" 
+                               placeholder="usuario@empresa.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="salario" class="form-label">
+                            <i class="fas fa-dollar-sign"></i> Salario *
+                        </label>
+                        <input type="number" class="form-control" id="salario" name="salario" 
+                               placeholder="Salario mensual" step="0.01" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha_ingreso" class="form-label">
+                            <i class="fas fa-calendar-plus"></i> Fecha de Ingreso *
+                        </label>
+                        <input type="date" class="form-control" id="fecha_ingreso" name="fecha_ingreso" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha_salida" class="form-label">
+                            <i class="fas fa-calendar-minus"></i> Fecha de Salida
+                        </label>
+                        <input type="date" class="form-control" id="fecha_salida" name="fecha_salida">
+                        <small class="text-muted">Opcional - Solo si el empleado ya no está activo</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Agregar Usuario
+                </button>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Información adicional -->
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <h5><i class="fas fa-info-circle"></i> Información</h5>
+    </div>
+    <div class="card-body">
+        <ul class="mb-0">
+            <li>Los campos marcados con (*) son obligatorios</li>
+            <li>El ID de usuario debe ser único en el sistema</li>
+            <li>La fecha de salida es opcional y solo se usa para empleados inactivos</li>
+            <li>El salario debe ser un valor numérico positivo</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,15 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Eliminar Liquidacion</title>
-</head>
-<body>
-    <h1>Eliminar Liquidacion</h1>
-    <form method="POST" action="{{ url_for('eliminar_liquidacion') }}">
-        <label for="id_liquidacion">Liquidation ID:</label>
-        <input type="text" id="id_liquidacion" name="id_liquidacion"><br>
-        <input type="submit" value="Eliminar Liquidacion">
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Eliminar Liquidación{% endblock %}
+
+{% block content %}
+<!-- Botón de regreso -->
+<div class="mb-3">
+    <a href="{{ url_for('index') }}" class="btn btn-back">
+        <i class="fas fa-arrow-left"></i> Volver al Inicio
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-danger text-white">
+        <h4><i class="fas fa-file-times"></i> Eliminar Liquidación</h4>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>¡Advertencia!</strong> Esta acción eliminará permanentemente la liquidación del sistema.
+        </div>
+
+        <form method="POST" action="{{ url_for('eliminar_liquidacion') }}">
+            <div class="form-group">
+                <label for="id_liquidacion" class="form-label">
+                    <i class="fas fa-hashtag"></i> ID de la Liquidación a Eliminar *
+                </label>
+                <input type="number" class="form-control" id="id_liquidacion" name="id_liquidacion" 
+                       placeholder="Ingrese el ID de la liquidación" required>
+                <small class="text-muted">Asegúrese de que el ID sea correcto</small>
+            </div>
+
+            <!-- Botones -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar esta liquidación? Esta acción no se puede deshacer.')">
+                    <i class="fas fa-trash"></i> Eliminar Liquidación
+                </button>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Información importante -->
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <h5><i class="fas fa-info-circle"></i> Información Importante</h5>
+    </div>
+    <div class="card-body">
+        <ul class="mb-0">
+            <li><i class="fas fa-exclamation-circle text-warning"></i> Esta acción solo elimina la liquidación, no al usuario</li>
+            <li><i class="fas fa-search text-info"></i> Puede consultar el usuario para ver sus liquidaciones</li>
+            <li><i class="fas fa-undo text-secondary"></i> Esta acción no se puede deshacer</li>
+            <li><i class="fas fa-list text-primary"></i> Consulte el panel de administración para ver todas las liquidaciones</li>
+        </ul>
+        
+        <div class="mt-3">
+            <a href="{{ url_for('consultar_usuario') }}" class="btn btn-sm btn-info">
+                <i class="fas fa-search"></i> Consultar Usuario
+            </a>
+            <a href="{{ url_for('admin_panel') }}" class="btn btn-sm btn-primary">
+                <i class="fas fa-list"></i> Ver Liquidaciones
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

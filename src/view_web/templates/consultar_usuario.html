@@ -1,42 +1,160 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Consulta de Usuario</title>
-</head>
-<body>
-    <form method="POST" action="{{ url_for('consultar_usuario') }}">
-        <h1>Consulta de Usuario</h1>
-        <label for="id_usuario">ID del Usuario:</label>
-        <input type="text" id="id_usuario" name="id_usuario" required>
-        <button type="submit">Consultar</button>
-    </form>
+{% extends "base.html" %}
 
-    {% if usuario %}
-        <h1>Datos del Usuario</h1>
-        <p>ID_Usuario: {{ usuario[0] }}</p>
-        <p>Nombre: {{ usuario[1] }}</p>
-        <p>Apellido: {{ usuario[2] }}</p>
-        <p>Documento_Identidad: {{ usuario[3] }}</p>
-        <p>Correo_Electronico: {{ usuario[4] }}</p>
-        <p>Telefono: {{ usuario[5] }}</p>
-        <p>Fecha_Ingreso: {{ usuario[6] }}</p>
-        <p>Fecha_Salida: {{ usuario[7] }}</p>
-        <p>Salario: {{ usuario[8] }}</p>
+{% block title %}Consultar Usuario{% endblock %}
 
+{% block content %}
+<!-- Botón de regreso -->
+<div class="mb-3">
+    <a href="{{ url_for('index') }}" class="btn btn-back">
+        <i class="fas fa-arrow-left"></i> Volver al Inicio
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h4><i class="fas fa-search"></i> Consultar Usuario</h4>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('consultar_usuario') }}">
+            <div class="form-group">
+                <label for="id_usuario" class="form-label">ID del Usuario:</label>
+                <input type="number" class="form-control" id="id_usuario" name="id_usuario" 
+                       placeholder="Ingrese el ID del usuario" required>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i> Consultar Usuario
+            </button>
+        </form>
+    </div>
+</div>
+
+{% if usuario %}
+<div class="row mt-4">
+    <!-- Datos del Usuario -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5><i class="fas fa-user"></i> Información del Usuario</h5>
+            </div>
+            <div class="card-body">
+                <div class="data-row">
+                    <span class="data-label">ID:</span>
+                    <span class="data-value"><strong>{{ usuario[0] }}</strong></span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Nombre:</span>
+                    <span class="data-value">{{ usuario[1] }} {{ usuario[2] }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Documento:</span>
+                    <span class="data-value">{{ usuario[3] }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Email:</span>
+                    <span class="data-value">{{ usuario[4] }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Teléfono:</span>
+                    <span class="data-value">{{ usuario[5] }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Fecha Ingreso:</span>
+                    <span class="data-value">{{ usuario[6] }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Fecha Salida:</span>
+                    <span class="data-value">
+                        {% if usuario[7] %}
+                            <span class="badge badge-secondary">{{ usuario[7] }}</span>
+                        {% else %}
+                            <span class="badge badge-success">Activo</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Salario:</span>
+                    <span class="data-value text-success">
+                        <strong>${{ "%.2f"|format(usuario[8]) }}</strong>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Datos de la Liquidación -->
+    <div class="col-md-6">
         {% if liquidacion %}
-            <h1>Datos de la Liquidación</h1>
-            <p>Id de la liquidacion: {{ liquidacion[0] }}</p>
-            <p>Indemnización: {{ liquidacion[1] }}</p>
-            <p>Vacaciones: {{ liquidacion[2] }}</p>
-            <p>Cesantías: {{ liquidacion[3] }}</p>
-            <p>Intereses sobre cesantías: {{ liquidacion[4] }}</p>
-            <p>Prima de servicios: {{ liquidacion[5] }}</p>
-            <p>Retención en la fuente: {{ liquidacion[6] }}</p>
-            <p>Total a pagar: {{ liquidacion[7] }}</p>
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5><i class="fas fa-file-invoice-dollar"></i> Información de Liquidación</h5>
+            </div>
+            <div class="card-body">
+                <div class="data-row">
+                    <span class="data-label">ID Liquidación:</span>
+                    <span class="data-value">{{ liquidacion[0] }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Indemnización:</span>
+                    <span class="data-value text-success">${{ "%.2f"|format(liquidacion[1]) }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Vacaciones:</span>
+                    <span class="data-value text-primary">${{ "%.2f"|format(liquidacion[2]) }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Cesantías:</span>
+                    <span class="data-value text-warning">${{ "%.2f"|format(liquidacion[3]) }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Intereses Cesantías:</span>
+                    <span class="data-value text-info">${{ "%.2f"|format(liquidacion[4]) }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Prima Servicios:</span>
+                    <span class="data-value text-secondary">${{ "%.2f"|format(liquidacion[5]) }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Retención:</span>
+                    <span class="data-value text-danger">-${{ "%.2f"|format(liquidacion[6]) }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Total a Pagar:</span>
+                    <span class="data-value">
+                        <h5 class="text-success mb-0">${{ "%.2f"|format(liquidacion[7]) }}</h5>
+                    </span>
+                </div>
+            </div>
+        </div>
         {% else %}
-            <p>No hay datos de liquidación para este usuario.</p>
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5><i class="fas fa-exclamation-triangle"></i> Liquidación</h5>
+            </div>
+            <div class="card-body text-center">
+                <i class="fas fa-info-circle fa-3x text-muted mb-3"></i>
+                <p>No hay datos de liquidación para este usuario.</p>
+                <a href="{{ url_for('agregar_liquidacion') }}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Crear Liquidación
+                </a>
+            </div>
+        </div>
         {% endif %}
+    </div>
+</div>
+
+<!-- Botones de acción -->
+<div class="text-center mt-4">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+        <i class="fas fa-home"></i> Ir al Inicio
+    </a>
+    <a href="{{ url_for('consultar_usuario') }}" class="btn btn-primary">
+        <i class="fas fa-search"></i> Nueva Consulta
+    </a>
+    {% if not liquidacion %}
+    <a href="{{ url_for('agregar_liquidacion') }}" class="btn btn-success">
+        <i class="fas fa-calculator"></i> Crear Liquidación
+    </a>
     {% endif %}
-</body>
-</html>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,27 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Agregar Liquidacion</title>
-</head>
-<body>
-    <h1>Agregar Liquidacion</h1>
-    
-    <form method="POST" action="{{ url_for('agregar_liquidacion') }}">
-        <label for="salario">Monthly Salary:</label>
-        <input type="number" step="0.01" id="salario" name="salario"><br>
-        
-        <label for="fecha_ingreso">Entry Date (YYYY-MM-DD):</label>
-        <input type="date" id="fecha_ingreso" name="fecha_ingreso"><br>
-        
-        <label for="fecha_salida">Exit Date (YYYY-MM-DD):</label>
-        <input type="date" id="fecha_salida" name="fecha_salida"><br>
-        
-        <label for="id_usuario">User ID:</label>
-        <input type="number" id="id_usuario" name="id_usuario"><br>
-        
-        <input type="submit" value="Agregar Liquidacion">
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Crear Liquidación{% endblock %}
+
+{% block content %}
+<!-- Botón de regreso -->
+<div class="mb-3">
+    <a href="{{ url_for('index') }}" class="btn btn-back">
+        <i class="fas fa-arrow-left"></i> Volver al Inicio
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <h4><i class="fas fa-calculator"></i> Crear Nueva Liquidación</h4>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('agregar_liquidacion') }}">
+            <div class="row">
+                <!-- Información del empleado -->
+                <div class="col-md-6">
+                    <h5 class="mb-3"><i class="fas fa-user"></i> Datos del Empleado</h5>
+                    
+                    <div class="form-group">
+                        <label for="id_usuario" class="form-label">
+                            <i class="fas fa-hashtag"></i> ID del Usuario *
+                        </label>
+                        <input type="number" class="form-control" id="id_usuario" name="id_usuario" 
+                               placeholder="Ingrese el ID del usuario" required>
+                        <small class="text-muted">Debe existir en el sistema</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="salario" class="form-label">
+                            <i class="fas fa-dollar-sign"></i> Salario Mensual *
+                        </label>
+                        <input type="number" class="form-control" id="salario" name="salario" 
+                               placeholder="Salario mensual" step="0.01" min="0" required>
+                    </div>
+                </div>
+
+                <!-- Fechas de trabajo -->
+                <div class="col-md-6">
+                    <h5 class="mb-3"><i class="fas fa-calendar"></i> Período Laboral</h5>
+                    
+                    <div class="form-group">
+                        <label for="fecha_ingreso" class="form-label">
+                            <i class="fas fa-calendar-plus"></i> Fecha de Ingreso *
+                        </label>
+                        <input type="date" class="form-control" id="fecha_ingreso" name="fecha_ingreso" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha_salida" class="form-label">
+                            <i class="fas fa-calendar-minus"></i> Fecha de Salida *
+                        </label>
+                        <input type="date" class="form-control" id="fecha_salida" name="fecha_salida" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-calculator"></i> Calcular Liquidación
+                </button>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Información sobre el cálculo -->
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <h5><i class="fas fa-info-circle"></i> Información del Cálculo</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h6><strong>La liquidación incluye:</strong></h6>
+                <ul>
+                    <li><i class="fas fa-check text-success"></i> Indemnización</li>
+                    <li><i class="fas fa-check text-success"></i> Vacaciones</li>
+                    <li><i class="fas fa-check text-success"></i> Cesantías</li>
+                    <li><i class="fas fa-check text-success"></i> Intereses sobre cesantías</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h6><strong>También calcula:</strong></h6>
+                <ul>
+                    <li><i class="fas fa-check text-success"></i> Prima de servicios</li>
+                    <li><i class="fas fa-minus text-danger"></i> Retención en la fuente</li>
+                    <li><i class="fas fa-calculator text-primary"></i> Total a pagar</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 

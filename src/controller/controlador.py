@@ -81,12 +81,27 @@ class BaseDeDatos:
                 port=SecretConfig.PGPORT
             )
             cursor=conn.cursor()
-            cursor.execute( "INSERT INTO usuarios (Nombre, Apellido, Documento_Identidad, Correo_Electronico, Telefono, Fecha_Ingreso, Fecha_Salida, Salario,ID_Usuario) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s)",(nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, id_usuario))
-            print("Usuario agregado exitosamente")
+            cursor.execute( "INSERT INTO usuarios (ID_Usuario, Nombre, Apellido, Documento_Identidad, Correo_Electronico, Telefono, Fecha_Ingreso, Fecha_Salida, Salario) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",(id_usuario, nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario))
             conn.commit()
+            cursor.close()
             conn.close()
-        except (Exception, psycopg2.Error) as error:
+            print("Usuario agregado exitosamente")
+        except psycopg2.IntegrityError as e:
+            if conn:
+                conn.close()
+            if "duplicate key" in str(e):
+                if "usuarios_pkey" in str(e):
+                    raise Exception(f"Ya existe un usuario con ID {id_usuario}")
+                elif "documento_identidad" in str(e):
+                    raise Exception(f"Ya existe un usuario con documento {documento_identidad}")
+                elif "correo_electronico" in str(e):
+                    raise Exception(f"Ya existe un usuario con email {correo_electronico}")
+            raise Exception(f"Error de integridad: {str(e)}")
+        except Exception as error:
+            if conn:
+                conn.close()
             print(f"Error al agregar el usuario: {error}")
+            raise Exception(f"Error en la base de datos: {str(error)}")
 
     # Función para agregar una nueva liquidación
     def agregar_liquidacion(id_liquidacion, indemnizacion, vacaciones, cesantias, intereses_sobre_cesantias, prima_servicios, retencion_fuente, total_a_pagar, id_usuario):
@@ -152,13 +167,14 @@ class BaseDeDatos:
                             print(f"Prima de servicios: {liquidacion[5]}")
                             print(f"Retención en la fuente: {liquidacion[6]}")
                             print(f"Total a pagar: {liquidacion[7]}")
-                
-                    elif usuario is None or liquidacion is None:
+                        
+                        return usuario, liquidacion
+                    else:
                         return None, None
-                    return usuario, liquidacion
                 
         except (Exception, psycopg2.Error) as error:
             print(f"Error al consultar el usuario: {error}")
+            return None, None
         finally:
             if conn:
                 conn.close()
@@ -190,6 +206,85 @@ class BaseDeDatos:
                 conn.close()
         except (Exception, psycopg2.Error) as error:
             print(f"Error al eliminar los datos de liquidación: {error}")
+
+    # Función para obtener todos los usuarios (para panel de administración)
+    def obtener_todos_usuarios():
+        try:
+            conn = BaseDeDatos.conectar_db()
+            if conn:
+                with conn.cursor() as cur:
+                    sql = "SELECT * FROM usuarios ORDER BY ID_Usuario"
+                    cur.execute(sql)
+                    usuarios = cur.fetchall()
+                    return usuarios
+        except (Exception, psycopg2.Error) as error:
+            print(f"Error al obtener usuarios: {error}")
+            return []
+        finally:
+            if conn:
+                conn.close()
+
+    # Función para obtener todas las liquidaciones
+    def obtener_todas_liquidaciones():
+        try:
+            conn = BaseDeDatos.conectar_db()
+            if conn:
+                with conn.cursor() as cur:
+                    sql = """
+                    SELECT l.*, u.Nombre, u.Apellido 
+                    FROM liquidacion l 
+                    JOIN usuarios u ON l.ID_Usuario = u.ID_Usuario 
+                    ORDER BY l.ID_Liquidacion
+                    """
+                    cur.execute(sql)
+                    liquidaciones = cur.fetchall()
+                    return liquidaciones
+        except (Exception, psycopg2.Error) as error:
+            print(f"Error al obtener liquidaciones: {error}")
+            return []
+        finally:
+            if conn:
+                conn.close()
+
+    # Función para obtener estadísticas generales
+    def obtener_estadisticas():
+        try:
+            conn = BaseDeDatos.conectar_db()
+            if conn:
+                with conn.cursor() as cur:
+                    # Contar usuarios
+                    cur.execute("SELECT COUNT(*) FROM usuarios")
+                    total_usuarios = cur.fetchone()[0]
+                    
+                    # Contar liquidaciones
+                    cur.execute("SELECT COUNT(*) FROM liquidacion")
+                    total_liquidaciones = cur.fetchone()[0]
+                    
+                    # Promedio de salarios
+                    cur.execute("SELECT AVG(Salario) FROM usuarios")
+                    promedio_salario = cur.fetchone()[0] or 0
+                    
+                    # Total pagado en liquidaciones
+                    cur.execute("SELECT SUM(Total_A_Pagar) FROM liquidacion")
+                    total_pagado = cur.fetchone()[0] or 0
+                    
+                    return {
+                        'total_usuarios': total_usuarios,
+                        'total_liquidaciones': total_liquidaciones,
+                        'promedio_salario': float(promedio_salario),
+                        'total_pagado': float(total_pagado)
+                    }
+        except (Exception, psycopg2.Error) as error:
+            print(f"Error al obtener estadísticas: {error}")
+            return {
+                'total_usuarios': 0,
+                'total_liquidaciones': 0,
+                'promedio_salario': 0,
+                'total_pagado': 0
+            }
+        finally:
+            if conn:
+                conn.close()
 
 
 if __name__ == "__main__":

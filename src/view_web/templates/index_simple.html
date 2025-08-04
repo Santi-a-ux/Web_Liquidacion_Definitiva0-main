@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Liquidación</title>
+    <style>
+        body {
+            background: #000000;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: #111111;
+            border-bottom: 2px solid #00d4ff;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #00d4ff;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+        
+        .header p {
+            color: #888888;
+            margin: 0.5rem 0 0 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #0066cc;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: #00d4ff;
+            transform: translateY(-5px);
+        }
+        
+        .card-icon {
+            width: 4rem;
+            height: 4rem;
+            background: #00d4ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: #000000;
+        }
+        
+        .card h3 {
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+        
+        .card p {
+            color: #888888;
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn {
+            background: #00d4ff;
+            color: #000000;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #00ffff;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 Centro de Control</h1>
+        <p>Sistema avanzado de gestión de liquidaciones laborales</p>
+    </div>
+
+    <div class="container">
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon">👤</div>
+                <h3>Agregar Usuario</h3>
+                <p>Registrar nuevos empleados en el sistema</p>
+                <a href="/agregar_usuario" class="btn">+ Nuevo Usuario</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🔍</div>
+                <h3>Consultar Usuario</h3>
+                <p>Buscar y visualizar información de empleados</p>
+                <a href="/consultar_usuario" class="btn">🔍 Consultar</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🧮</div>
+                <h3>Crear Liquidación</h3>
+                <p>Calcular liquidaciones precisas</p>
+                <a href="/agregar_liquidacion" class="btn">🧮 Calcular</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🗑️</div>
+                <h3>Eliminar Usuario</h3>
+                <p>Remover empleados del sistema</p>
+                <a href="/eliminar_usuario" class="btn">🗑️ Eliminar</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">📊</div>
+                <h3>Panel de Administración</h3>
+                <p>Estadísticas y gestión completa</p>
+                <a href="/admin_panel" class="btn">📊 Administrar</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

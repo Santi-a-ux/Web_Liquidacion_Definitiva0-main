@@ -1,15 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Eliminar Usuario</title>
-</head>
-<body>
-    <h1>Eliminar Usuario</h1>
-    <form method="POST" action="{{ url_for('eliminar_usuario') }}">
-        <label for="id_usuario">User ID:</label>
-        <input type="text" id="id_usuario" name="id_usuario"><br>
-        <input type="submit" value="Eliminar Usuario">
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Eliminar Usuario{% endblock %}
+
+{% block content %}
+<!-- Botón de regreso -->
+<div class="mb-3">
+    <a href="{{ url_for('index') }}" class="btn btn-back">
+        <i class="fas fa-arrow-left"></i> Volver al Inicio
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-danger text-white">
+        <h4><i class="fas fa-user-times"></i> Eliminar Usuario</h4>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>¡Advertencia!</strong> Esta acción eliminará permanentemente el usuario del sistema.
+        </div>
+
+        <form method="POST" action="{{ url_for('eliminar_usuario') }}">
+            <div class="form-group">
+                <label for="id_usuario" class="form-label">
+                    <i class="fas fa-hashtag"></i> ID del Usuario a Eliminar *
+                </label>
+                <input type="number" class="form-control" id="id_usuario" name="id_usuario" 
+                       placeholder="Ingrese el ID del usuario" required>
+                <small class="text-muted">Asegúrese de que el ID sea correcto</small>
+            </div>
+
+            <!-- Botones -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar este usuario? Esta acción no se puede deshacer.')">
+                    <i class="fas fa-trash"></i> Eliminar Usuario
+                </button>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Información importante -->
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <h5><i class="fas fa-info-circle"></i> Información Importante</h5>
+    </div>
+    <div class="card-body">
+        <ul class="mb-0">
+            <li><i class="fas fa-exclamation-circle text-warning"></i> Si el usuario tiene liquidaciones asociadas, elimínelas primero</li>
+            <li><i class="fas fa-search text-info"></i> Puede consultar el usuario antes de eliminarlo para verificar sus datos</li>
+            <li><i class="fas fa-undo text-secondary"></i> Esta acción no se puede deshacer</li>
+            <li><i class="fas fa-list text-primary"></i> Consulte el panel de administración para ver todos los usuarios</li>
+        </ul>
+        
+        <div class="mt-3">
+            <a href="{{ url_for('consultar_usuario') }}" class="btn btn-sm btn-info">
+                <i class="fas fa-search"></i> Consultar Usuario
+            </a>
+            <a href="{{ url_for('admin_panel') }}" class="btn btn-sm btn-primary">
+                <i class="fas fa-list"></i> Ver Todos los Usuarios
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

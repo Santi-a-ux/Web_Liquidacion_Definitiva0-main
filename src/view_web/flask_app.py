@@ -16,12 +16,27 @@ class Run:
     app = Flask(__name__, template_folder='templates')
     app.secret_key = "supersecretkey"  # Llave secreta para manejar sesiones y mensajes flash
 
+
     @app.route('/')
+    @staticmethod
     def index():
-        # Renderiza la plantilla del índice
         return render_template('index.html')
 
+    @app.route('/test')
+    @staticmethod
+    def test():
+        return """
+        <!DOCTYPE html>
+        <html lang='es'>
+        <head><meta charset='UTF-8'><title>Test Flask</title></head>
+        <body style='background:#222;color:#0f0;font-size:2rem;'>
+        <h1>¡Ruta /test funciona!</h1>
+        <p>Esto es HTML plano desde Flask.</p>
+        </body></html>
+        """
+
     @app.route('/agregar_usuario', methods=['GET', 'POST'])
+    @staticmethod
     def agregar_usuario():
         if request.method == 'POST':
             # Obtiene los datos del formulario
@@ -37,17 +52,22 @@ class Run:
 
             try:
                 # Intenta agregar el usuario a la base de datos
+                print(f"DEBUG: Intentando agregar usuario ID: {id_usuario}, Nombre: {nombre}")
                 BaseDeDatos.agregar_usuario(nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, id_usuario)
-                flash("Usuario agregado exitosamente")
+                flash("Usuario agregado exitosamente", "success")
+                print(f"DEBUG: Usuario {id_usuario} agregado exitosamente")
                 return redirect(url_for('index'))
             except Exception as e:
-                # Si hay un error, muestra un mensaje flash
-                flash(f"Error al agregar el usuario: {str(e)}")
+                # Si hay un error, muestra un mensaje flash detallado
+                error_msg = f"Error al agregar el usuario: {str(e)}"
+                print(f"DEBUG: {error_msg}")
+                flash(error_msg, "error")
                 return redirect(url_for('agregar_usuario'))
         # Renderiza la plantilla para agregar usuario
         return render_template('agregar_usuario.html')
 
     @app.route('/agregar_liquidacion', methods=['GET', 'POST'])
+    @staticmethod
     def agregar_liquidacion():
         if request.method == 'POST':
             try:
@@ -95,23 +115,29 @@ class Run:
         return render_template('agregar_liquidacion.html')
     
     @app.route('/consultar_usuario', methods=['GET', 'POST'])
+    @staticmethod
     def consultar_usuario():
         if request.method == 'POST':
             # Obtiene el ID del usuario del formulario
-            id_usuario = request.form['id_usuario']
+            id_usuario = int(request.form['id_usuario'])  # Convertir a entero
+            print(f"DEBUG: Consultando usuario con ID: {id_usuario}")
             # Consulta el usuario y su liquidación en la base de datos
             usuario, Liquidacion = BaseDeDatos.consultar_usuario(id_usuario)
+            print(f"DEBUG: Resultado consulta - Usuario: {usuario}, Liquidacion: {Liquidacion}")
             if usuario:
                 # Si el usuario existe, renderiza la plantilla con los datos del usuario y la liquidación
+                print("DEBUG: Usuario encontrado, renderizando template")
                 return render_template('consultar_usuario.html', usuario=usuario, liquidacion=Liquidacion)
             else:
                 # Si el usuario no se encuentra, muestra un mensaje flash
+                print("DEBUG: Usuario no encontrado")
                 flash("Usuario no encontrado")
                 return redirect(url_for('consultar_usuario'))
         # Renderiza la plantilla para consultar usuario
         return render_template('consultar_usuario.html')
 
     @app.route('/eliminar_usuario', methods=['GET', 'POST'])
+    @staticmethod
     def eliminar_usuario():
         if request.method == 'POST':
             # Obtiene el ID del usuario del formulario
@@ -124,6 +150,7 @@ class Run:
         return render_template('eliminar_usuario.html')
 
     @app.route('/eliminar_liquidacion', methods=['GET', 'POST'])
+    @staticmethod
     def eliminar_liquidacion():
         if request.method == 'POST':
             # Obtiene el ID de la liquidación del formulario
@@ -134,6 +161,58 @@ class Run:
             return redirect(url_for('index'))
         # Renderiza la plantilla para eliminar liquidación
         return render_template('eliminar_liquidacion.html')
+
+
+    @app.route('/admin')
+    @staticmethod
+    def admin_panel_redirect():
+        return redirect(url_for('admin_panel'))
+
+    @app.route('/admin_panel')
+    @staticmethod
+    def admin_panel():
+        """Panel de administración para ver todos los datos"""
+        try:
+            usuarios = BaseDeDatos.obtener_todos_usuarios()
+            liquidaciones = BaseDeDatos.obtener_todas_liquidaciones()
+            stats = BaseDeDatos.obtener_estadisticas()
+            return render_template('admin_panel.html', 
+                                 usuarios=usuarios, 
+                                 liquidaciones=liquidaciones,
+                                 stats=stats)
+        except Exception as e:
+            flash(f"Error al cargar el panel de administración: {str(e)}", "error")
+            return redirect(url_for('index'))
+
+
+
+
+    @app.route('/admin/usuarios')
+    @staticmethod
+    def admin_usuarios():
+        """Ver solo la lista de usuarios"""
+        try:
+            usuarios = BaseDeDatos.obtener_todos_usuarios()
+            return render_template('admin_usuarios.html', usuarios=usuarios)
+        except Exception as e:
+            flash(f"Error al cargar usuarios: {str(e)}", "error")
+            return redirect(url_for('admin_panel'))
+
+
+
+    @app.route('/simple')
+    @staticmethod
+    def simple():
+        """Página de prueba simple"""
+        return """
+        <!DOCTYPE html>
+        <html lang='es'>
+        <head><meta charset='UTF-8'><title>Prueba Flask</title></head>
+        <body style='background:#111;color:#0ff;font-size:2rem;'>
+        <h1>¡Flask responde correctamente!</h1>
+        <p>Si ves esto, el backend y el navegador funcionan.</p>
+        </body></html>
+        """
 
 # Inicia la aplicación Flask en modo depuración
 if __name__ == "__main__":
