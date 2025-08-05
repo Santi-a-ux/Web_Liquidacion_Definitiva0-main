@@ -19,32 +19,47 @@
 <div class="container">
     <!-- Grid de navegación futurista -->
     <div class="nav-grid">
-        <!-- Agregar Usuario -->
+        <!-- Agregar Empleado -->
         <div class="nav-card">
             <div class="nav-card-icon">
                 <i class="fas fa-user-plus"></i>
             </div>
             <div class="nav-card-content">
-                <h3>Agregar Usuario</h3>
+                <h3>Agregar Empleado</h3>
                 <p>Registrar nuevos empleados en el sistema con datos completos</p>
                 <a href="{{ url_for('agregar_usuario') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i>
-                    Nuevo Usuario
+                    Nuevo Empleado
                 </a>
             </div>
         </div>
 
-        <!-- Consultar Usuario -->
+        <!-- Consultar Empleado -->
         <div class="nav-card">
             <div class="nav-card-icon">
                 <i class="fas fa-search"></i>
             </div>
             <div class="nav-card-content">
-                <h3>Consultar Usuario</h3>
+                <h3>Consultar Empleado</h3>
                 <p>Buscar y visualizar información detallada de empleados</p>
                 <a href="{{ url_for('consultar_usuario') }}" class="btn btn-secondary">
                     <i class="fas fa-search"></i>
                     Consultar
+                </a>
+            </div>
+        </div>
+
+        <!-- Modificar Empleado -->
+        <div class="nav-card">
+            <div class="nav-card-icon">
+                <i class="fas fa-user-edit"></i>
+            </div>
+            <div class="nav-card-content">
+                <h3>Modificar Empleado</h3>
+                <p>Actualizar información personal y laboral de empleados</p>
+                <a href="{{ url_for('modificar_usuario') }}" class="btn btn-info">
+                    <i class="fas fa-edit"></i>
+                    Modificar
                 </a>
             </div>
         </div>
@@ -64,13 +79,14 @@
             </div>
         </div>
 
-        <!-- Eliminar Usuario -->
+        <!-- Eliminar Empleado -->
+        {% if session.get('rol') == 'administrador' %}
         <div class="nav-card">
             <div class="nav-card-icon warning">
                 <i class="fas fa-user-minus"></i>
             </div>
             <div class="nav-card-content">
-                <h3>Eliminar Usuario</h3>
+                <h3>Eliminar Empleado</h3>
                 <p>Remover empleados del sistema de forma segura</p>
                 <a href="{{ url_for('eliminar_usuario') }}" class="btn btn-outline">
                     <i class="fas fa-trash"></i>
@@ -78,8 +94,10 @@
                 </a>
             </div>
         </div>
+        {% endif %}
 
         <!-- Eliminar Liquidación -->
+        {% if session.get('rol') == 'administrador' %}
         <div class="nav-card">
             <div class="nav-card-icon warning">
                 <i class="fas fa-file-excel"></i>
@@ -93,8 +111,10 @@
                 </a>
             </div>
         </div>
+        {% endif %}
 
         <!-- Panel de Administración -->
+        {% if session.get('rol') == 'administrador' %}
         <div class="nav-card admin-card">
             <div class="nav-card-icon admin">
                 <i class="fas fa-tachometer-alt"></i>
@@ -108,6 +128,7 @@
                 </a>
             </div>
         </div>
+        {% endif %}
     </div>
 
     <!-- Stats Section -->
@@ -116,7 +137,7 @@
         <div class="stats-grid">
             <div class="stats-card">
                 <div class="stats-number">{{ "7" }}</div>
-                <div class="stats-label">Usuarios Activos</div>
+                <div class="stats-label">Empleados Activos</div>
             </div>
             <div class="stats-card">
                 <div class="stats-number">100%</div>

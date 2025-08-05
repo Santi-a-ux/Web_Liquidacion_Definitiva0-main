@@ -6,9 +6,31 @@ from controller.controlador import BaseDeDatos  # Importa la clase BaseDeDatos d
 from datetime import datetime  # Importa la clase datetime para trabajar con fechas
 import random  # Importa el módulo random para generar valores aleatorios
 
-# Función para asignar un ID de liquidación aleatorio
+# Función para asignar un ID de liquidación único
 def asignar_id_liquidacion():
-    return random.randint(0, 9)
+    """
+    Genera un ID único para liquidación dentro del rango de INT (2,147,483,647)
+    usando timestamp + número aleatorio pequeño
+    """
+    import time
+    import random
+    
+    # Usar los últimos 4 dígitos del timestamp + 3 dígitos aleatorios = 7 dígitos max
+    timestamp = int(time.time()) % 10000  # Últimos 4 dígitos del timestamp
+    random_part = random.randint(100, 999)  # 3 dígitos aleatorios
+    
+    # Combinar: máximo 7 dígitos (dentro del rango de INT)
+    unique_id = int(f"{timestamp}{random_part}")
+    
+    # Asegurar que esté en rango válido (1-2,000,000,000)
+    if unique_id > 2000000000:
+        unique_id = unique_id % 2000000000
+        
+    # Asegurar que no sea 0
+    if unique_id == 0:
+        unique_id = random.randint(100000, 999999)
+    
+    return unique_id
 
 # Funciones para calcular diferentes aspectos de la liquidación
 def calcular_indemnizacion(salario_mensual, años_trabajados):

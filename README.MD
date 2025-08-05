@@ -1,29 +1,123 @@
-# Calculadora de Liquidación de Empleados
+# Calculadora de L4. **Panel de Administración:** Dashboard principal con navegación a todas las funcionalidades administrativas
+5. **Generar Reportes:** Módulo dedicado de análisis avanzado con:
+   - Distribución de salarios por rangos
+   - Ranking de empleados
+   - Análisis de componentes de liquidación
+   - Resumen ejecutivo
+   - Exportación de datos en formato CSVquidación de Empleados
 
-Este es un programa Python que permite calcular la liquidación de empleados, teniendo en cuenta diferentes factores como el salario, días trabajados, vacaciones, indemnizaciones, cesantías, entre otros. El programa ofrece una interfaz web para facilitar el ingreso de datos y la visualización de resultados.
+¿Te ha tocado calcular liquidaciones laborales y terminas con dolor de cabeza entre tantos números y fechas? Esta aplicación nace de esa necesidad real que tienen las empresas, contadores y departamentos de recursos humanos de hacer estos cálculos de manera rápida, precisa y sin errores.
 
-## Características
+Cuando un empleado termina su contrato laboral, hay que calcular exactamente cuánto se le debe pagar: vacaciones, cesantías, prima de servicios, indemnización y descontar la retención en la fuente. Son muchos factores y cualquier error puede traer problemas legales o inconformidades.
 
-1. Calcula la liquidación de empleados basada en:
-   - Salario mensual
-   - Días trabajados
-   - Indemnización
-   - Vacaciones
-   - Cesantías
-   - Intereses sobre cesantías
-   - Prima de servicios
-   - Retención en la fuente
-2. Muestra la información detallada de la liquidación.
-3. Permite agregar, consultar y eliminar usuarios y sus liquidaciones.
-4. Proporciona una interfaz web amigable.
+Esta herramienta automatiza todo ese proceso tedioso, cumpliendo con la legislación laboral colombiana vigente, para que puedas concentrarte en lo importante en lugar de estar haciendo cálculos manuales que pueden fallar.
+
+## Funcionalidades Principales
+
+1. **Agregar Empleado:** Registrar empleados con datos completos (nombre, apellido, documento, correo, teléfono, fechas laborales, salario) ✅ FUNCIONA
+2. **Consultar Empleado:** Búsqueda por ID con visualización completa de datos personales y liquidaciones asociadas ✅ FUNCIONA
+3. **Modificar Empleado:** Actualización de información personal y laboral del empleado ✅ FUNCIONA
+4. **Eliminar Empleado:** Eliminación segura con validación de integridad referencial ✅ FUNCIONA
+5. **Calcular Liquidación:** Cálculo automático de todos los componentes (indemnización, vacaciones, cesantías, intereses, prima, retención) ✅ FUNCIONA
+6. **Crear Liquidación:** Generación y almacenamiento de liquidaciones con ID único y relación FK ✅ FUNCIONA
+7. **Consultar Liquidación:** Visualización detallada del desglose completo de liquidación ✅ FUNCIONA
+8. **Eliminar Liquidación:** Eliminación específica por ID con validaciones ✅ FUNCIONA
+9. **Panel de Administración:** Dashboard con estadísticas generales y vista consolidada ✅ FUNCIONA
+10. **Listar Empleados:** Vista tabular de todos los empleados con accesos rápidos ✅ FUNCIONA
+11. **Listar Liquidaciones:** Historial completo de liquidaciones procesadas ✅ FUNCIONA
+12. **Validar Integridad Referencial:** Verificación de relaciones entre usuarios y liquidaciones ✅ FUNCIONA
+13. **Generar Reportes:** Análisis avanzado, gráficos detallados y exportación de datos en CSV ✅ FUNCIONA
+14. **Autenticación y Seguridad:** Validación de entrada y prevención de inyección SQL ✅ FUNCIONA
+15. **Sistema de Auditoría:** Registro de operaciones y seguimiento de cambios en el sistema ✅ FUNCIONA 
+
+## Tipos de Usuarios del Sistema
+
+### 🔧 Administrador (Recursos Humanos)
+**Acceso completo al sistema con las siguientes capacidades:**
+
+- ✅ **Panel de Administración:** Dashboard con estadísticas completas, reportes financieros y métricas del sistema
+- ✅ **Gestión Completa de Empleados:** Crear, consultar, modificar y eliminar empleados
+- ✅ **Gestión Completa de Liquidaciones:** Crear, consultar y eliminar liquidaciones
+- ✅ **Vista Consolidada:** Acceso a listados completos y gestión masiva
+- ✅ **Operaciones Críticas:** Permisos para eliminar registros con validaciones de seguridad
+- ✅ **Análisis y Estadísticas:** Generación de reportes, métricas financieras y análisis del sistema
+- ✅ **Auditoría del Sistema:** Seguimiento completo de operaciones realizadas
+
+### 👤 Asistente Administrativo
+**Acceso limitado con funcionalidades básicas:**
+
+- ✅ **Consultar Información:** Ver datos específicos de empleados
+- ✅ **Crear Liquidaciones:** Calcular liquidaciones para empleados existentes
+- ✅ **Ver Resultados:** Consultar liquidaciones ya procesadas
+- ✅ **Registrar Empleados:** Agregar nuevos empleados al sistema
+- ❌ **Sin Panel Admin:** No acceso a estadísticas generales del sistema
+- ❌ **Sin Eliminación:** No puede eliminar empleados ni liquidaciones
+- ❌ **Sin Vista Consolidada:** No acceso a listados completos de gestión
+
+### 📊 Comparación de Permisos
+
+| Funcionalidad | Administrador (RRHH) | Asistente Administrativo |
+|---------------|:--------------------:|:------------------------:|
+| Dashboard administrativo | ✅ | ❌ |
+| Generar reportes avanzados | ✅ | ❌ |
+| Agregar empleados | ✅ | ✅ |
+| Consultar empleados | ✅ | ✅ |
+| Modificar empleados | ✅ | ❌ |
+| Eliminar empleados | ✅ | ❌ |
+| Crear liquidaciones | ✅ | ✅ |
+| Consultar liquidaciones | ✅ | ✅ |
+| Eliminar liquidaciones | ✅ | ❌ |
+| Ver listados completos | ✅ | ❌ |
+| Sistema de auditoría | ✅ | ❌ |
+| Exportar datos CSV | ✅ | ❌ |
+
+## Detalles Técnicos de Funcionalidades Clave
+
+### 🧮 Cálculo Automático de Liquidación
+- **Indemnización:** Máximo 12 meses, 20 días por año trabajado según legislación colombiana
+- **Vacaciones:** Cálculo proporcional basado en días trabajados (base 720 días anuales)
+- **Cesantías:** 1 mes de salario por año trabajado (base 360 días)
+- **Intereses sobre Cesantías:** 12% anual automático sobre cesantías acumuladas
+- **Prima de Servicios:** Cálculo proporcional semestral (base 360 días)
+- **Retención en la Fuente:** Tabla UVT colombiana actualizada (UVT 2024: $39,205)
+
+### 🔒 Validación de Integridad Referencial
+- Prevención de eliminación de usuarios con liquidaciones activas
+- Verificación automática de relaciones entre tablas
+- Mantenimiento de consistencia en base de datos PostgreSQL
+- Mensajes informativos sobre restricciones de eliminación
+
+### 🛡️ Seguridad del Sistema
+- **Prevención SQL Injection:** Uso de parámetros seguros en todas las consultas
+- **Validación de Entrada:** Verificación de tipos de datos y formatos
+- **Manejo Seguro de Conexiones:** Cierre automático y gestión de pool de conexiones
+- **Auditoría Completa:** Registro de todas las operaciones críticas del sistema
+
+### 📊 Panel de Administración
+- **Dashboard Central:** Punto de acceso a todas las funcionalidades administrativas
+- **Navegación Intuitiva:** Acceso directo a gestión de empleados, liquidaciones y reportes
+- **Estadísticas Básicas:** Contadores de empleados y liquidaciones registradas
+- **Interfaz Responsive:** Diseño optimizado para desktop y dispositivos móviles
+
+### 📈 Módulo de Reportes Avanzados
+- **Acceso Dedicado:** Página especializada accesible desde el Panel de Administración
+- **Análisis Salarial:** Distribución por rangos (bajo: <$2M, medio: $2M-$5M, alto: >$5M)
+- **Rankings:** Top empleados ordenados por salario base
+- **Componentes de Liquidación:** Análisis detallado de indemnizaciones, cesantías, vacaciones, etc.
+- **Resumen Ejecutivo:** Totales, promedios y métricas clave del sistema
+- **Exportación CSV:** Descarga completa de datos para análisis externo
+- **Interfaz Avanzada:** Gráficos, estadísticas detalladas y herramientas de análisis
 
 ## Requisitos del Sistema
 
-- Python 3.x instalado.
-- Flask para la interfaz web [`pip install flask`]
-- SQLite para la base de datos (incluido en Python)
+- Python 3.x instalado
+- PostgreSQL 13+ (base de datos en Neon Cloud)
+- Flask y dependencias [`pip install flask psycopg2-binary`]
+- Conexión a internet para base de datos remota
 
-## Uso
+## Configuración y Uso
+
+### Instalación
 
 1. Clona este repositorio en tu máquina local:
     ```bash
@@ -32,57 +126,71 @@ Este es un programa Python que permite calcular la liquidación de empleados, te
 
 2. Instala las dependencias necesarias:
     ```bash
-    pip install flask
+    pip install flask psycopg2-binary
     ```
 
-3. Inicializa la base de datos:
-    ```
-    Coloca las credenciales de tu base de datos
-    ```
+3. Configura la base de datos:
+    - Edita `SecretConfig.py` con las credenciales de tu base de datos PostgreSQL
+    - Ejecuta los scripts SQL en la carpeta `sql/` para crear las tablas necesarias
 
 4. Ejecuta la aplicación web:
     ```bash
     python app.py
     ```
 
-5. Abre tu navegador web y ve a la dirección que aparece en la consola (por defecto, `http://127.0.0.1:5000/`).
+5. Abre tu navegador web y ve a `http://127.0.0.1:5000/`
+
+### Acceso al Sistema
+
+**Usuarios de Prueba:**
+- **Administrador RRHH:** usuario: `admin` | contraseña: `admin123`
+- **Asistente Administrativo:** usuario: `asistente` | contraseña: `asistente123`
+
+### Navegación Principal
+
+1. **Página de Login:** Autenticación con validación de roles
+2. **Dashboard Principal:** Diferentes vistas según el rol del usuario
+3. **Panel de Administración:** Solo para Administradores RRHH
+4. **Generar Reportes:** Módulo dedicado de análisis avanzado
+5. **Gestión de Empleados:** Operaciones CRUD completas
+6. **Gestión de Liquidaciones:** Cálculo, creación y consulta
 
 ## Funcionamiento
 
-### Agregar Usuario
+### Agregar Empleado
 
 1. Navega a `http://127.0.0.1:5000/agregar_usuario`.
-2. Llena el formulario con la información del usuario.
-3. Haz clic en "Agregar Usuario".
-4. Si el usuario se agrega correctamente, verás un mensaje de confirmación en la página.
+2. Llena el formulario con la información del empleado.
+3. Haz clic en "Agregar Empleado".
+4. Si el empleado se agrega correctamente, verás un mensaje de confirmación en la página.
 
-### Agregar Liquidación
+### Crear Liquidación
 
 1. Navega a `http://127.0.0.1:5000/agregar_liquidacion`.
-2. Llena el formulario con la información de la liquidación.
-3. Haz clic en "Agregar Liquidacion".
-4. Si la liquidación se agrega correctamente, verás un mensaje de confirmación con el total a pagar y serás redirigido a la página principal.
+2. Ingresa el ID del empleado para el cual deseas crear la liquidación.
+3. Haz clic en "Crear Liquidación".
+4. Si la liquidación se crea correctamente, verás un mensaje de confirmación con el total a pagar y serás redirigido a la página principal.
 
-### Consultar Usuario
+### Consultar Empleado
 
 1. Navega a `http://127.0.0.1:5000/consultar_usuario`.
-2. Ingresa el ID del usuario que deseas consultar.
-3. Haz clic en "Consulta".
-4. Si el usuario existe, verás su información y la de su liquidación.
+2. Ingresa el ID del empleado que deseas consultar.
+3. Haz clic en "Consultar".
+4. Si el empleado existe, verás su información y la de su liquidación.
 
-### Eliminar Usuario
+### Eliminar Empleado
 
 1. Navega a `http://127.0.0.1:5000/eliminar_usuario`.
-2. Ingresa el ID del usuario que deseas eliminar.
-3. Haz clic en "Eliminar".
-4. Si el usuario se elimina correctamente, verás un mensaje de confirmación.
-5. Tener en cuenta que el usuario no podra ser eliminado si aun no se ha eliminado su liquidación.
+2. Ingresa el ID del empleado que deseas eliminar.
+3. Haz clic en "Eliminar Empleado".
+4. Si el empleado se elimina correctamente, verás un mensaje de confirmación.
+5. Tener en cuenta que el empleado no podrá ser eliminado si aún no se ha eliminado su liquidación.
 
 ### Eliminar Liquidación
 
 1. Navega a `http://127.0.0.1:5000/eliminar_liquidacion`.
 2. Ingresa el ID de la liquidación que deseas eliminar.
-3. Haz clic en "Eliminar".
+3. Haz clic en "Eliminar Liquidación".
 4. Si la liquidación se elimina correctamente, verás un mensaje de confirmación.
 
 ## Pruebas Unitarias

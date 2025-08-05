@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Sistema de Liquidación</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--bg-dark);
+        }
+        
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-blue);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-header h1 {
+            color: var(--primary-blue);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        
+        .default-users {
+            background: var(--bg-card);
+            border: 1px solid var(--border-blue);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .default-users h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .user-demo {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 6px;
+        }
+        
+        .user-demo:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div style="position: fixed; top: 1rem; right: 1rem; z-index: 1000; width: 300px;">
+            {% for category, message in messages %}
+            <div class="alert-{{ category }}" style="background-color: {{ '#84cc16' if category == 'success' else '#ef4444' }}20; border: 1px solid {{ '#84cc16' if category == 'success' else '#ef4444' }}40; border-radius: 8px; padding: 1rem; margin-bottom: 0.5rem; color: var(--text-white); display: flex; align-items: center; gap: 0.75rem;">
+                <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }}" style="color: {{ '#84cc16' if category == 'success' else '#ef4444' }};"></i>
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1><i class="fas fa-calculator"></i> Sistema de Liquidación</h1>
+                <p>Ingresa tus credenciales para acceder</p>
+            </div>
+
+            <!-- Usuarios de demostración -->
+            <div class="default-users">
+                <h3><i class="fas fa-users"></i> Usuarios del Sistema</h3>
+                <div class="user-demo">
+                    <span><strong>Administrador (RRHH):</strong> ID: 1</span>
+                    <span>Password: admin123</span>
+                </div>
+                <div class="user-demo">
+                    <span><strong>Asistente Administrativo:</strong> ID: 2</span>
+                    <span>Password: user123</span>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="form-group">
+                    <label for="id_usuario" class="form-label">
+                        <i class="fas fa-user"></i> ID del Usuario del Sistema
+                    </label>
+                    <input type="number" class="form-control" id="id_usuario" name="id_usuario" 
+                           placeholder="Ingresa tu ID del sistema" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i> Contraseña
+                    </label>
+                    <input type="password" class="form-control" id="password" name="password" 
+                           placeholder="Ingresa tu contraseña" required>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </button>
+                </div>
+            </form>
+
+            <div class="text-center mt-3">
+                <p style="color: var(--text-muted); font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> 
+                    Sistema de Gestión de Liquidaciones Laborales
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

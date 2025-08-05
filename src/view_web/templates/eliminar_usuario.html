@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Eliminar Usuario{% endblock %}
+{% block title %}Eliminar Empleado{% endblock %}
 
 {% block content %}
 <!-- Botón de regreso -->
@@ -12,28 +12,28 @@
 
 <div class="card">
     <div class="card-header bg-danger text-white">
-        <h4><i class="fas fa-user-times"></i> Eliminar Usuario</h4>
+        <h4><i class="fas fa-user-times"></i> Eliminar Empleado</h4>
     </div>
     <div class="card-body">
         <div class="alert alert-warning">
             <i class="fas fa-exclamation-triangle"></i>
-            <strong>¡Advertencia!</strong> Esta acción eliminará permanentemente el usuario del sistema.
+            <strong>¡Advertencia!</strong> Esta acción eliminará permanentemente el empleado del sistema.
         </div>
 
         <form method="POST" action="{{ url_for('eliminar_usuario') }}">
             <div class="form-group">
                 <label for="id_usuario" class="form-label">
-                    <i class="fas fa-hashtag"></i> ID del Usuario a Eliminar *
+                    <i class="fas fa-hashtag"></i> ID del Empleado a Eliminar *
                 </label>
                 <input type="number" class="form-control" id="id_usuario" name="id_usuario" 
-                       placeholder="Ingrese el ID del usuario" required>
+                       placeholder="Ingrese el ID del empleado" required>
                 <small class="text-muted">Asegúrese de que el ID sea correcto</small>
             </div>
 
             <!-- Botones -->
             <div class="text-center mt-4">
-                <button type="submit" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar este usuario? Esta acción no se puede deshacer.')">
-                    <i class="fas fa-trash"></i> Eliminar Usuario
+                <button type="submit" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar este empleado? Esta acción no se puede deshacer.')">
+                    <i class="fas fa-trash"></i> Eliminar Empleado
                 </button>
                 <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">
                     <i class="fas fa-times"></i> Cancelar

@@ -16,53 +16,38 @@
     </div>
     <div class="card-body">
         <form method="POST" action="{{ url_for('agregar_liquidacion') }}">
-            <div class="row">
-                <!-- Información del empleado -->
+            <div class="row justify-content-center">
+                <!-- Información simplificada -->
                 <div class="col-md-6">
-                    <h5 class="mb-3"><i class="fas fa-user"></i> Datos del Empleado</h5>
+                    <h5 class="mb-4 text-center"><i class="fas fa-user"></i> Liquidación de Empleado</h5>
                     
                     <div class="form-group">
                         <label for="id_usuario" class="form-label">
-                            <i class="fas fa-hashtag"></i> ID del Usuario *
+                            <i class="fas fa-hashtag"></i> ID del Empleado *
                         </label>
                         <input type="number" class="form-control" id="id_usuario" name="id_usuario" 
-                               placeholder="Ingrese el ID del usuario" required>
-                        <small class="text-muted">Debe existir en el sistema</small>
+                               placeholder="Ingrese el ID del empleado" min="1" required>
+                        <small class="form-text text-muted">
+                            <i class="fas fa-info-circle"></i> Toda la información se obtendrá automáticamente desde los datos registrados del empleado
+                        </small>
                     </div>
 
-                    <div class="form-group">
-                        <label for="salario" class="form-label">
-                            <i class="fas fa-dollar-sign"></i> Salario Mensual *
-                        </label>
-                        <input type="number" class="form-control" id="salario" name="salario" 
-                               placeholder="Salario mensual" step="0.01" min="0" required>
-                    </div>
-                </div>
-
-                <!-- Fechas de trabajo -->
-                <div class="col-md-6">
-                    <h5 class="mb-3"><i class="fas fa-calendar"></i> Período Laboral</h5>
-                    
-                    <div class="form-group">
-                        <label for="fecha_ingreso" class="form-label">
-                            <i class="fas fa-calendar-plus"></i> Fecha de Ingreso *
-                        </label>
-                        <input type="date" class="form-control" id="fecha_ingreso" name="fecha_ingreso" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="fecha_salida" class="form-label">
-                            <i class="fas fa-calendar-minus"></i> Fecha de Salida *
-                        </label>
-                        <input type="date" class="form-control" id="fecha_salida" name="fecha_salida" required>
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-lightbulb"></i> <strong>Información automática:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Nombre y datos personales</li>
+                            <li>Salario mensual registrado</li>
+                            <li>Fechas de ingreso y salida</li>
+                            <li>Cálculo completo de liquidación</li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
             <!-- Botones -->
             <div class="text-center mt-4">
-                <button type="submit" class="btn btn-success">
-                    <i class="fas fa-calculator"></i> Calcular Liquidación
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="fas fa-calculator"></i> Calcular Liquidación Automática
                 </button>
                 <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">
                     <i class="fas fa-times"></i> Cancelar
@@ -82,6 +67,7 @@
             <div class="col-md-6">
                 <h6><strong>La liquidación incluye:</strong></h6>
                 <ul>
+                    <li><i class="fas fa-dollar-sign text-info"></i> Salario (obtenido automáticamente)</li>
                     <li><i class="fas fa-check text-success"></i> Indemnización</li>
                     <li><i class="fas fa-check text-success"></i> Vacaciones</li>
                     <li><i class="fas fa-check text-success"></i> Cesantías</li>

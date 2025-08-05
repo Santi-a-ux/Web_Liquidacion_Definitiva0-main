@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Agregar Usuario{% endblock %}
+{% block title %}Agregar Empleado{% endblock %}
 
 {% block content %}
 <!-- Botón de regreso -->
@@ -12,7 +12,7 @@
 
 <div class="card">
     <div class="card-header">
-        <h4><i class="fas fa-user-plus"></i> Agregar Nuevo Usuario</h4>
+        <h4><i class="fas fa-user-plus"></i> Agregar Nuevo Empleado</h4>
     </div>
     <div class="card-body">
         <form method="POST" action="{{ url_for('agregar_usuario') }}">
@@ -98,7 +98,7 @@
             <!-- Botones -->
             <div class="text-center mt-4">
                 <button type="submit" class="btn btn-success">
-                    <i class="fas fa-plus"></i> Agregar Usuario
+                    <i class="fas fa-plus"></i> Agregar Empleado
                 </button>
                 <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">
                     <i class="fas fa-times"></i> Cancelar
@@ -116,7 +116,7 @@
     <div class="card-body">
         <ul class="mb-0">
             <li>Los campos marcados con (*) son obligatorios</li>
-            <li>El ID de usuario debe ser único en el sistema</li>
+            <li>El ID de empleado debe ser único en el sistema</li>
             <li>La fecha de salida es opcional y solo se usa para empleados inactivos</li>
             <li>El salario debe ser un valor numérico positivo</li>
         </ul>

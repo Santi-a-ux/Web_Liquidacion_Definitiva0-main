@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% block title %}Generar Reportes{% endblock %}
+
+{% block content %}
+<!-- Botón de regreso -->
+<div class="mb-3">
+    <a href="{{ url_for('admin_panel') }}" class="btn btn-back">
+        <i class="fas fa-arrow-left"></i> Volver al Panel RRHH
+    </a>
+</div>
+
+<div class="container-fluid">
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="text-primary">
+                <i class="fas fa-chart-line"></i>
+                Generar Reportes
+            </h1>
+            <p class="text-muted">Análisis avanzado y exportación de datos del sistema</p>
+        </div>
+    </div>
+
+    <!-- Botones de Exportación -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-download"></i>
+                        Exportar Datos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="{{ url_for('exportar_datos') }}" class="btn btn-success btn-block">
+                                <i class="fas fa-file-csv"></i> Descargar Reporte Completo (CSV)
+                            </a>
+                            <small class="text-muted">Incluye todos los empleados y liquidaciones</small>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-success btn-block" onclick="window.print()">
+                                <i class="fas fa-print"></i> Imprimir Reporte
+                            </button>
+                            <small class="text-muted">Imprime la vista actual del reporte</small>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-info btn-block" onclick="copiarReporte()">
+                                <i class="fas fa-copy"></i> Copiar Estadísticas
+                            </button>
+                            <small class="text-muted">Copia las estadísticas al portapapeles</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas Principales -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">{{ stats.total_usuarios }}</h4>
+                            <p class="card-text">Total Empleados</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">{{ stats.total_liquidaciones }}</h4>
+                            <p class="card-text">Total Liquidaciones</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-calculator fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">${{ "{:,.0f}".format(stats.promedio_salario) }}</h4>
+                            <p class="card-text">Promedio Salarios</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-dollar-sign fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">${{ "{:,.0f}".format(stats.total_pagado) }}</h4>
+                            <p class="card-text">Total Pagado</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-money-bill-wave fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Análisis de Rangos Salariales -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie"></i>
+                        Distribución Salarial
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for rango, cantidad in rangos_salariales.items() %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>{{ rango }}</span>
+                            <span class="font-weight-bold">{{ cantidad }} empleados</span>
+                        </div>
+                        <div class="progress">
+                            {% set porcentaje = (cantidad / stats.total_usuarios * 100) if stats.total_usuarios > 0 else 0 %}
+                            <div class="progress-bar bg-primary" style="width: {{ porcentaje }}%"></div>
+                        </div>
+                        <small class="text-muted">{{ "{:.1f}".format(porcentaje) }}%</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar"></i>
+                        Análisis de Componentes de Liquidación
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <h6>Indemnización</h6>
+                            <h4 class="text-primary">${{ "{:,.0f}".format(total_por_componente.indemnizacion) }}</h4>
+                        </div>
+                        <div class="col-6">
+                            <h6>Vacaciones</h6>
+                            <h4 class="text-success">${{ "{:,.0f}".format(total_por_componente.vacaciones) }}</h4>
+                        </div>
+                        <div class="col-6">
+                            <h6>Cesantías</h6>
+                            <h4 class="text-info">${{ "{:,.0f}".format(total_por_componente.cesantias) }}</h4>
+                        </div>
+                        <div class="col-6">
+                            <h6>Prima Servicios</h6>
+                            <h4 class="text-warning">${{ "{:,.0f}".format(total_por_componente.prima) }}</h4>
+                        </div>
+                        <div class="col-6">
+                            <h6>Intereses</h6>
+                            <h4 class="text-secondary">${{ "{:,.0f}".format(total_por_componente.intereses) }}</h4>
+                        </div>
+                        <div class="col-6">
+                            <h6>Retención</h6>
+                            <h4 class="text-danger">${{ "{:,.0f}".format(total_por_componente.retencion) }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Empleados por Salario -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-trophy"></i>
+                        Top 10 Empleados por Salario
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if top_empleados %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Posición</th>
+                                    <th>Nombre</th>
+                                    <th>Documento</th>
+                                    <th>Salario</th>
+                                    <th>Fecha Ingreso</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for empleado in top_empleados %}
+                                <tr>
+                                    <td>
+                                        {% if loop.index <= 3 %}
+                                            <span class="badge badge-warning">{{ loop.index }}</span>
+                                        {% else %}
+                                            <span class="badge badge-secondary">{{ loop.index }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ empleado[1] }} {{ empleado[2] }}</td>
+                                    <td>{{ empleado[3] }}</td>
+                                    <td class="font-weight-bold text-success">${{ "{:,.0f}".format(empleado[8]) }}</td>
+                                    <td>{{ empleado[6] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">No hay empleados registrados</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empleados por Mes -->
+    {% if empleados_por_mes %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-alt"></i>
+                        Empleados Registrados por Mes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for mes, cantidad in empleados_por_mes.items() %}
+                        <div class="col-md-2 mb-3">
+                            <div class="text-center">
+                                <h4 class="text-primary">{{ cantidad }}</h4>
+                                <small class="text-muted">{{ mes }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Resumen Ejecutivo -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clipboard-check"></i>
+                        Resumen Ejecutivo
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6>Eficiencia del Sistema</h6>
+                            {% set eficiencia = (stats.total_liquidaciones / (stats.total_usuarios if stats.total_usuarios > 0 else 1)) * 100 %}
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-success" style="width: {{ eficiencia|round }}%"></div>
+                            </div>
+                            <small class="text-muted">{{ eficiencia|round }}% de empleados con liquidación</small>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Valor Promedio por Liquidación</h6>
+                            {% if stats.total_liquidaciones > 0 %}
+                                {% set promedio_liquidacion = stats.total_pagado / stats.total_liquidaciones %}
+                                <h4 class="text-primary">${{ "{:,.0f}".format(promedio_liquidacion) }}</h4>
+                            {% else %}
+                                <h4 class="text-muted">$0</h4>
+                            {% endif %}
+                            <small class="text-muted">Por liquidación procesada</small>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Estado del Sistema</h6>
+                            {% if stats.total_usuarios > 0 and stats.total_liquidaciones > 0 %}
+                                <span class="badge badge-success badge-lg">Operativo</span>
+                                <br><small class="text-muted">Sistema funcionando correctamente</small>
+                            {% else %}
+                                <span class="badge badge-warning badge-lg">Configurando</span>
+                                <br><small class="text-muted">Agregue empleados y liquidaciones</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copiarReporte() {
+    const estadisticas = `
+REPORTE DE ESTADÍSTICAS DEL SISTEMA
+===================================
+Total Empleados: {{ stats.total_usuarios }}
+Total Liquidaciones: {{ stats.total_liquidaciones }}
+Promedio Salarios: ${{ "{:,.0f}".format(stats.promedio_salario) }}
+Total Pagado: ${{ "{:,.0f}".format(stats.total_pagado) }}
+
+DISTRIBUCIÓN SALARIAL:
+{% for rango, cantidad in rangos_salariales.items() -%}
+{{ rango }}: {{ cantidad }} empleados
+{% endfor %}
+
+Generado: ${new Date().toLocaleString()}
+`;
+    
+    navigator.clipboard.writeText(estadisticas).then(function() {
+        alert('Estadísticas copiadas al portapapeles');
+    }, function(err) {
+        alert('Error al copiar: ' + err);
+    });
+}
+</script>
+
+{% endblock %}

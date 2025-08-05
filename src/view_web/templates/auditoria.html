@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block title %}Sistema de Auditoría{% endblock %}
+
+{% block content %}
+<!-- Botón de regreso -->
+<div class="mb-3">
+    <a href="{{ url_for('admin_panel') }}" class="btn btn-back">
+        <i class="fas fa-arrow-left"></i> Volver al Panel RRHH
+    </a>
+</div>
+
+<div class="container-fluid">
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="text-primary">
+                <i class="fas fa-clipboard-list"></i>
+                Sistema de Auditoría
+            </h1>
+            <p class="text-muted">Registro completo de operaciones y seguimiento de cambios</p>
+        </div>
+    </div>
+
+    <!-- Estadísticas de Auditoría -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">{{ estadisticas.total_registros }}</h4>
+                            <p class="card-text">Total Registros</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-database fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">{{ estadisticas.acciones_comunes|length }}</h4>
+                            <p class="card-text">Tipos de Acciones</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-cogs fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">{{ estadisticas.usuarios_activos|length }}</h4>
+                            <p class="card-text">Usuarios Activos</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-secondary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">{{ estadisticas.actividad_diaria|length }}</h4>
+                            <p class="card-text">Días con Actividad</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-calendar-day fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros de Búsqueda -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-filter"></i> Filtros de Auditoría
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('auditoria') }}">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="accion_filtro">Tipo de Acción:</label>
+                            <select class="form-control" id="accion_filtro" name="accion_filtro">
+                                <option value="">Todas las acciones</option>
+                                <option value="CREATE" {% if filtros.accion_filtro == 'CREATE' %}selected{% endif %}>Crear</option>
+                                <option value="UPDATE" {% if filtros.accion_filtro == 'UPDATE' %}selected{% endif %}>Actualizar</option>
+                                <option value="DELETE" {% if filtros.accion_filtro == 'DELETE' %}selected{% endif %}>Eliminar</option>
+                                <option value="LOGIN" {% if filtros.accion_filtro == 'LOGIN' %}selected{% endif %}>Inicio Sesión</option>
+                                <option value="LOGOUT" {% if filtros.accion_filtro == 'LOGOUT' %}selected{% endif %}>Cerrar Sesión</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="tabla_filtro">Tabla Afectada:</label>
+                            <select class="form-control" id="tabla_filtro" name="tabla_filtro">
+                                <option value="">Todas las tablas</option>
+                                <option value="usuarios" {% if filtros.tabla_filtro == 'usuarios' %}selected{% endif %}>Empleados</option>
+                                <option value="liquidacion" {% if filtros.tabla_filtro == 'liquidacion' %}selected{% endif %}>Liquidaciones</option>
+                                <option value="sistema" {% if filtros.tabla_filtro == 'sistema' %}selected{% endif %}>Sistema</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="limite">Registros a mostrar:</label>
+                            <select class="form-control" id="limite" name="limite">
+                                <option value="25" {% if filtros.limite == 25 %}selected{% endif %}>25</option>
+                                <option value="50" {% if filtros.limite == 50 %}selected{% endif %}>50</option>
+                                <option value="100" {% if filtros.limite == 100 %}selected{% endif %}>100</option>
+                                <option value="200" {% if filtros.limite == 200 %}selected{% endif %}>200</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <div>
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fas fa-search"></i> Filtrar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de Registros de Auditoría -->
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-list"></i> Registros de Auditoría
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            {% if registros %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha/Hora</th>
+                            <th>Usuario</th>
+                            <th>Acción</th>
+                            <th>Tabla</th>
+                            <th>ID Registro</th>
+                            <th>Descripción</th>
+                            <th>Detalles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for registro in registros %}
+                        <tr>
+                            <td>
+                                <span class="badge badge-info">{{ registro[0] }}</span>
+                            </td>
+                            <td>
+                                <small>{{ registro[9].strftime('%d/%m/%Y %H:%M:%S') if registro[9] else 'N/A' }}</small>
+                            </td>
+                            <td>
+                                <strong>{{ registro[2] }} {{ registro[3] }}</strong>
+                                <br><small class="text-muted">ID: {{ registro[1] }}</small>
+                            </td>
+                            <td>
+                                {% set accion = registro[4] %}
+                                {% if accion == 'CREATE' %}
+                                    <span class="badge badge-success">
+                                        <i class="fas fa-plus"></i> Crear
+                                    </span>
+                                {% elif accion == 'UPDATE' %}
+                                    <span class="badge badge-warning">
+                                        <i class="fas fa-edit"></i> Actualizar
+                                    </span>
+                                {% elif accion == 'DELETE' %}
+                                    <span class="badge badge-danger">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </span>
+                                {% elif accion == 'LOGIN' %}
+                                    <span class="badge badge-info">
+                                        <i class="fas fa-sign-in-alt"></i> Login
+                                    </span>
+                                {% elif accion == 'LOGOUT' %}
+                                    <span class="badge badge-secondary">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-light">{{ accion }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <code>{{ registro[5] }}</code>
+                            </td>
+                            <td>
+                                {% if registro[6] %}
+                                    <span class="badge badge-primary">{{ registro[6] }}</span>
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if registro[11] %}
+                                    <small>{{ registro[11][:50] }}{% if registro[11]|length > 50 %}...{% endif %}</small>
+                                {% else %}
+                                    <span class="text-muted">Sin descripción</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if registro[7] or registro[8] %}
+                                <button class="btn btn-sm btn-outline-info" 
+                                        onclick="mostrarDetalles({{ registro[0] }}, '{{ registro[7]|e }}', '{{ registro[8]|e }}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No se encontraron registros de auditoría</h5>
+                <p class="text-muted">Prueba ajustando los filtros de búsqueda</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Estadísticas Adicionales -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar"></i> Acciones Más Comunes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if estadisticas.acciones_comunes %}
+                        {% for accion in estadisticas.acciones_comunes %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>{{ accion[0] }}</span>
+                            <span class="badge badge-primary">{{ accion[1] }}</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No hay datos disponibles</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users"></i> Usuarios Más Activos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if estadisticas.usuarios_activos %}
+                        {% for usuario in estadisticas.usuarios_activos %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>{{ usuario[0] }} {{ usuario[1] }}</span>
+                            <span class="badge badge-info">{{ usuario[2] }} ops</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No hay datos disponibles</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para detalles -->
+<div class="modal fade" id="detallesModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-info-circle"></i> Detalles del Registro de Auditoría
+                </h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-history"></i> Datos Anteriores:</h6>
+                        <pre id="datosAnteriores" class="bg-light p-2"></pre>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-plus-circle"></i> Datos Nuevos:</h6>
+                        <pre id="datosNuevos" class="bg-light p-2"></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function mostrarDetalles(id, datosAnteriores, datosNuevos) {
+    // Formatear JSON si existe
+    try {
+        if (datosAnteriores && datosAnteriores !== 'None') {
+            document.getElementById('datosAnteriores').textContent = JSON.stringify(JSON.parse(datosAnteriores), null, 2);
+        } else {
+            document.getElementById('datosAnteriores').textContent = 'No hay datos anteriores';
+        }
+    } catch (e) {
+        document.getElementById('datosAnteriores').textContent = datosAnteriores || 'No hay datos anteriores';
+    }
+    
+    try {
+        if (datosNuevos && datosNuevos !== 'None') {
+            document.getElementById('datosNuevos').textContent = JSON.stringify(JSON.parse(datosNuevos), null, 2);
+        } else {
+            document.getElementById('datosNuevos').textContent = 'No hay datos nuevos';
+        }
+    } catch (e) {
+        document.getElementById('datosNuevos').textContent = datosNuevos || 'No hay datos nuevos';
+    }
+    
+    // Mostrar modal
+    $('#detallesModal').modal('show');
+}
+</script>
+
+{% endblock %}

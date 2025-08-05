@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}Modificar Empleado{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2 class="text-primary">
+                        <i class="fas fa-user-edit"></i>
+                        Modificar Empleado
+                    </h2>
+                    <p class="text-muted">Actualizar información personal y laboral del empleado</p>
+                </div>
+                <div class="card-body">
+                    
+                    {% if not usuario %}
+                    <!-- Formulario de búsqueda -->
+                    <div class="search-section mb-4">
+                        <h5 class="mb-3">
+                            <i class="fas fa-search text-info"></i>
+                            Buscar Empleado a Modificar
+                        </h5>
+                        <form method="GET" action="{{ url_for('modificar_usuario') }}">
+                            <div class="input-group">
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="id" 
+                                       name="id" 
+                                       placeholder="Ingrese el ID del empleado"
+                                       required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-info" type="submit">
+                                        <i class="fas fa-search"></i> Buscar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Información de ayuda -->
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle"></i> Instrucciones:</h6>
+                        <ul class="mb-0">
+                            <li>Ingrese el ID del empleado que desea modificar</li>
+                            <li>Se cargarán automáticamente los datos actuales</li>
+                            <li>Modifique solo los campos que necesite cambiar</li>
+                            <li>Los campos marcados con (*) son obligatorios</li>
+                        </ul>
+                    </div>
+                    
+                    {% else %}
+                    <!-- Formulario de modificación -->
+                    <div class="modification-section">
+                        <div class="alert alert-success">
+                            <h6><i class="fas fa-check-circle"></i> Empleado Encontrado:</h6>
+                            <strong>{{ usuario.nombre }} {{ usuario.apellido }}</strong> (ID: {{ usuario.id }})
+                        </div>
+                        
+                        <form method="POST" action="{{ url_for('modificar_usuario') }}">
+                            <input type="hidden" name="id_usuario" value="{{ usuario.id }}">
+                            
+                            <div class="row">
+                                <!-- Información Personal -->
+                                <div class="col-md-6">
+                                    <h5 class="text-primary mb-3">
+                                        <i class="fas fa-user"></i> Información Personal
+                                    </h5>
+                                    
+                                    <div class="form-group">
+                                        <label for="nombre">
+                                            <i class="fas fa-user text-primary"></i> Nombre *
+                                        </label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="nombre" 
+                                               name="nombre" 
+                                               value="{{ usuario.nombre }}"
+                                               required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="apellido">
+                                            <i class="fas fa-user text-primary"></i> Apellido *
+                                        </label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="apellido" 
+                                               name="apellido" 
+                                               value="{{ usuario.apellido }}"
+                                               required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="documento">
+                                            <i class="fas fa-id-card text-primary"></i> Documento de Identidad *
+                                        </label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="documento" 
+                                               name="documento" 
+                                               value="{{ usuario.documento }}"
+                                               required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="correo">
+                                            <i class="fas fa-envelope text-primary"></i> Correo Electrónico *
+                                        </label>
+                                        <input type="email" 
+                                               class="form-control" 
+                                               id="correo" 
+                                               name="correo" 
+                                               value="{{ usuario.correo }}"
+                                               required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="telefono">
+                                            <i class="fas fa-phone text-primary"></i> Teléfono *
+                                        </label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="telefono" 
+                                               name="telefono" 
+                                               value="{{ usuario.telefono }}"
+                                               required>
+                                    </div>
+                                </div>
+                                
+                                <!-- Información Laboral -->
+                                <div class="col-md-6">
+                                    <h5 class="text-success mb-3">
+                                        <i class="fas fa-briefcase"></i> Información Laboral
+                                    </h5>
+                                    
+                                    <div class="form-group">
+                                        <label for="fecha_ingreso">
+                                            <i class="fas fa-calendar-plus text-success"></i> Fecha de Ingreso *
+                                        </label>
+                                        <input type="date" 
+                                               class="form-control" 
+                                               id="fecha_ingreso" 
+                                               name="fecha_ingreso" 
+                                               value="{{ usuario.fecha_ingreso }}"
+                                               required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="fecha_salida">
+                                            <i class="fas fa-calendar-minus text-warning"></i> Fecha de Salida
+                                        </label>
+                                        <input type="date" 
+                                               class="form-control" 
+                                               id="fecha_salida" 
+                                               name="fecha_salida" 
+                                               value="{{ usuario.fecha_salida if usuario.fecha_salida else '' }}">
+                                        <small class="form-text text-muted">
+                                            Dejar vacío si el empleado aún trabaja en la empresa
+                                        </small>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="salario">
+                                            <i class="fas fa-money-bill-wave text-success"></i> Salario *
+                                        </label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">$</span>
+                                            </div>
+                                            <input type="number" 
+                                                   class="form-control" 
+                                                   id="salario" 
+                                                   name="salario" 
+                                                   value="{{ usuario.salario }}"
+                                                   step="0.01" 
+                                                   min="0"
+                                                   required>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Vista previa de cambios -->
+                                    <div class="alert alert-warning">
+                                        <h6><i class="fas fa-exclamation-triangle"></i> Importante:</h6>
+                                        <ul class="mb-0">
+                                            <li>Los cambios son permanentes</li>
+                                            <li>Si el empleado tiene liquidaciones, pueden verse afectadas</li>
+                                            <li>Verifique la información antes de guardar</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Botones de acción -->
+                            <div class="form-group text-center mt-4">
+                                <button type="submit" class="btn btn-success btn-lg mr-3">
+                                    <i class="fas fa-save"></i> Guardar Cambios
+                                </button>
+                                <a href="{{ url_for('modificar_usuario') }}" class="btn btn-secondary btn-lg mr-3">
+                                    <i class="fas fa-search"></i> Buscar Otro
+                                </a>
+                                <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-lg">
+                                    <i class="fas fa-home"></i> Volver al Inicio
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        border-radius: 0.5rem;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 0.5rem 0.5rem 0 0 !important;
+    }
+    
+    .form-group label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .btn {
+        border-radius: 0.375rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    }
+    
+    .alert {
+        border: none;
+        border-radius: 0.375rem;
+    }
+    
+    .search-section {
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 1.5rem;
+    }
+    
+    .modification-section {
+        animation: fadeIn 0.5s ease-in;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}

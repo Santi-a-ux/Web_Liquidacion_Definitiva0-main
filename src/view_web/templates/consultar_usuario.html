@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Consultar Usuario{% endblock %}
+{% block title %}Consultar Empleado{% endblock %}
 
 {% block content %}
 <!-- Botón de regreso -->
@@ -12,12 +12,12 @@
 
 <div class="card">
     <div class="card-header">
-        <h4><i class="fas fa-search"></i> Consultar Usuario</h4>
+        <h4><i class="fas fa-search"></i> Consultar Empleado</h4>
     </div>
     <div class="card-body">
         <form method="POST" action="{{ url_for('consultar_usuario') }}">
             <div class="form-group">
-                <label for="id_usuario" class="form-label">ID del Usuario:</label>
+                <label for="id_usuario" class="form-label">ID del Empleado:</label>
                 <input type="number" class="form-control" id="id_usuario" name="id_usuario" 
                        placeholder="Ingrese el ID del usuario" required>
             </div>

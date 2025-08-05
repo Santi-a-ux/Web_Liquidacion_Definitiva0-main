@@ -21,7 +21,25 @@
                 </h1>
                 <p>Gestión profesional de liquidaciones laborales</p>
             </div>
-            <div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                {% if session.get('user_id') %}
+                <div style="color: var(--text-white); text-align: right;">
+                    <div style="font-size: 0.9rem;">
+                        <i class="fas fa-user"></i> {{ session.get('nombre') }} {{ session.get('apellido') }}
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">
+                        {% if session.get('rol') == 'administrador' %}
+                            <i class="fas fa-crown" style="color: #ffd700;"></i> Administrador (RRHH)
+                        {% else %}
+                            <i class="fas fa-user-tie"></i> Asistente Administrativo
+                        {% endif %}
+                    </div>
+                </div>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline" style="padding: 0.5rem 1rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Cerrar Sesión
+                </a>
+                {% endif %}
                 <a href="{{ url_for('index') }}" class="btn btn-outline">
                     <i class="fas fa-home"></i>
                     Inicio

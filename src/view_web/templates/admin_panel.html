@@ -1,0 +1,323 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Recursos Humanos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center mb-4">
+            <h1 class="text-primary">
+                <i class="fas fa-tachometer-alt"></i>
+                Panel de Recursos Humanos
+            </h1>
+            <p class="text-muted">Dashboard administrativo con estadísticas completas del sistema</p>
+        </div>
+    </div>
+
+    <!-- Tarjetas de Estadísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">{{ stats.total_usuarios }}</h4>
+                            <p class="card-text">Total Usuarios</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">{{ stats.total_liquidaciones }}</h4>
+                            <p class="card-text">Total Liquidaciones</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-calculator fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">${{ "{:,.0f}".format(stats.promedio_salario) }}</h4>
+                            <p class="card-text">Promedio Salarios</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-dollar-sign fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">${{ "{:,.0f}".format(stats.total_pagado) }}</h4>
+                            <p class="card-text">Total Pagado</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-money-bill-wave fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación Rápida -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-rocket"></i>
+                        Acciones Rápidas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('agregar_usuario') }}" class="btn btn-outline-primary btn-block">
+                                <i class="fas fa-user-plus"></i> Nuevo Empleado
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('modificar_usuario') }}" class="btn btn-outline-info btn-block">
+                                <i class="fas fa-user-edit"></i> Modificar Empleado
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('agregar_liquidacion') }}" class="btn btn-outline-success btn-block">
+                                <i class="fas fa-calculator"></i> Nueva Liquidación
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('admin_usuarios') }}" class="btn btn-outline-warning btn-block">
+                                <i class="fas fa-list"></i> Gestionar Empleados
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('consultar_usuario') }}" class="btn btn-outline-secondary btn-block">
+                                <i class="fas fa-search"></i> Consultar
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('reportes') }}" class="btn btn-outline-success btn-block">
+                                <i class="fas fa-chart-line"></i> Generar Reportes
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('auditoria') }}" class="btn btn-outline-info btn-block">
+                                <i class="fas fa-clipboard-list"></i> Sistema de Auditoría
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Usuarios Recientes -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users"></i>
+                        Usuarios Recientes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if usuarios %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Salario</th>
+                                    <th>Rol</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for usuario in usuarios[:5] %}
+                                <tr>
+                                    <td>{{ usuario[0] }}</td>
+                                    <td>{{ usuario[1] }} {{ usuario[2] }}</td>
+                                    <td>${{ "{:,.0f}".format(usuario[8]) }}</td>
+                                    <td>
+                                        {% if usuario[9] == 'administrador' %}
+                                            <span class="badge badge-danger">Admin</span>
+                                        {% else %}
+                                            <span class="badge badge-secondary">Usuario</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center">
+                        <a href="{{ url_for('admin_usuarios') }}" class="btn btn-sm btn-primary">Ver Todos</a>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">No hay usuarios registrados</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Liquidaciones Recientes -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calculator"></i>
+                        Liquidaciones Recientes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if liquidaciones %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Empleado</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for liquidacion in liquidaciones[:5] %}
+                                <tr>
+                                    <td>{{ liquidacion[0] }}</td>
+                                    <td>{{ liquidacion[8] }} {{ liquidacion[9] }}</td>
+                                    <td class="text-success font-weight-bold">
+                                        ${{ "{:,.0f}".format(liquidacion[6]) }}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center">
+                        <a href="#" class="btn btn-sm btn-success">Ver Todas</a>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">No hay liquidaciones procesadas</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos y Análisis -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar"></i>
+                        Análisis Rápido
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <h6>Eficiencia del Sistema</h6>
+                                {% set eficiencia = (stats.total_liquidaciones / (stats.total_usuarios if stats.total_usuarios > 0 else 1)) * 100 %}
+                                <div class="progress mb-2">
+                                    <div class="progress-bar bg-success" style="width: {{ eficiencia|round }}%"></div>
+                                </div>
+                                <small class="text-muted">{{ eficiencia|round }}% de usuarios con liquidación</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <h6>Valor Promedio por Liquidación</h6>
+                                {% if stats.total_liquidaciones > 0 %}
+                                    {% set promedio_liquidacion = stats.total_pagado / stats.total_liquidaciones %}
+                                    <h4 class="text-primary">${{ "{:,.0f}".format(promedio_liquidacion) }}</h4>
+                                {% else %}
+                                    <h4 class="text-muted">$0</h4>
+                                {% endif %}
+                                <small class="text-muted">Por liquidación procesada</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <h6>Estado del Sistema</h6>
+                                {% if stats.total_usuarios > 0 and stats.total_liquidaciones > 0 %}
+                                    <span class="badge badge-success badge-lg">Operativo</span>
+                                    <br><small class="text-muted">Sistema funcionando correctamente</small>
+                                {% else %}
+                                    <span class="badge badge-warning badge-lg">Configurando</span>
+                                    <br><small class="text-muted">Agregue usuarios y liquidaciones</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botones de Acción -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                <i class="fas fa-home"></i> Volver al Inicio
+            </a>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .badge-lg {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+    
+    .btn-block {
+        width: 100%;
+    }
+    
+    .progress {
+        height: 10px;
+    }
+</style>
+{% endblock %}

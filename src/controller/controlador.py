@@ -3,6 +3,8 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import psycopg2
 import SecretConfig
+import json
+from datetime import datetime
 class BaseDeDatos:
 # Función para conectarse a la base de datos
     def conectar_db():
@@ -39,7 +41,9 @@ class BaseDeDatos:
                     Telefono VARCHAR(20) NOT NULL,
                     Fecha_Ingreso DATE NOT NULL,
                     Fecha_Salida DATE,
-                    Salario DECIMAL(10,2) NOT NULL
+                    Salario DECIMAL(10,2) NOT NULL,
+                    Rol VARCHAR(20) DEFAULT 'usuario' CHECK (Rol IN ('administrador', 'usuario')),
+                    Password VARCHAR(100) DEFAULT 'password123'
                     );
                            
                 CREATE TABLE IF NOT EXISTS liquidacion (
@@ -54,7 +58,39 @@ class BaseDeDatos:
                     ID_Usuario INT NOT NULL,
                     FOREIGN KEY (ID_Usuario) REFERENCES usuarios(ID_Usuario)
                     );
+
+                CREATE TABLE IF NOT EXISTS auditoria (
+                    ID_Auditoria SERIAL PRIMARY KEY,
+                    Usuario_Sistema INT NOT NULL,
+                    Accion VARCHAR(50) NOT NULL,
+                    Tabla_Afectada VARCHAR(50) NOT NULL,
+                    ID_Registro INT,
+                    Datos_Anteriores TEXT,
+                    Datos_Nuevos TEXT,
+                    Fecha_Hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    IP_Address VARCHAR(45),
+                    Descripcion TEXT,
+                    FOREIGN KEY (Usuario_Sistema) REFERENCES usuarios(ID_Usuario)
+                    );
                 
+            """)
+            
+            # Crear empleado administrador por defecto
+            cursor.execute("""
+                INSERT INTO usuarios (ID_Usuario, Nombre, Apellido, Documento_Identidad, 
+                                    Correo_Electronico, Telefono, Fecha_Ingreso, Salario, Rol, Password) 
+                VALUES (1, 'Admin', 'Sistema', '12345678', 'admin@sistema.com', 
+                        '3001234567', CURRENT_DATE, 5000000, 'administrador', 'admin123')
+                ON CONFLICT (ID_Usuario) DO NOTHING;
+            """)
+            
+            # Crear asistente administrativo de demostración
+            cursor.execute("""
+                INSERT INTO usuarios (ID_Usuario, Nombre, Apellido, Documento_Identidad, 
+                                    Correo_Electronico, Telefono, Fecha_Ingreso, Salario, Rol, Password) 
+                VALUES (2, 'Asistente', 'Administrativo', '87654321', 'asistente@sistema.com', 
+                        '3009876543', CURRENT_DATE, 3000000, 'usuario', 'user123')
+                ON CONFLICT (ID_Usuario) DO NOTHING;
             """)
             
             # Confirmar la transacción
@@ -69,9 +105,58 @@ class BaseDeDatos:
         except (Exception, psycopg2.Error) as error:
             print("Error al conectar a la base de datos:", error)
             return None
+    
+    # Función para autenticar empleado del sistema
+    def autenticar_usuario(id_usuario, password):
+        try:
+            conn = BaseDeDatos.conectar_db()
+            if conn:
+                with conn.cursor() as cur:
+                    sql = "SELECT ID_Usuario, Nombre, Apellido, Rol FROM usuarios WHERE ID_Usuario = %s AND Password = %s"
+                    cur.execute(sql, (id_usuario, password))
+                    usuario = cur.fetchone()
+                    
+                    if usuario:
+                        return {
+                            'id': usuario[0],
+                            'nombre': usuario[1],
+                            'apellido': usuario[2],
+                            'rol': usuario[3],
+                            'autenticado': True
+                        }
+                    else:
+                        return {'autenticado': False}
+                        
+        except (Exception, psycopg2.Error) as error:
+            print(f"Error en autenticación: {error}")
+            return {'autenticado': False}
+        finally:
+            if conn:
+                conn.close()
+
+    # Función para verificar si es administrador
+    def es_administrador(id_usuario):
+        try:
+            conn = BaseDeDatos.conectar_db()
+            if conn:
+                with conn.cursor() as cur:
+                    sql = "SELECT Rol FROM usuarios WHERE ID_Usuario = %s"
+                    cur.execute(sql, (id_usuario,))
+                    resultado = cur.fetchone()
+                    
+                    if resultado and resultado[0] == 'administrador':
+                        return True
+                    return False
+                        
+        except (Exception, psycopg2.Error) as error:
+            print(f"Error verificando rol: {error}")
+            return False
+        finally:
+            if conn:
+                conn.close()
         
-    # Función para agregar un nuevo usuario
-    def agregar_usuario(nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, id_usuario):
+    # Función para agregar un nuevo empleado
+    def agregar_usuario(nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, id_usuario, rol='usuario', password='password123', usuario_sistema=None):
         try:
             conn = psycopg2.connect(
                 host=SecretConfig.PGHOST,
@@ -81,26 +166,51 @@ class BaseDeDatos:
                 port=SecretConfig.PGPORT
             )
             cursor=conn.cursor()
-            cursor.execute( "INSERT INTO usuarios (ID_Usuario, Nombre, Apellido, Documento_Identidad, Correo_Electronico, Telefono, Fecha_Ingreso, Fecha_Salida, Salario) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",(id_usuario, nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario))
+            cursor.execute( "INSERT INTO usuarios (ID_Usuario, Nombre, Apellido, Documento_Identidad, Correo_Electronico, Telefono, Fecha_Ingreso, Fecha_Salida, Salario, Rol, Password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",(id_usuario, nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, rol, password))
             conn.commit()
+            
+            # Registrar en auditoría
+            if usuario_sistema:
+                datos_nuevos = json.dumps({
+                    'id_usuario': id_usuario,
+                    'nombre': nombre,
+                    'apellido': apellido,
+                    'documento': documento_identidad,
+                    'correo': correo_electronico,
+                    'telefono': telefono,
+                    'fecha_ingreso': str(fecha_ingreso),
+                    'fecha_salida': str(fecha_salida) if fecha_salida else None,
+                    'salario': float(salario),
+                    'rol': rol
+                })
+                
+                BaseDeDatos.registrar_auditoria(
+                    usuario_sistema=usuario_sistema,
+                    accion='CREATE',
+                    tabla_afectada='usuarios',
+                    id_registro=id_usuario,
+                    datos_nuevos=datos_nuevos,
+                    descripcion=f'Nuevo empleado creado: {nombre} {apellido}'
+                )
+            
             cursor.close()
             conn.close()
-            print("Usuario agregado exitosamente")
+            print("Empleado agregado exitosamente")
         except psycopg2.IntegrityError as e:
             if conn:
                 conn.close()
             if "duplicate key" in str(e):
                 if "usuarios_pkey" in str(e):
-                    raise Exception(f"Ya existe un usuario con ID {id_usuario}")
+                    raise Exception(f"Ya existe un empleado con ID {id_usuario}")
                 elif "documento_identidad" in str(e):
-                    raise Exception(f"Ya existe un usuario con documento {documento_identidad}")
+                    raise Exception(f"Ya existe un empleado con documento {documento_identidad}")
                 elif "correo_electronico" in str(e):
-                    raise Exception(f"Ya existe un usuario con email {correo_electronico}")
+                    raise Exception(f"Ya existe un empleado con email {correo_electronico}")
             raise Exception(f"Error de integridad: {str(e)}")
         except Exception as error:
             if conn:
                 conn.close()
-            print(f"Error al agregar el usuario: {error}")
+            print(f"Error al agregar el empleado: {error}")
             raise Exception(f"Error en la base de datos: {str(error)}")
 
     # Función para agregar una nueva liquidación
@@ -118,16 +228,22 @@ class BaseDeDatos:
                     Prima_Servicios DECIMAL(10,2) NOT NULL,
                     Retencion_Fuente DECIMAL(10,2) NOT NULL,
                     Total_A_Pagar DECIMAL(10,2) NOT NULL,
-                    id_usuario INT NOT NULL,
-                    FOREIGN KEY (id_usuario)
-                    REFERENCES usuarios(id_usuario)
+                    ID_Usuario INT NOT NULL,
+                    FOREIGN KEY (ID_Usuario)
+                    REFERENCES usuarios(ID_Usuario)
                     );""")
             
             cursor.execute("INSERT INTO liquidacion (ID_Liquidacion, Indemnizacion, Vacaciones, Cesantias, Intereses_Sobre_Cesantias, Prima_Servicios, Retencion_Fuente, Total_A_Pagar, ID_Usuario) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s)",(id_liquidacion,indemnizacion, vacaciones, cesantias, intereses_sobre_cesantias, prima_servicios, retencion_fuente, total_a_pagar, id_usuario))
             conn.commit()
+            cursor.close()
             conn.close()
+            print(f"✅ Liquidación {id_liquidacion} guardada exitosamente para empleado {id_usuario}")
+            return True
         except (Exception, psycopg2.Error) as error:
-            print(f"Error al agregar la liquidación: {error}")
+            print(f"❌ Error al agregar la liquidación: {error}")
+            if conn:
+                conn.close()
+            return False
 
     # Función para consultar los datos de un usuario
     def consultar_usuario(id_usuario):
@@ -180,32 +296,97 @@ class BaseDeDatos:
                 conn.close()
 
     # Función para eliminar un usuario
-    def eliminar_usuario(id_usuario):
+    def eliminar_usuario(id_usuario, usuario_sistema=None):
         try:
             conn = BaseDeDatos.conectar_db()
             if conn:
                 with conn.cursor() as cur:
+                    # Primero obtenemos los datos del usuario antes de eliminarlo
+                    sql_datos = "SELECT * FROM usuarios WHERE ID_Usuario = %s"
+                    cur.execute(sql_datos, (id_usuario,))
+                    datos_usuario = cur.fetchone()
+                    
+                    if not datos_usuario:
+                        print(f"No se encontró un usuario con ID: {id_usuario}")
+                        return False
+                    
+                    # Verificamos si hay liquidaciones asociadas
+                    sql_check = "SELECT COUNT(*) FROM liquidacion WHERE ID_Usuario = %s"
+                    cur.execute(sql_check, (id_usuario,))
+                    liquidaciones_count = cur.fetchone()[0]
+                    
+                    if liquidaciones_count > 0:
+                        print(f"Error: No se puede eliminar el empleado. Primero elimina su liquidación.")
+                        return False
+                    
+                    # Si no hay liquidaciones, procedemos a eliminar el usuario
                     sql = "DELETE FROM usuarios WHERE ID_Usuario = %s"
                     cur.execute(sql, (id_usuario,))
-                    BaseDeDatos.conectar_db()
-                conn.commit()
-                conn.close()
+                    
+                    # Verificamos si se eliminó algún registro
+                    if cur.rowcount > 0:
+                        conn.commit()
+                        
+                        # Registrar en auditoría
+                        if usuario_sistema:
+                            datos_anteriores = json.dumps({
+                                'id_usuario': datos_usuario[0],
+                                'nombre': datos_usuario[1],
+                                'apellido': datos_usuario[2],
+                                'documento': datos_usuario[3],
+                                'correo': datos_usuario[4],
+                                'telefono': datos_usuario[5],
+                                'fecha_ingreso': str(datos_usuario[6]),
+                                'fecha_salida': str(datos_usuario[7]) if datos_usuario[7] else None,
+                                'salario': float(datos_usuario[8]),
+                                'rol': datos_usuario[9]
+                            })
+                            
+                            BaseDeDatos.registrar_auditoria(
+                                usuario_sistema=usuario_sistema,
+                                accion='DELETE',
+                                tabla_afectada='usuarios',
+                                id_registro=id_usuario,
+                                datos_anteriores=datos_anteriores,
+                                descripcion=f'Empleado eliminado: {datos_usuario[1]} {datos_usuario[2]}'
+                            )
+                        
+                        print(f"Empleado eliminado exitosamente")
+                        return True
+                    else:
+                        print(f"No se encontró un empleado con ID: {id_usuario}")
+                        return False
+                        
         except (Exception, psycopg2.Error) as error:
-            print(f"Error al eliminar el usuario")
-            print(f"Si tienes una liquidacion, elimina primero la liquidacion")
+            print(f"Error al eliminar el empleado: {error}")
+            return False
+        finally:
+            if conn:
+                conn.close()
     # Función para eliminar los datos de la tabla de liquidación
-    def eliminar_liquidacion(id_usuario):
+    def eliminar_liquidacion(id_liquidacion):
         try:
             conn = BaseDeDatos.conectar_db()
             if conn:
                 with conn.cursor() as cur:
-                    sql = "DELETE FROM liquidacion WHERE id_liquidacion = %s"
-                    cur.execute(sql, (id_usuario,))
-                    BaseDeDatos.conectar_db()
-                conn.commit()
-                conn.close()
+                    sql = "DELETE FROM liquidacion WHERE ID_Liquidacion = %s"
+                    cur.execute(sql, (id_liquidacion,))
+                    
+                    # Verificamos si se eliminó algún registro
+                    if cur.rowcount > 0:
+                        conn.commit()
+                        print("Liquidación eliminada exitosamente")
+                        return True
+                    else:
+                        print(f"No se encontró una liquidación con ID: {id_liquidacion}")
+                        return False
+                        
         except (Exception, psycopg2.Error) as error:
             print(f"Error al eliminar los datos de liquidación: {error}")
+            return False
+        finally:
+            if conn:
+                conn.close()
 
     # Función para obtener todos los usuarios (para panel de administración)
     def obtener_todos_usuarios():
@@ -285,6 +466,251 @@ class BaseDeDatos:
         finally:
             if conn:
                 conn.close()
+
+    # Función para modificar un empleado
+    def modificar_usuario(id_usuario, nombre, apellido, documento, correo, telefono, fecha_ingreso, fecha_salida, salario, usuario_sistema=None):
+        try:
+            conn = BaseDeDatos.conectar_db()
+            if conn:
+                with conn.cursor() as cur:
+                    # Primero obtenemos los datos anteriores del usuario
+                    cur.execute("SELECT * FROM usuarios WHERE ID_Usuario = %s", (id_usuario,))
+                    datos_anteriores_tuple = cur.fetchone()
+                    
+                    if not datos_anteriores_tuple:
+                        return False, "Empleado no encontrado"
+                    
+                    # Guardar datos anteriores para auditoría
+                    datos_anteriores_dict = {
+                        'id_usuario': datos_anteriores_tuple[0],
+                        'nombre': datos_anteriores_tuple[1],
+                        'apellido': datos_anteriores_tuple[2],
+                        'documento': datos_anteriores_tuple[3],
+                        'correo': datos_anteriores_tuple[4],
+                        'telefono': datos_anteriores_tuple[5],
+                        'fecha_ingreso': str(datos_anteriores_tuple[6]),
+                        'fecha_salida': str(datos_anteriores_tuple[7]) if datos_anteriores_tuple[7] else None,
+                        'salario': float(datos_anteriores_tuple[8]),
+                        'rol': datos_anteriores_tuple[9]
+                    }
+                    
+                    # Actualizar los datos del usuario
+                    sql = """
+                    UPDATE usuarios 
+                    SET Nombre = %s, Apellido = %s, Documento_Identidad = %s, 
+                        Correo_Electronico = %s, Telefono = %s, Fecha_Ingreso = %s, 
+                        Fecha_Salida = %s, Salario = %s
+                    WHERE ID_Usuario = %s
+                    """
+                    cur.execute(sql, (nombre, apellido, documento, correo, telefono, 
+                                    fecha_ingreso, fecha_salida, salario, id_usuario))
+                    
+                    if cur.rowcount > 0:
+                        conn.commit()
+                        
+                        # Registrar en auditoría
+                        if usuario_sistema:
+                            datos_nuevos_dict = {
+                                'id_usuario': id_usuario,
+                                'nombre': nombre,
+                                'apellido': apellido,
+                                'documento': documento,
+                                'correo': correo,
+                                'telefono': telefono,
+                                'fecha_ingreso': str(fecha_ingreso),
+                                'fecha_salida': str(fecha_salida) if fecha_salida else None,
+                                'salario': float(salario),
+                                'rol': datos_anteriores_dict['rol']  # El rol no se modifica en esta función
+                            }
+                            
+                            BaseDeDatos.registrar_auditoria(
+                                usuario_sistema=usuario_sistema,
+                                accion='UPDATE',
+                                tabla_afectada='usuarios',
+                                id_registro=id_usuario,
+                                datos_anteriores=json.dumps(datos_anteriores_dict),
+                                datos_nuevos=json.dumps(datos_nuevos_dict),
+                                descripcion=f'Empleado modificado: {nombre} {apellido}'
+                            )
+                        
+                        return True, "Empleado modificado exitosamente"
+                    else:
+                        return False, "No se pudo modificar el empleado"
+                        
+        except (Exception, psycopg2.Error) as error:
+            print(f"Error al modificar empleado: {error}")
+            return False, f"Error al modificar empleado: {str(error)}"
+        finally:
+            if conn:
+                conn.close()
+
+    # =============== SISTEMA DE AUDITORÍA ===============
+    
+    @staticmethod
+    def registrar_auditoria(usuario_sistema, accion, tabla_afectada, id_registro=None, 
+                           datos_anteriores=None, datos_nuevos=None, ip_address=None, descripcion=None):
+        """
+        Registra una operación en el sistema de auditoría
+        
+        Args:
+            usuario_sistema: ID del usuario que realiza la acción
+            accion: Tipo de acción (CREATE, UPDATE, DELETE, LOGIN, etc.)
+            tabla_afectada: Nombre de la tabla afectada
+            id_registro: ID del registro afectado (opcional)
+            datos_anteriores: JSON con datos antes del cambio (opcional)
+            datos_nuevos: JSON con datos después del cambio (opcional)
+            ip_address: Dirección IP del usuario (opcional)
+            descripcion: Descripción adicional de la operación (opcional)
+        """
+        try:
+            conn = BaseDeDatos.conectar_db()
+            if conn:
+                cursor = conn.cursor()
+                
+                sql = """
+                    INSERT INTO auditoria (Usuario_Sistema, Accion, Tabla_Afectada, ID_Registro, 
+                                         Datos_Anteriores, Datos_Nuevos, IP_Address, Descripcion)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                
+                cursor.execute(sql, (usuario_sistema, accion, tabla_afectada, id_registro,
+                                   datos_anteriores, datos_nuevos, ip_address, descripcion))
+                
+                conn.commit()
+                cursor.close()
+                conn.close()
+                return True
+                
+        except Exception as error:
+            print(f"Error al registrar auditoría: {error}")
+            return False
+    
+    @staticmethod
+    def obtener_auditoria(limite=100, usuario_filtro=None, accion_filtro=None, tabla_filtro=None):
+        """
+        Obtiene registros de auditoría con filtros opcionales
+        
+        Args:
+            limite: Número máximo de registros a devolver
+            usuario_filtro: Filtrar por ID de usuario (opcional)
+            accion_filtro: Filtrar por tipo de acción (opcional)
+            tabla_filtro: Filtrar por tabla afectada (opcional)
+        
+        Returns:
+            Lista de registros de auditoría
+        """
+        try:
+            conn = BaseDeDatos.conectar_db()
+            if conn:
+                cursor = conn.cursor()
+                
+                # Construir consulta base
+                sql = """
+                    SELECT a.ID_Auditoria, a.Usuario_Sistema, u.Nombre, u.Apellido, 
+                           a.Accion, a.Tabla_Afectada, a.ID_Registro, 
+                           a.Datos_Anteriores, a.Datos_Nuevos, a.Fecha_Hora, 
+                           a.IP_Address, a.Descripcion
+                    FROM auditoria a
+                    JOIN usuarios u ON a.Usuario_Sistema = u.ID_Usuario
+                    WHERE 1=1
+                """
+                
+                parametros = []
+                
+                # Agregar filtros
+                if usuario_filtro:
+                    sql += " AND a.Usuario_Sistema = %s"
+                    parametros.append(usuario_filtro)
+                
+                if accion_filtro:
+                    sql += " AND a.Accion = %s"
+                    parametros.append(accion_filtro)
+                
+                if tabla_filtro:
+                    sql += " AND a.Tabla_Afectada = %s"
+                    parametros.append(tabla_filtro)
+                
+                sql += " ORDER BY a.Fecha_Hora DESC LIMIT %s"
+                parametros.append(limite)
+                
+                cursor.execute(sql, parametros)
+                registros = cursor.fetchall()
+                
+                cursor.close()
+                conn.close()
+                
+                return registros
+                
+        except Exception as error:
+            print(f"Error al obtener auditoría: {error}")
+            return []
+    
+    @staticmethod
+    def obtener_estadisticas_auditoria():
+        """
+        Obtiene estadísticas del sistema de auditoría
+        
+        Returns:
+            Diccionario con estadísticas de auditoría
+        """
+        try:
+            conn = BaseDeDatos.conectar_db()
+            if conn:
+                cursor = conn.cursor()
+                
+                # Total de registros de auditoría
+                cursor.execute("SELECT COUNT(*) FROM auditoria")
+                total_registros = cursor.fetchone()[0]
+                
+                # Acciones más comunes
+                cursor.execute("""
+                    SELECT Accion, COUNT(*) as cantidad 
+                    FROM auditoria 
+                    GROUP BY Accion 
+                    ORDER BY cantidad DESC 
+                    LIMIT 5
+                """)
+                acciones_comunes = cursor.fetchall()
+                
+                # Usuarios más activos
+                cursor.execute("""
+                    SELECT u.Nombre, u.Apellido, COUNT(*) as operaciones
+                    FROM auditoria a
+                    JOIN usuarios u ON a.Usuario_Sistema = u.ID_Usuario
+                    GROUP BY u.ID_Usuario, u.Nombre, u.Apellido
+                    ORDER BY operaciones DESC
+                    LIMIT 5
+                """)
+                usuarios_activos = cursor.fetchall()
+                
+                # Actividad por día (últimos 7 días)
+                cursor.execute("""
+                    SELECT DATE(Fecha_Hora) as fecha, COUNT(*) as operaciones
+                    FROM auditoria
+                    WHERE Fecha_Hora >= CURRENT_DATE - INTERVAL '7 days'
+                    GROUP BY DATE(Fecha_Hora)
+                    ORDER BY fecha DESC
+                """)
+                actividad_diaria = cursor.fetchall()
+                
+                cursor.close()
+                conn.close()
+                
+                return {
+                    'total_registros': total_registros,
+                    'acciones_comunes': acciones_comunes,
+                    'usuarios_activos': usuarios_activos,
+                    'actividad_diaria': actividad_diaria
+                }
+                
+        except Exception as error:
+            print(f"Error al obtener estadísticas de auditoría: {error}")
+            return {
+                'total_registros': 0,
+                'acciones_comunes': [],
+                'usuarios_activos': [],
+                'actividad_diaria': []
+            }
 
 
 if __name__ == "__main__":
