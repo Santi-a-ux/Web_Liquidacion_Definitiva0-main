@@ -6,7 +6,6 @@ import SecretConfig
 import json
 from datetime import datetime
 class BaseDeDatos:
-# Función para conectarse a la base de datos
     def conectar_db():
         try:
             conn = psycopg2.connect(
@@ -75,7 +74,6 @@ class BaseDeDatos:
                 
             """)
             
-            # Crear empleado administrador por defecto
             cursor.execute("""
                 INSERT INTO usuarios (ID_Usuario, Nombre, Apellido, Documento_Identidad, 
                                     Correo_Electronico, Telefono, Fecha_Ingreso, Salario, Rol, Password) 
@@ -84,7 +82,6 @@ class BaseDeDatos:
                 ON CONFLICT (ID_Usuario) DO NOTHING;
             """)
             
-            # Crear asistente administrativo de demostración
             cursor.execute("""
                 INSERT INTO usuarios (ID_Usuario, Nombre, Apellido, Documento_Identidad, 
                                     Correo_Electronico, Telefono, Fecha_Ingreso, Salario, Rol, Password) 
@@ -93,10 +90,8 @@ class BaseDeDatos:
                 ON CONFLICT (ID_Usuario) DO NOTHING;
             """)
             
-            # Confirmar la transacción
             conn.commit()
             
-            # Cerrar el cursor y la conexión
             cursor.close()
             conn.close()
             print("Tabla creada exitosamente")
@@ -106,7 +101,6 @@ class BaseDeDatos:
             print("Error al conectar a la base de datos:", error)
             return None
     
-    # Función para autenticar empleado del sistema
     def autenticar_usuario(id_usuario, password):
         try:
             conn = BaseDeDatos.conectar_db()
@@ -134,7 +128,6 @@ class BaseDeDatos:
             if conn:
                 conn.close()
 
-    # Función para verificar si es administrador
     def es_administrador(id_usuario):
         try:
             conn = BaseDeDatos.conectar_db()
@@ -155,7 +148,6 @@ class BaseDeDatos:
             if conn:
                 conn.close()
         
-    # Función para agregar un nuevo empleado
     def agregar_usuario(nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, id_usuario, rol='usuario', password='password123', usuario_sistema=None):
         try:
             conn = psycopg2.connect(
@@ -169,7 +161,6 @@ class BaseDeDatos:
             cursor.execute( "INSERT INTO usuarios (ID_Usuario, Nombre, Apellido, Documento_Identidad, Correo_Electronico, Telefono, Fecha_Ingreso, Fecha_Salida, Salario, Rol, Password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",(id_usuario, nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, rol, password))
             conn.commit()
             
-            # Registrar en auditoría
             if usuario_sistema:
                 datos_nuevos = json.dumps({
                     'id_usuario': id_usuario,
@@ -213,7 +204,6 @@ class BaseDeDatos:
             print(f"Error al agregar el empleado: {error}")
             raise Exception(f"Error en la base de datos: {str(error)}")
 
-    # Función para agregar una nueva liquidación
     def agregar_liquidacion(id_liquidacion, indemnizacion, vacaciones, cesantias, intereses_sobre_cesantias, prima_servicios, retencion_fuente, total_a_pagar, id_usuario):
         try:
             conn = BaseDeDatos.conectar_db()
@@ -245,18 +235,15 @@ class BaseDeDatos:
                 conn.close()
             return False
 
-    # Función para consultar los datos de un usuario
     def consultar_usuario(id_usuario):
         try:
             conn = BaseDeDatos.conectar_db()
             if conn:
                 with conn.cursor() as cur:
-                    # Consultar datos del usuario
                     sql = "SELECT * FROM usuarios WHERE ID_Usuario = %s"
                     cur.execute(sql, (id_usuario,))
                     usuario = cur.fetchone()
                     
-                    # Consultar datos de la liquidación
                     sql = "SELECT * FROM liquidacion WHERE ID_Usuario = %s"
                     cur.execute(sql, (id_usuario,))
                     liquidacion = cur.fetchone()
@@ -295,13 +282,11 @@ class BaseDeDatos:
             if conn:
                 conn.close()
 
-    # Función para eliminar un usuario
     def eliminar_usuario(id_usuario, usuario_sistema=None):
         try:
             conn = BaseDeDatos.conectar_db()
             if conn:
                 with conn.cursor() as cur:
-                    # Primero obtenemos los datos del usuario antes de eliminarlo
                     sql_datos = "SELECT * FROM usuarios WHERE ID_Usuario = %s"
                     cur.execute(sql_datos, (id_usuario,))
                     datos_usuario = cur.fetchone()
@@ -310,7 +295,6 @@ class BaseDeDatos:
                         print(f"No se encontró un usuario con ID: {id_usuario}")
                         return False
                     
-                    # Verificamos si hay liquidaciones asociadas
                     sql_check = "SELECT COUNT(*) FROM liquidacion WHERE ID_Usuario = %s"
                     cur.execute(sql_check, (id_usuario,))
                     liquidaciones_count = cur.fetchone()[0]
@@ -319,15 +303,12 @@ class BaseDeDatos:
                         print(f"Error: No se puede eliminar el empleado. Primero elimina su liquidación.")
                         return False
                     
-                    # Si no hay liquidaciones, procedemos a eliminar el usuario
                     sql = "DELETE FROM usuarios WHERE ID_Usuario = %s"
                     cur.execute(sql, (id_usuario,))
                     
-                    # Verificamos si se eliminó algún registro
                     if cur.rowcount > 0:
                         conn.commit()
                         
-                        # Registrar en auditoría
                         if usuario_sistema:
                             datos_anteriores = json.dumps({
                                 'id_usuario': datos_usuario[0],
@@ -363,7 +344,6 @@ class BaseDeDatos:
         finally:
             if conn:
                 conn.close()
-    # Función para eliminar los datos de la tabla de liquidación
     def eliminar_liquidacion(id_liquidacion):
         try:
             conn = BaseDeDatos.conectar_db()
@@ -388,7 +368,6 @@ class BaseDeDatos:
             if conn:
                 conn.close()
 
-    # Función para obtener todos los usuarios (para panel de administración)
     def obtener_todos_usuarios():
         try:
             conn = BaseDeDatos.conectar_db()
@@ -405,7 +384,6 @@ class BaseDeDatos:
             if conn:
                 conn.close()
 
-    # Función para obtener todas las liquidaciones
     def obtener_todas_liquidaciones():
         try:
             conn = BaseDeDatos.conectar_db()
@@ -427,7 +405,6 @@ class BaseDeDatos:
             if conn:
                 conn.close()
 
-    # Función para obtener estadísticas generales
     def obtener_estadisticas():
         try:
             conn = BaseDeDatos.conectar_db()
@@ -467,7 +444,6 @@ class BaseDeDatos:
             if conn:
                 conn.close()
 
-    # Función para modificar un empleado
     def modificar_usuario(id_usuario, nombre, apellido, documento, correo, telefono, fecha_ingreso, fecha_salida, salario, usuario_sistema=None):
         try:
             conn = BaseDeDatos.conectar_db()
@@ -480,7 +456,6 @@ class BaseDeDatos:
                     if not datos_anteriores_tuple:
                         return False, "Empleado no encontrado"
                     
-                    # Guardar datos anteriores para auditoría
                     datos_anteriores_dict = {
                         'id_usuario': datos_anteriores_tuple[0],
                         'nombre': datos_anteriores_tuple[1],
@@ -494,7 +469,6 @@ class BaseDeDatos:
                         'rol': datos_anteriores_tuple[9]
                     }
                     
-                    # Actualizar los datos del usuario
                     sql = """
                     UPDATE usuarios 
                     SET Nombre = %s, Apellido = %s, Documento_Identidad = %s, 
@@ -508,7 +482,6 @@ class BaseDeDatos:
                     if cur.rowcount > 0:
                         conn.commit()
                         
-                        # Registrar en auditoría
                         if usuario_sistema:
                             datos_nuevos_dict = {
                                 'id_usuario': id_usuario,
@@ -520,7 +493,7 @@ class BaseDeDatos:
                                 'fecha_ingreso': str(fecha_ingreso),
                                 'fecha_salida': str(fecha_salida) if fecha_salida else None,
                                 'salario': float(salario),
-                                'rol': datos_anteriores_dict['rol']  # El rol no se modifica en esta función
+                                'rol': datos_anteriores_dict['rol']  
                             }
                             
                             BaseDeDatos.registrar_auditoria(
@@ -617,7 +590,6 @@ class BaseDeDatos:
                 
                 parametros = []
                 
-                # Agregar filtros
                 if usuario_filtro:
                     sql += " AND a.Usuario_Sistema = %s"
                     parametros.append(usuario_filtro)
@@ -658,11 +630,9 @@ class BaseDeDatos:
             if conn:
                 cursor = conn.cursor()
                 
-                # Total de registros de auditoría
                 cursor.execute("SELECT COUNT(*) FROM auditoria")
                 total_registros = cursor.fetchone()[0]
                 
-                # Acciones más comunes
                 cursor.execute("""
                     SELECT Accion, COUNT(*) as cantidad 
                     FROM auditoria 
@@ -672,7 +642,6 @@ class BaseDeDatos:
                 """)
                 acciones_comunes = cursor.fetchall()
                 
-                # Usuarios más activos
                 cursor.execute("""
                     SELECT u.Nombre, u.Apellido, COUNT(*) as operaciones
                     FROM auditoria a
