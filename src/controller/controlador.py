@@ -352,7 +352,6 @@ class BaseDeDatos:
                     sql = "DELETE FROM liquidacion WHERE ID_Liquidacion = %s"
                     cur.execute(sql, (id_liquidacion,))
                     
-                    # Verificamos si se eliminó algún registro
                     if cur.rowcount > 0:
                         conn.commit()
                         print("Liquidación eliminada exitosamente")
@@ -410,19 +409,15 @@ class BaseDeDatos:
             conn = BaseDeDatos.conectar_db()
             if conn:
                 with conn.cursor() as cur:
-                    # Contar usuarios
                     cur.execute("SELECT COUNT(*) FROM usuarios")
                     total_usuarios = cur.fetchone()[0]
                     
-                    # Contar liquidaciones
                     cur.execute("SELECT COUNT(*) FROM liquidacion")
                     total_liquidaciones = cur.fetchone()[0]
                     
-                    # Promedio de salarios
                     cur.execute("SELECT AVG(Salario) FROM usuarios")
                     promedio_salario = cur.fetchone()[0] or 0
                     
-                    # Total pagado en liquidaciones
                     cur.execute("SELECT SUM(Total_A_Pagar) FROM liquidacion")
                     total_pagado = cur.fetchone()[0] or 0
                     
@@ -449,7 +444,6 @@ class BaseDeDatos:
             conn = BaseDeDatos.conectar_db()
             if conn:
                 with conn.cursor() as cur:
-                    # Primero obtenemos los datos anteriores del usuario
                     cur.execute("SELECT * FROM usuarios WHERE ID_Usuario = %s", (id_usuario,))
                     datos_anteriores_tuple = cur.fetchone()
                     
@@ -577,7 +571,6 @@ class BaseDeDatos:
             if conn:
                 cursor = conn.cursor()
                 
-                # Construir consulta base
                 sql = """
                     SELECT a.ID_Auditoria, a.Usuario_Sistema, u.Nombre, u.Apellido, 
                            a.Accion, a.Tabla_Afectada, a.ID_Registro, 
@@ -652,7 +645,6 @@ class BaseDeDatos:
                 """)
                 usuarios_activos = cursor.fetchall()
                 
-                # Actividad por día (últimos 7 días)
                 cursor.execute("""
                     SELECT DATE(Fecha_Hora) as fecha, COUNT(*) as operaciones
                     FROM auditoria
