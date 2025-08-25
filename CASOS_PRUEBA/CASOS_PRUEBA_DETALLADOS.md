@@ -3,7 +3,7 @@
 
 ---
 
-## 📋 CASO DE PRUEBA CP-001
+## CASO DE PRUEBA CP-001
 
 | **Campo** | **Detalle** |
 |-----------|------------|
@@ -11,8 +11,8 @@
 | **Número** | CP-001 |
 | **Código** | AGR_EMP_VAL_001 |
 | **Responsable** | QA Lead - Testing Team |
-| **Fecha** | 22 de Agosto de 2025 |
-| **Descripción** | Verificar que el sistema permite agregar empleados con datos válidos completos y persiste correctamente en PostgreSQL con integridad referencial |
+| **Fecha** | 25 de Agosto de 2025 |
+| **Descripción** | Verificar que el sistema permita agregar empleados con datos válidos y persista correctamente en PostgreSQL |
 
 ### **Actores**
 - Usuario administrador del sistema
@@ -27,11 +27,11 @@
 
 ### **Pasos normales**
 1. Establecer conexión BD usando BaseDeDatos.conectar_db()
-2. Generar datos empleado válidos: cedula=12345678, nombre="Juan Perez", salario=2500000, fecha_ingreso="2023-01-15"
+2. Generar datos empleado válidos: nombre="Juan", apellido="Perez", salario=2500000, id_usuario=1234
 3. Construir query INSERT INTO usuarios con parámetros
 4. Ejecutar INSERT con cursor.execute() y parámetros seguros
 5. Confirmar transacción con conn.commit()
-6. Verificar fila insertada con SELECT COUNT(*) WHERE cedula=12345678
+6. Verificar fila insertada con SELECT COUNT(*) WHERE id_usuario=1234
 
 ### **Pasos alternativos**
 - **Alt 3a:** Si datos duplicados → Capturar IntegrityError, mostrar mensaje "Empleado ya existe"
@@ -44,21 +44,27 @@
 - **Exc 3:** Constraint violation → Capturar error específico, mensaje user-friendly
 
 ### **Resultados Esperados**
-- ✅ Empleado insertado correctamente en BD
-- ✅ Sin errores SQL o excepciones no controladas  
-- ✅ Datos persisten correctamente tras commit
-- ✅ Verificación posterior confirma existencia registro
-- ✅ Performance < 5 segundos para operación completa
+- Empleado insertado correctamente en BD
+- Sin errores SQL o excepciones no controladas  
+- Datos persisten correctamente tras commit
+- Verificación posterior confirma existencia registro
+- Performance < 2 segundos para operación completa
 
 ### **Post-Condiciones**
 - Empleado disponible para consultas inmediatamente
-- Registro con ID único generado automáticamente
+- Registro con ID único asignado
 - Datos accesibles para cálculos liquidación posteriores
 - Auditoría operación registrada en logs sistema
 
+### **Implementación Técnica**
+- **Archivo**: testbasedatos.py
+- **Función**: test_agregar_usuario()
+- **Método**: BaseDeDatos.agregar_usuario() (línea 151)
+- **Escenario**: ESC-01 - Gestión Empleados
+
 ---
 
-## 📋 CASO DE PRUEBA CP-002
+## CASO DE PRUEBA CP-002
 
 | **Campo** | **Detalle** |
 |-----------|------------|
@@ -66,44 +72,43 @@
 | **Número** | CP-002 |
 | **Código** | CALC_IND_SJC_002 |
 | **Responsable** | QA Automation - Cálculos Team |
-| **Fecha** | 22 de Agosto de 2025 |
-| **Descripción** | Validar cálculo matemático preciso de indemnización por despido sin justa causa según legislación laboral colombiana con UVT 2024 |
+| **Fecha** | 25 de Agosto de 2025 |
+| **Descripción** | Validar cálculo matemático preciso de indemnización por despido sin justa causa según legislación laboral colombiana |
 
 ### **Actores**
 - CalculadoraLiquidacion (módulo core)
-- Legislación laboral colombiana UVT 2024
+- Legislación laboral colombiana
 - Usuario realizando liquidación
 
 ### **Pre-Condiciones**
 - CalculadoraLiquidacion instanciada correctamente
-- UVT 2024 configurado: $39,205 pesos
 - Parámetros legislación colombiana cargados
 - Método calcular_indemnizacion() disponible
 
 ### **Pasos normales**
 1. Crear instancia calc = CalculadoraLiquidacion()
-2. Definir parámetros: salario=3000000, dias_trabajados=365, tipo="sin_justa_causa"
-3. Invocar resultado = calc.calcular_indemnizacion(salario, dias_trabajados, tipo)
-4. Aplicar fórmula legislación: salario * 30 días para primer año
-5. Verificar resultado exacto con assertEqual(resultado, 3000000)
+2. Definir parámetros: salario=2500000, tiempo_trabajado=0.5, tipo="sin_justa_causa"
+3. Invocar resultado = calc.calcular_indemnizacion(salario, tiempo_trabajado, tipo)
+4. Aplicar fórmula legislación: salario * días correspondientes
+5. Verificar resultado exacto con assertEqual(resultado, valor_esperado)
 6. Validar precisión decimal sin pérdida centavos
 
 ### **Pasos alternativos**
 - **Alt 3a:** Si tipo="justa_causa" → Aplicar fórmula diferente, indemnización = 0
-- **Alt 4a:** Si dias_trabajados < 365 → Calcular proporcional por días
+- **Alt 4a:** Si tiempo < 1 año → Calcular proporcional por meses
 - **Alt 5a:** Si salario variable → Promedio últimos 6 meses
 
 ### **Excepciones**
 - **Exc 1:** Salario inválido (negativo) → ValueError con mensaje descriptivo
-- **Exc 2:** Días trabajados no numérico → TypeError con validación input
+- **Exc 2:** Tiempo trabajado no numérico → TypeError con validación input
 - **Exc 3:** Tipo despido desconocido → ValueError con opciones válidas
 
 ### **Resultados Esperados**
-- ✅ Resultado matemático exacto: $3,000,000 pesos
-- ✅ Sin pérdida precisión decimal o centavos
-- ✅ Fórmula legislación aplicada correctamente
-- ✅ Performance cálculo < 100 milisegundos
-- ✅ Resultado tipo float con 2 decimales precisión
+- Resultado matemático exacto según legislación colombiana
+- Sin pérdida precisión decimal o centavos
+- Fórmula legislación aplicada correctamente
+- Performance cálculo < 100 milisegundos
+- Resultado tipo float con 2 decimales precisión
 
 ### **Post-Condiciones**
 - Cálculo disponible para integración liquidación final
@@ -111,9 +116,15 @@
 - Resultado auditable y trazeable
 - Sin efectos secundarios en instancia calculadora
 
+### **Implementación Técnica**
+- **Archivo**: controllertest.py
+- **Función**: test_calculo_indemnizacion()
+- **Método**: calcular_indemnizacion() (línea 22)
+- **Escenario**: ESC-02 - Cálculos Matemáticos
+
 ---
 
-## 📋 CASO DE PRUEBA CP-003
+## CASO DE PRUEBA CP-003
 
 | **Campo** | **Detalle** |
 |-----------|------------|
@@ -121,8 +132,8 @@
 | **Número** | CP-003 |
 | **Código** | CALC_VAC_PROP_003 |
 | **Responsable** | QA Automation - Cálculos Team |
-| **Fecha** | 22 de Agosto de 2025 |
-| **Descripción** | Verificar cálculo matemático correcto de vacaciones proporcionales para empleado activo según días trabajados y legislación colombiana |
+| **Fecha** | 25 de Agosto de 2025 |
+| **Descripción** | Verificar cálculo matemático correcto de vacaciones proporcionales para empleado según días trabajados y legislación colombiana |
 
 ### **Actores**
 - CalculadoraLiquidacion (módulo matemático)
@@ -137,11 +148,11 @@
 
 ### **Pasos normales**
 1. Instanciar calculadora = CalculadoraLiquidacion()
-2. Preparar datos: salario=2800000, dias_trabajados=180, vacaciones_tomadas=0
+2. Preparar datos: salario=1500000, dias_trabajados=10, vacaciones_tomadas=0
 3. Ejecutar vacaciones = calculadora.calcular_vacaciones(salario, dias_trabajados, vacaciones_tomadas)
-4. Aplicar fórmula: (salario/12) * (dias_trabajados/30) para proporcional
-5. Verificar resultado = $700,000 (6 meses trabajados)
-6. Confirmar exactitud con assertAlmostEqual(vacaciones, 700000.0, places=2)
+4. Aplicar fórmula proporcional para días trabajados
+5. Verificar resultado = $20,833.33 (proporcional)
+6. Confirmar exactitud con assertAlmostEqual(vacaciones, 20833.33, places=2)
 
 ### **Pasos alternativos**
 - **Alt 2a:** Si vacaciones_tomadas > 0 → Descontar días ya disfrutados
@@ -154,11 +165,11 @@
 - **Exc 3:** Vacaciones tomadas > días trabajados → ValueError("Inconsistencia datos vacaciones")
 
 ### **Resultados Esperados**
-- ✅ Cálculo proporcional exacto: $700,000 pesos
-- ✅ Precisión matemática sin errores redondeo
-- ✅ Aplicación correcta legislación colombiana
-- ✅ Validación robusta parámetros entrada
-- ✅ Performance óptima < 50 milisegundos
+- Cálculo proporcional exacto: $20,833.33 pesos
+- Precisión matemática sin errores redondeo
+- Aplicación correcta legislación colombiana
+- Validación robusta parámetros entrada
+- Performance óptima < 50 milisegundos
 
 ### **Post-Condiciones**
 - Valor vacaciones listo para liquidación final
@@ -166,183 +177,206 @@
 - Sin modificación estado calculadora
 - Resultado compatible integración otros módulos
 
+### **Implementación Técnica**
+- **Archivo**: controllertest.py
+- **Función**: test_calculo_vacaciones()
+- **Método**: calcular_vacaciones() (línea 30)
+- **Escenario**: ESC-02 - Cálculos Matemáticos
+
 ---
 
-## 📋 CASO DE PRUEBA CP-004
+## CASO DE PRUEBA CP-004
 
 | **Campo** | **Detalle** |
 |-----------|------------|
 | **Nombre del proyecto** | Sistema Web de Liquidación Definitiva |
 | **Número** | CP-004 |
 | **Código** | MOD_SAL_EMP_004 |
-| **Responsable** | Dev Backend - Implementation Team |
-| **Fecha** | 22 de Agosto de 2025 |
-| **Descripción** | **[CASO FALLA ESPERADA]** Verificar capacidad sistema para modificar salario empleado existente con auditoría automática - funcionalidad NO implementada actualmente |
+| **Responsable** | QA Integration - Implementation Team |
+| **Fecha** | 25 de Agosto de 2025 |
+| **Descripción** | Verificar capacidad del sistema para modificar salario de empleado existente usando método BaseDeDatos.modificar_usuario() disponible |
 
 ### **Actores**
-- Sistema gestión empleados (módulo faltante)
+- Sistema gestión empleados BaseDeDatos
 - Base datos PostgreSQL con tabla usuarios
-- Sistema auditoría automática (no implementado)
+- Módulo controlador con método modificar_usuario()
 
 ### **Pre-Condiciones**
-- Empleado previamente registrado en BD
-- Método modificar_empleado_salario() debería existir (NO EXISTE)
-- Tabla auditoría configurada para tracking cambios
+- Empleado creado dinámicamente para test
+- Método BaseDeDatos.modificar_usuario() disponible
+- Conexión activa PostgreSQL Neon Cloud
 - Permisos UPDATE en tabla usuarios
 
 ### **Pasos normales**
-1. Buscar empleado por cédula: empleado = buscar_empleado(cedula=12345678)
-2. Validar empleado existe y está activo
-3. **[FALLA AQUÍ]** Invocar modificar_empleado_salario(cedula, nuevo_salario=3500000)
-4. Actualizar registro BD con nuevo salario
-5. Registrar auditoría: operación=UPDATE, tabla=usuarios, timestamp=NOW()
-6. Confirmar cambio persistido con SELECT salario WHERE cedula=12345678
+1. Crear empleado test: BaseDeDatos.agregar_usuario() con ID aleatorio
+2. Validar empleado creado correctamente
+3. Invocar BaseDeDatos.modificar_usuario() con nuevo salario
+4. Actualizar registro BD con datos completos empleado
+5. Verificar cambio salario: $2,500,000 → $3,200,000
+6. Eliminar empleado test (cleanup automático)
 
 ### **Pasos alternativos**
-- **Alt 2a:** Si empleado no existe → Error "Empleado no encontrado"
-- **Alt 3a:** Si nuevo salario inválido → Validación "Salario debe ser > 0"
-- **Alt 5a:** Si falla auditoría → Rollback cambio, mantener integridad
+- **Alt 1a:** Si error creación → Fallar test con mensaje descriptivo
+- **Alt 3a:** Si falla modificación → Limpiar datos test e informar error
+- **Alt 6a:** Si falla cleanup → Log warning pero test continúa
 
 ### **Excepciones**
-- **Exc 1:** **AttributeError** → "modificar_empleado_salario() no existe" ❌
-- **Exc 2:** ConnectionError BD → Reintentar operación, fallar después 3 intentos
-- **Exc 3:** Constraint violation → Validar nuevo salario contra reglas negocio
+- **Exc 1:** Funciona correctamente - Sin errores esperados
+- **Exc 2:** ConnectionError BD → Fallar test, verificar conectividad Neon
+- **Exc 3:** Parámetros incorrectos → Verificar firma método modificar_usuario
 
 ### **Resultados Esperados**
-- ❌ **FALLA ESPERADA:** AttributeError por método faltante
-- ❌ Sistema no puede completar operación modificación
-- ❌ Auditoría automática no registra cambio
-- ❌ Gap funcional identificado para desarrollo
-- ❌ Test documenta requirement faltante
+- Modificación salario exitosa
+- Sistema completa operación correctamente
+- Datos persistidos en BD sin errores
+- Cleanup automático realizado
+- Test valida funcionalidad existente
 
 ### **Post-Condiciones**
-- **ESTADO ACTUAL:** Empleado mantiene salario original (sin cambios)
-- **OBJETIVO FUTURO:** Empleado con nuevo salario + auditoría registrada
-- **ACCIÓN REQUERIDA:** Implementar método en próximo sprint
-- **PRIORIDAD:** MEDIA - Enhancement funcionalidad existente
+- Empleado test eliminado, BD limpia
+- Método modificar_usuario() confirmado operativo
+- Funcionalidad disponible para uso producción
+
+### **Implementación Técnica**
+- **Archivo**: test_faltantes.py
+- **Función**: test_modificar_empleado_campo_salario()
+- **Método**: BaseDeDatos.modificar_usuario() (línea 442)
+- **Escenario**: ESC-05 - Funciones Admin
 
 ---
 
-## 📋 CASO DE PRUEBA CP-005
+## CASO DE PRUEBA CP-005
 
 | **Campo** | **Detalle** |
 |-----------|------------|
 | **Nombre del proyecto** | Sistema Web de Liquidación Definitiva |
 | **Número** | CP-005 |
-| **Código** | EXP_CSV_AUTO_005 |
-| **Responsable** | Dev Backend - API Team |
-| **Fecha** | 22 de Agosto de 2025 |
-| **Descripción** | **[CASO FALLA ESPERADA]** Validar generación automática reporte CSV empleados con filtros y exportación programática - API NO implementada actualmente |
+| **Código** | VAL_PRIMA_LEG_005 |
+| **Responsable** | QA Compliance - Legal Validation Team |
+| **Fecha** | 25 de Agosto de 2025 |
+| **Descripción** | Validar que cálculo prima de servicios cumple mínimos establecidos por legislación laboral colombiana - identifica gap compliance |
 
 ### **Actores**
-- API exportación datos (no implementada)
-- Sistema archivos servidor
-- Usuario solicitando reporte automated
+- CalculadoraLiquidacion con método calcular_prima()
+- Legislación laboral colombiana vigente
+- Sistema validación compliance (no implementado)
 
 ### **Pre-Condiciones**
-- Sistema con 5+ empleados registrados para testing
-- API exportar_empleados_csv() debería existir (NO IMPLEMENTADA)
-- Permisos escritura directorio /exports/
-- Filtros y parámetros configuración disponibles
+- CalculadoraLiquidacion inicializada correctamente
+- Método calcular_prima() disponible y funcional
+- Caso test: empleado 1 mes trabajado (30 días)
+- Parámetros legislación colombiana conocidos
 
 ### **Pasos normales**
-1. Preparar parámetros: formato="CSV", filtros={"activos": true}, ruta="/exports/"
-2. **[FALLA AQUÍ]** Invocar exportar_empleados_csv(filtros, formato, ruta)
-3. Generar query BD con filtros aplicados
-4. Crear archivo CSV temporal con headers apropiados
-5. Escribir datos empleados fila por fila formato CSV
-6. Retornar ruta archivo generado para descarga
+1. Definir caso test: salario=$1,000,000, días_trabajados=30
+2. Calcular prima actual: prima_actual = calcular_prima(1000000, 30)  
+3. Calcular prima mínima legal: prima_legal = 500000 (mínimo legal)
+4. Comparar: prima_actual vs prima_legal
+5. Validar compliance: assertGreaterEqual(prima_actual, prima_legal)
+6. Documentar diferencia económica si existe gap
 
 ### **Pasos alternativos**
-- **Alt 2a:** Si filtros vacíos → Exportar todos empleados activos por defecto
-- **Alt 4a:** Si error permisos directorio → Crear en /tmp/ como fallback
-- **Alt 5a:** Si datos corruptos → Skip fila, loggear warning, continuar
+- **Alt 4a:** Si prima_actual >= prima_legal → Test pasa (cumple legislación)  
+- **Alt 5a:** Si diferencia < $100,000 → Warning, no crítico
+- **Alt 6a:** Si gap > $400,000 → Error crítico compliance
 
 ### **Excepciones**
-- **Exc 1:** **AttributeError** → "exportar_empleados_csv() no existe" ❌
-- **Exc 2:** PermissionError → "Sin permisos escritura directorio destino"
-- **Exc 3:** MemoryError → "Dataset demasiado grande para procesamiento"
+- **Exc 1:** AssertionError → Prima calculada por debajo mínimo legal
+- **Exc 2:** ValueError → Parámetros inválidos, verificar salario > 0
+- **Exc 3:** TypeError → Verificar tipos datos entrada método
 
 ### **Resultados Esperados**
-- ❌ **FALLA ESPERADA:** AttributeError por API faltante  
-- ❌ No se genera archivo CSV automáticamente
-- ❌ Usuario debe usar interface web manual (workaround)
-- ❌ Gap funcional documentado para roadmap
-- ❌ Prioridad BAJA - Nice-to-have feature
+- FALLA ESPERADA: Prima $83,333 < Prima mínima legal $500,000
+- Diferencia: $416,667 por debajo mínimo legislación
+- Sistema no valida compliance automáticamente
+- Gap crítico identificado: riesgo legal empresa
+- Prioridad MEDIA - Compliance requerido
 
 ### **Post-Condiciones**
-- **ESTADO ACTUAL:** Sin archivo CSV generado, error controlado
-- **WORKAROUND:** Export manual disponible vía interface web
-- **OBJETIVO FUTURO:** API completa con filtros y formatos múltiples
-- **ACCIÓN REQUERIDA:** Implementar en backlog, no crítico MVP
+- Sistema calcula prima sin validaciones legales
+- Riesgo identificado: incumplimiento legislación laboral colombiana
+- Objetivo futuro: implementar validaciones mínimos legales
+- Acción requerida: sprint compliance, prioridad media-alta
+
+### **Implementación Técnica**
+- **Archivo**: test_faltantes.py
+- **Función**: test_validacion_calculo_prima_incorrecta()
+- **Método**: calcular_prima() (línea 50)
+- **Escenario**: ESC-06 - Validación Legal
 
 ---
 
-## 📋 CASO DE PRUEBA CP-006
+## CASO DE PRUEBA CP-006
 
 | **Campo** | **Detalle** |
 |-----------|------------|
 | **Nombre del proyecto** | Sistema Web de Liquidación Definitiva |
 | **Número** | CP-006 |
-| **Código** | AUD_AUTO_SYS_006 |
-| **Responsable** | DBA + Dev Backend - Integration Team |
-| **Fecha** | 22 de Agosto de 2025 |
-| **Descripción** | **[CASO FALLA ESPERADA]** Verificar sistema auditoría automática registra operaciones críticas con triggers BD - infraestructura NO completamente implementada |
+| **Código** | DUP_KEY_BD_006 |
+| **Responsable** | QA Infrastructure - Testing Framework |
+| **Fecha** | 25 de Agosto de 2025 |
+| **Descripción** | Verificar que sistema maneja adecuadamente claves duplicadas entre ejecuciones tests - cleanup datos residuales no implementado |
 
 ### **Actores**
-- Sistema auditoría PostgreSQL (parcialmente implementado)
-- Triggers BD automáticos (no configurados)
-- Tabla auditoria (estructura incompleta)
+- Framework testing Python unittest
+- PostgreSQL BD con constraint usuarios_pkey
+- Sistema cleanup datos test (no implementado)
 
 ### **Pre-Condiciones**
-- Tabla auditoria existe pero estructura incomplete
-- Triggers automáticos deberían estar configurados (NO ESTÁN)
-- Operación crítica ejecutándose (DELETE, UPDATE, INSERT)
-- Usuario autenticado ejecutando operación
+- Tests ejecutados previamente con datos residuales
+- Tabla usuarios con constraint PRIMARY KEY id_usuario
+- ID fijo 9999 usado en test anterior (dato residual)
+- Conexión BD activa para testing
 
 ### **Pasos normales**
-1. Ejecutar operación crítica: DELETE FROM liquidacion WHERE id=12345
-2. **[FALLA AQUÍ]** Trigger debería activarse automáticamente post-DELETE
-3. Insertar registro auditoría: operacion='DELETE', tabla='liquidacion', usuario='admin'
-4. Incluir timestamp, IP usuario, datos antes/después cambio
-5. Verificar registro con: SELECT * FROM auditoria WHERE operacion='DELETE'
-6. Confirmar trazabilidad completa operación crítica
+1. Intentar INSERT usuario ID fijo: id_usuario=9999, nombre='Test Duplicado'
+2. BD detecta constraint violation usuarios_pkey
+3. PostgreSQL lanza: duplicate key value violates unique constraint
+4. Sistema debería manejar error con cleanup automático
+5. Test debería usar IDs aleatorios o limpiar datos residuales
+6. Documentar necesidad mejora infraestructura testing
 
 ### **Pasos alternativos**
-- **Alt 2a:** Si trigger no existe → Manual logging (workaround actual)
-- **Alt 3a:** Si tabla auditoria mal estructurada → Error schema mismatch
-- **Alt 5a:** Si múltiples registros → Filtrar por timestamp y usuario
+- **Alt 1a:** Si usar ID aleatorio → Test pasa, evita conflicto
+- **Alt 4a:** Si implementar cleanup → DELETE datos test post-ejecución
+- **Alt 5a:** Si usar transacción → ROLLBACK automático datos test
 
 ### **Excepciones**
-- **Exc 1:** **Trigger no configurado** → Sin registro auditoría automático ❌
-- **Exc 2:** Column 'operacion' doesn't exist → Schema auditoria incompleto ❌  
-- **Exc 3:** Permission denied auditoría → Usuario sin permisos logging
+- **Exc 1:** duplicate key constraint → ID ya existe de test anterior
+- **Exc 2:** Connection timeout → Verificar conectividad BD Neon Cloud
+- **Exc 3:** Permission denied → Usuario test sin permisos DELETE/INSERT
 
 ### **Resultados Esperados**
-- ❌ **FALLA ESPERADA:** Sin trigger automático configurado
-- ❌ Auditoría no se registra automáticamente post-operación
-- ❌ Trazabilidad incompleta operaciones críticas
-- ❌ Gap infraestructura BD identificado
-- ❌ Prioridad MEDIA - Importante para compliance
+- FALLA ESPERADA: Constraint violation por datos residuales
+- Tests pueden fallar por ejecuciones anteriores
+- Sin cleanup automático entre test runs
+- Gap infraestructura testing identificado
+- Prioridad MEDIA - Estabilidad testing framework
 
 ### **Post-Condiciones**
-- **ESTADO ACTUAL:** Operación ejecutada pero sin auditoría automática
-- **WORKAROUND:** Logging manual en código aplicación (limitado)
-- **OBJETIVO FUTURO:** Triggers completos + tabla auditoria estructurada
-- **ACCIÓN REQUERIDA:** DBA configurar triggers + Dev ajustar schema
+- Datos test permanecen BD entre ejecuciones
+- Problema: tests interdependientes, fallos esporádicos
+- Objetivo futuro: cleanup automático o IDs aleatorios
+- Acción requerida: refactor testing infrastructure, isolation
+
+### **Implementación Técnica**
+- **Archivo**: test_faltantes.py
+- **Función**: test_gestion_claves_duplicadas_bd()
+- **Método**: No específico (infraestructura)
+- **Escenario**: ESC-05 - Funciones Admin
 
 ---
 
-## 📋 CASO DE PRUEBA CP-007
+## CASO DE PRUEBA CP-007
 
 | **Campo** | **Detalle** |
 |-----------|------------|
 | **Nombre del proyecto** | Sistema Web de Liquidación Definitiva |
 | **Número** | CP-007 |
 | **Código** | DEL_EMP_FK_007 |
-| **Responsable** | QA Database - Integrity Team |
-| **Fecha** | 22 de Agosto de 2025 |
-| **Descripción** | Validar que sistema protege integridad referencial impidiendo eliminación empleados con liquidaciones asociadas mediante FK constraints |
+| **Responsable** | QA Integration - Database Team |
+| **Fecha** | 25 de Agosto de 2025 |
+| **Descripción** | Validar que sistema maneja correctamente eliminación empleados con liquidaciones asociadas mediante FK constraints |
 
 ### **Actores**
 - PostgreSQL con FK constraints configurados
@@ -356,12 +390,12 @@
 - Manejo excepciones IntegrityError implementado
 
 ### **Pasos normales**
-1. Identificar empleado con liquidaciones: cedula=12345678
-2. Verificar liquidaciones asociadas: SELECT COUNT(*) FROM liquidacion WHERE cedula_empleado=12345678
-3. Intentar DELETE usuarios: DELETE FROM usuarios WHERE cedula=12345678
-4. **[ESPERADO]** PostgreSQL lanza IntegrityError por FK constraint
-5. Capturar excepción con try/except IntegrityError
-6. Verificar empleado NO eliminado: SELECT * FROM usuarios WHERE cedula=12345678
+1. Crear empleado con ID específico para test
+2. Crear liquidación asociada con FK válida al empleado
+3. Intentar eliminar empleado via Flask interface
+4. Sistema detecta FK constraint violation
+5. Capturar IntegrityError apropiadamente
+6. Verificar empleado NO eliminado, liquidación intacta
 
 ### **Pasos alternativos**
 - **Alt 2a:** Si empleado sin liquidaciones → DELETE exitoso (caso diferente)
@@ -369,26 +403,32 @@
 - **Alt 5a:** Si excepción no capturada → Crash aplicación (bug)
 
 ### **Excepciones**
-- **Exc 1:** **IntegrityError capturado correctamente** → ✅ Comportamiento esperado
-- **Exc 2:** Sin IntegrityError → ❌ FK constraint no funciona, BUG CRÍTICO
+- **Exc 1:** IntegrityError no manejado elegantemente en interface
+- **Exc 2:** Sin IntegrityError → FK constraint no funciona, BUG CRÍTICO
 - **Exc 3:** ConnectionError → Reintentar operación, verificar estabilidad BD
 
 ### **Resultados Esperados**
-- ✅ **IntegrityError capturado correctamente por FK constraint**
-- ✅ Empleado NO eliminado, integridad preservada
-- ✅ Liquidaciones asociadas intactas y accesibles
-- ✅ Mensaje error user-friendly: "No se puede eliminar empleado con liquidaciones"
-- ✅ Sistema estable después manejo excepción
+- FALLA ESPERADA: IntegrityError no manejado elegantemente en UI
+- Empleado NO eliminado, integridad preservada
+- Liquidaciones asociadas intactas y accesibles
+- Error mostrado sin manejo user-friendly
+- Gap UX identificado para mejora
 
 ### **Post-Condiciones**
 - Empleado permanece en BD con todos sus datos
 - Referencias liquidación intactas y consistentes  
 - Integridad referencial BD demostrada funcional
-- Usuario informado razón restricción eliminación
+- Necesidad mejorar manejo errores en interface
+
+### **Implementación Técnica**
+- **Archivo**: testbasedatos.py
+- **Función**: test_eliminar_usuario()
+- **Método**: BaseDeDatos.eliminar_usuario() + Flask interface
+- **Escenario**: ESC-01 - Gestión Empleados
 
 ---
 
-## 📋 CASO DE PRUEBA CP-008
+## CASO DE PRUEBA CP-008
 
 | **Campo** | **Detalle** |
 |-----------|------------|
@@ -396,7 +436,7 @@
 | **Número** | CP-008 |
 | **Código** | CRE_LIQ_FK_008 |
 | **Responsable** | QA Integration - Database Team |
-| **Fecha** | 22 de Agosto de 2025 |
+| **Fecha** | 25 de Agosto de 2025 |
 | **Descripción** | Verificar creación exitosa liquidación completa con FK válida hacia empleado existente y persistencia correcta datos PostgreSQL |
 
 ### **Actores**
@@ -405,18 +445,18 @@
 - Empleado previamente registrado (referencia válida)
 
 ### **Pre-Condiciones**
-- Empleado registrado con cedula=12345678 en tabla usuarios
+- Empleado registrado con ID específico en tabla usuarios
 - Tabla liquidacion configurada con FK constraint hacia usuarios
 - Conexión BD estable y operativa
 - Datos liquidación calculados previamente
 
 ### **Pasos normales**
-1. Validar empleado existe: SELECT * FROM usuarios WHERE cedula=12345678
-2. Preparar datos liquidación: cedula_empleado=12345678, total=5500000, fecha="2024-08-22"
-3. Generar INSERT liquidacion con FK válida hacia usuarios.cedula
-4. Ejecutar INSERT INTO liquidacion (cedula_empleado, total_liquidacion, fecha_liquidacion)
+1. Validar empleado existe: SELECT * FROM usuarios WHERE id_usuario=5000
+2. Preparar datos liquidación: empleado_id=5000, total=14000, fecha="2024-08-22"
+3. Generar INSERT liquidacion con FK válida hacia usuarios.id
+4. Ejecutar INSERT INTO liquidacion con todos los campos requeridos
 5. Confirmar transacción con conn.commit()
-6. Verificar persistencia: SELECT * FROM liquidacion WHERE cedula_empleado=12345678
+6. Verificar persistencia: SELECT * FROM liquidacion WHERE empleado_id=5000
 
 ### **Pasos alternativos**
 - **Alt 1a:** Si empleado no existe → Error FK constraint, operación cancelada
@@ -429,11 +469,11 @@
 - **Exc 3:** ConnectionError → Reintentar operación, fallar tras 3 intentos
 
 ### **Resultados Esperados**
-- ✅ **Liquidación creada exitosamente con FK válida**
-- ✅ Datos persistidos correctamente tras commit
-- ✅ Relación empleado-liquidación establecida y funcional
-- ✅ Sin errores integridad o consistency issues
-- ✅ Performance operación < 3 segundos
+- Liquidación creada exitosamente con FK válida
+- Datos persistidos correctamente tras commit
+- Relación empleado-liquidación establecida y funcional
+- Sin errores integridad o consistency issues
+- Performance operación < 3 segundos
 
 ### **Post-Condiciones**
 - Liquidación disponible para consultas inmediatamente
@@ -441,9 +481,15 @@
 - Datos accesibles para reportes y analytics
 - Integridad referencial BD demostrada operativa
 
+### **Implementación Técnica**
+- **Archivo**: testbasedatos.py
+- **Función**: test_agregar_liquidacion()
+- **Método**: BaseDeDatos.agregar_liquidacion() (línea 207)
+- **Escenario**: ESC-03 - Gestión Liquidaciones
+
 ---
 
-## 📋 CASO DE PRUEBA CP-009
+## CASO DE PRUEBA CP-009
 
 | **Campo** | **Detalle** |
 |-----------|------------|
@@ -451,7 +497,7 @@
 | **Número** | CP-009 |
 | **Código** | VAL_ERR_SEC_009 |
 | **Responsable** | QA Security - Validation Team |
-| **Fecha** | 22 de Agosto de 2025 |
+| **Fecha** | 25 de Agosto de 2025 |
 | **Descripción** | Validar robustez sistema mediante entrada inválida en cálculos con manejo elegante excepciones y mensajes error descriptivos |
 
 ### **Actores**
@@ -468,9 +514,9 @@
 ### **Pasos normales**
 1. Preparar datos inválidos: salario=-1500000, dias_trabajados="abc", fecha_ingreso=null
 2. Intentar cálculo: calc.calcular_indemnizacion(salario=-1500000, dias="abc")
-3. **[ESPERADO]** Sistema lanza ValueError con mensaje descriptivo
+3. Sistema lanza ValueError con mensaje descriptivo
 4. Capturar excepción: except ValueError as e: mensaje_error = str(e)
-5. Verificar mensaje específico: "Salario debe ser positivo"
+5. Verificar mensaje específico: "Días no pueden ser negativos"
 6. Confirmar sistema estable sin crash o corruption
 
 ### **Pasos alternativos**
@@ -479,16 +525,16 @@
 - **Alt 5a:** Si mensaje genérico → Mejorar especificidad error user-facing
 
 ### **Excepciones**
-- **Exc 1:** **ValueError("Salario debe ser positivo")** → ✅ Esperado y correcto
+- **Exc 1:** ValueError("Días no pueden ser negativos") → Esperado y correcto
 - **Exc 2:** TypeError por tipo datos → Validación tipo activa funcionando
-- **Exc 3:** Sin excepción → ❌ BUG validación, permite datos inválidos
+- **Exc 3:** Sin excepción → BUG validación, permite datos inválidos
 
 ### **Resultados Esperados**
-- ✅ **ValueError capturado con mensaje descriptivo específico**
-- ✅ Sistema sin crash, estabilidad mantenida post-error
-- ✅ Mensaje user-friendly informativo: "Salario debe ser positivo"
-- ✅ Validación robusta previene cálculos con datos corruptos
-- ✅ Graceful error handling sin side effects
+- ValueError capturado con mensaje descriptivo específico
+- Sistema sin crash, estabilidad mantenida post-error
+- Mensaje user-friendly informativo: "Días no pueden ser negativos"
+- Validación robusta previene cálculos con datos corruptos
+- Graceful error handling sin side effects
 
 ### **Post-Condiciones**
 - Sistema operativo y estable después manejo error
@@ -496,8 +542,14 @@
 - Usuario informado específicamente del problema input
 - Seguridad validación demostrada funcional
 
+### **Implementación Técnica**
+- **Archivo**: controllertest.py
+- **Función**: test_dias_trabajados_negativos_*()
+- **Método**: Validaciones en CalculadoraLiquidacion
+- **Escenario**: ESC-04 - Validaciones Seguridad
+
 ---
 
-*Casos de prueba generados: 22 de Agosto de 2025*  
+*Casos de prueba generados: 25 de Agosto de 2025*  
 *Sistema Web de Liquidación Definitiva v3.0*  
 *9 Casos Detallados | 6 Funcionales + 3 Gap Analysis*

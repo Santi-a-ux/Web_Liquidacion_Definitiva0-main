@@ -2,77 +2,69 @@
 ## Sistema Web de Liquidación Definitiva
 
 **Proyecto:** Sistema Web de Liquidación Definitiva  
-**Fecha:** 22 de Agosto de 2025  
+**Fecha:** 25 de Agosto de 2025  
 **Responsable:** Equipo QA - Testing y Validación  
 
 ---
 
-## 📊 MATRIZ CONSOLIDADA DE CASOS DE PRUEBA
+## MATRIZ CONSOLIDADA DE CASOS DE PRUEBA
 
 | **Número** | **Código** | **Descripción** | **Pre Condiciones** | **Entradas** | **Pasos** | **Resultados Esperados** | **Post Condiciones** | **Estado** | **Prioridad** | **Responsable** |
 |------------|------------|----------------|-------------------|--------------|-----------|------------------------|-------------------|------------|-------------|-------------|
-| **1** | CP-001 | Agregar empleado con datos válidos completos | BD PostgreSQL conectada, tabla usuarios vacía inicial | cedula=12345678, nombre="Juan Perez", salario=2500000, fecha_ingreso="2023-01-15" | 1. Conectar BD<br>2. Ejecutar INSERT usuarios<br>3. Verificar fila creada<br>4. Validar datos integridad | Usuario insertado correctamente, sin errores SQL, datos persistidos | Registro empleado disponible para consultas posteriores | ✅ PASA | CRÍTICA | QA Lead |
-| **2** | CP-002 | Calcular indemnización por despido sin justa causa | CalculadoraLiquidacion instanciada, UVT 2024 configurado | salario=3000000, dias_trabajados=365, tipo="sin_justa_causa" | 1. Crear instancia calculadora<br>2. Invocar calcular_indemnizacion()<br>3. Verificar fórmula matemática<br>4. Validar centavos exactos | Resultado: $3000000 (30 días salario), precisión matemática absoluta | Cálculo disponible para liquidación final | ✅ PASA | CRÍTICA | QA Automation |
-| **3** | CP-003 | Calcular vacaciones proporcionales empleado activo | CalculadoraLiquidacion inicializada, parámetros legislación colombiana | salario=2800000, dias_trabajados=180, vacaciones_tomadas=0 | 1. Instanciar calculadora<br>2. Ejecutar calcular_vacaciones()<br>3. Aplicar fórmula proporcional<br>4. Verificar resultado centavo | Vacaciones: $700000 (6 meses proporcional), cálculo exacto legislación | Valor vacaciones listo para liquidación | ✅ PASA | ALTA | QA Automation |
-| **4** | CP-004 | Modificar salario empleado existente (FALLA ESPERADA) | Empleado registrado previamente BD, método modificar implementado | cedula=12345678, nuevo_salario=3500000, fecha_modificacion="2024-08-22" | 1. Buscar empleado por cédula<br>2. Invocar modificar_empleado_salario()<br>3. Actualizar registro BD<br>4. Verificar cambio persistido | Salario actualizado correctamente, auditoría registrada automáticamente | Empleado con nuevo salario operativo | ❌ FALLA | MEDIA | Dev Backend |
-| **5** | CP-005 | Generar reporte CSV empleados automático (FALLA ESPERADA) | Sistema con 5+ empleados registrados, API export implementada | formato="CSV", filtros={"activos": true}, ruta_destino="/exports/" | 1. Invocar exportar_empleados_csv()<br>2. Generar archivo temporal<br>3. Validar estructura CSV<br>4. Verificar contenido datos | Archivo CSV creado, estructura válida, datos completos empleados | Reporte disponible para descarga/análisis | ❌ FALLA | BAJA | Dev Backend |
-| **6** | CP-006 | Sistema auditoría automática operaciones críticas (FALLA ESPERADA) | Tabla auditoria configurada, triggers BD activos, operación CRUD ejecutada | operacion="DELETE", tabla="liquidacion", usuario="admin", timestamp=NOW() | 1. Ejecutar operación crítica<br>2. Verificar trigger auditoría<br>3. Consultar tabla auditoria<br>4. Validar registro automático | Auditoría registrada automáticamente: operación, usuario, timestamp | Trazabilidad completa operaciones críticas | ❌ FALLA | MEDIA | DBA + Dev |
-| **7** | CP-007 | Eliminar empleado con validación integridad referencial | Empleado con liquidaciones asociadas, FK constraints activos | cedula=12345678, force_delete=false, validar_referencias=true | 1. Identificar empleado objetivo<br>2. Verificar liquidaciones asociadas<br>3. Intentar DELETE usuarios<br>4. Capturar error FK constraint | Error FK constraint capturado correctamente, integridad preservada | Empleado NO eliminado, referencias protegidas | ✅ PASA | ALTA | QA Database |
-| **8** | CP-008 | Crear liquidación completa con FK válidas empleado existente | Empleado registrado BD, tabla liquidacion configurada, FK constraints | cedula_empleado=12345678, total_liquidacion=5500000, fecha_liquidacion="2024-08-22" | 1. Validar empleado existe<br>2. Generar INSERT liquidacion<br>3. Verificar FK válida<br>4. Confirmar persistencia datos | Liquidación creada exitosamente, FK válida, datos consistentes | Liquidación disponible para consultas/reportes | ✅ PASA | CRÍTICA | QA Integration |
-| **9** | CP-009 | Validar entrada inválida cálculos con manejo excepciones | CalculadoraLiquidacion inicializada, inputs malformados preparados | salario=-1500000, dias_trabajados="abc", fecha_ingreso=null | 1. Intentar cálculo con datos inválidos<br>2. Capturar ValueError esperado<br>3. Verificar mensaje error descriptivo<br>4. Validar sistema estable | ValueError: "Salario debe ser positivo", sistema sin crash, error manejado | Sistema robusto, errores controlados gracefully | ✅ PASA | ALTA | QA Security |
+| **1** | CP-001 | Agregar empleado con datos válidos | BD PostgreSQL conectada, permisos INSERT | nombre="Juan", apellido="Perez", salario=2500000, id_usuario=1234 | 1. Conectar BD<br>2. Ejecutar INSERT usuarios<br>3. Verificar fila creada | Usuario insertado correctamente sin errores SQL | Registro disponible para consultas | PASA | CRÍTICA | QA Lead |
+| **2** | CP-002 | Calcular indemnización por despido | CalculadoraLiquidacion instanciada | salario=2500000, tiempo_trabajado=0.5_años | 1. Crear calculadora<br>2. Invocar calcular_indemnizacion()<br>3. Verificar fórmula | Resultado correcto según legislación laboral | Cálculo listo para liquidación | PASA | CRÍTICA | QA Automation |
+| **3** | CP-003 | Calcular vacaciones proporcionales | CalculadoraLiquidacion inicializada | salario=1500000, dias_trabajados=10 | 1. Instanciar calculadora<br>2. Ejecutar calcular_vacaciones()<br>3. Validar resultado | Vacaciones: $20,833.33 (proporcional) | Valor listo para liquidación | PASA | CRÍTICA | QA Automation |
+| **4** | CP-004 | Modificar salario empleado existente | Empleado registrado, método disponible | id_usuario=1234, nuevo_salario=3200000 | 1. Crear empleado test<br>2. Modificar con BaseDeDatos.modificar_usuario()<br>3. Verificar cambio<br>4. Limpiar datos | Salario actualizado correctamente | Empleado modificado operativo | PASA | MEDIA | QA Integration |
+| **5** | CP-005 | Validación prima legal colombiana | CalculadoraLiquidacion inicializada | salario=1000000, dias_trabajados=30 | 1. Calcular prima actual<br>2. Calcular prima mínima legal<br>3. Comparar valores | FALLA: Prima $83,333 < Legal $500,000 | Gap compliance identificado | FALLA | MEDIA | QA Compliance |
+| **6** | CP-006 | Gestión claves duplicadas BD | Tests previos ejecutados, datos residuales | test_id=9999, usuario="Test Duplicado" | 1. INSERT usuario ID fijo<br>2. Detectar constraint violation<br>3. Verificar error | Error duplicate key constraint | Gap cleanup tests identificado | FALLA | MEDIA | QA Infrastructure |
+| **7** | CP-007 | Eliminar empleado con liquidaciones | Empleado con liquidaciones FK | id_usuario=7000, liquidacion_asociada=true | 1. Crear empleado + liquidación<br>2. Eliminar via Flask interface<br>3. Verificar manejo error FK | IntegrityError no manejado elegantemente | Error UX identificado | FALLA | CRÍTICA | QA Integration |
+| **8** | CP-008 | Crear liquidación con FK válida | Empleado existente en BD | empleado_id=5000, total_liquidacion=14000 | 1. Validar empleado existe<br>2. INSERT liquidacion<br>3. Verificar FK válida | Liquidación creada exitosamente | Liquidación disponible | PASA | ALTA | QA Integration |
+| **9** | CP-009 | Validar entrada inválida cálculos | CalculadoraLiquidacion inicializada | dias_trabajados=-5, salario=negativo | 1. Intentar cálculo datos inválidos<br>2. Capturar ValueError<br>3. Verificar mensaje error | ValueError: "Días no pueden ser negativos" | Sistema robusto ante errores | PASA | ALTA | QA Security |
 
 ---
 
-## 📈 RESUMEN ESTADÍSTICO MATRIZ
+## DISTRIBUCIÓN POR ESCENARIOS
 
-### 🎯 **Distribución por Estado**
-- ✅ **PASA:** 6 casos (66.7%) - Funcionalidad core operativa
-- ❌ **FALLA:** 3 casos (33.3%) - Gap analysis identificado
+**ESC-01: Gestión Empleados (CRÍTICA)**
+- CP-001: PASA - Agregar empleado → BaseDeDatos.agregar_usuario()
+- CP-007: FALLA - Eliminar empleado → BaseDeDatos.eliminar_usuario() + Flask interface
 
-### 🔥 **Distribución por Prioridad**
-- **CRÍTICA:** 4 casos (44.4%) - Core business functions
-- **ALTA:** 3 casos (33.3%) - Important validations & integrations  
-- **MEDIA:** 2 casos (22.2%) - Nice-to-have features
-- **BAJA:** 0 casos (0%) - Future enhancements
+**ESC-02: Cálculos Matemáticos (CRÍTICA)**  
+- CP-002: PASA - Indemnización → calcular_indemnizacion()
+- CP-003: PASA - Vacaciones → calcular_vacaciones()
 
-### 👥 **Distribución por Responsable**
-- **QA Team:** 5 casos (55.6%) - Testing & validation focus
-- **Dev Backend:** 2 casos (22.2%) - Missing implementation gaps  
-- **QA Database:** 1 caso (11.1%) - Data integrity specialist
-- **DBA + Dev:** 1 caso (11.1%) - Cross-functional collaboration
+**ESC-03: Gestión Liquidaciones (ALTA)**
+- CP-008: PASA - Crear liquidación → BaseDeDatos.agregar_liquidacion()
 
-### 🔧 **Análisis Técnico**
-- **Tests Automatizados:** 6/9 casos con assertions robustas
-- **Cobertura BD:** 4/9 casos testing PostgreSQL directamente
-- **Validaciones:** 3/9 casos focused on error handling & security
-- **Gap Analysis:** 3/9 casos documentan funcionalidad faltante
+**ESC-04: Validaciones Seguridad (ALTA)**
+- CP-009: PASA - Entrada inválida → Validaciones ValueError en calculadora
 
----
+**ESC-05: Funciones Admin (MEDIA)**
+- CP-004: PASA - Modificar empleado → BaseDeDatos.modificar_usuario()
+- CP-006: FALLA - Claves duplicadas → SIN FUNCIÓN (infraestructura testing)
 
-## 🚀 PLAN EJECUCIÓN MATRIZ
-
-### **FASE 1: Validación Estados Actuales** ✅ COMPLETADO
-- Ejecutados 6 casos que PASAN
-- Confirmados 3 casos que FALLAN esperadamente  
-- Baseline establecido para desarrollo
-
-### **FASE 2: Resolución Gaps Críticos** 🔄 EN PROGRESO
-- **CP-004:** Implementar modificar_empleado_salario() - 16h dev
-- **CP-006:** Configurar triggers auditoría BD - 12h DBA + 8h dev
-- **Target:** 2 semanas resolución
-
-### **FASE 3: Funcionalidades Opcionales** 📋 BACKLOG
-- **CP-005:** API exportar_empleados_csv() - 20h dev
-- **Priority:** Baja, post-MVP
-- **Target:** Sprint futuro según roadmap
-
-### **FASE 4: Regresión Completa** 🎯 PLANNING
-- Re-ejecución 9 casos post-fixes
-- **Target:** 9/9 casos PASANDO (100% success rate)
-- **Timeline:** Final sprint antes producción
+**ESC-06: Validación Legal (MEDIA)**
+- CP-005: FALLA - Prima legal → calcular_prima() (sin validaciones compliance)
 
 ---
 
-*Matriz generada: 22 de Agosto de 2025*  
+## RESUMEN ESTADÍSTICO
+
+**Distribución por Estado:**
+- PASA: 6 casos (66.7%) - Funcionalidad core operativa
+- FALLA: 3 casos (33.3%) - Gap analysis identificado
+
+**Distribución por Prioridad:**
+- CRÍTICA: 4 casos (44.4%) - Core business functions
+- ALTA: 3 casos (33.3%) - Important validations & integrations  
+- MEDIA: 2 casos (22.2%) - Admin features
+
+**Tests Automatizados:** 9/9 casos con assertions implementadas
+**Cobertura BD:** 4/9 casos testing PostgreSQL directamente
+**Gap Analysis:** 3/9 casos documentan funcionalidad faltante
+
+---
+
+*Matriz generada: 25 de Agosto de 2025*  
 *Sistema Web de Liquidación Definitiva v3.0*  
-*9 Casos de Prueba | 6 Escenarios | 28+ Assertions*
+*9 Casos de Prueba | 6 Escenarios*

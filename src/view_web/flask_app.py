@@ -203,9 +203,9 @@ class Run:
                                     total_a_pagar, id_usuario)
             
             if resultado_guardado:
-                flash(f"✅ Liquidación creada exitosamente para el empleado {id_usuario}. Total a pagar: ${total_a_pagar:,.2f}", "success")
+                flash(f"OK Liquidación creada exitosamente para el empleado {id_usuario}. Total a pagar: ${total_a_pagar:,.2f}", "success")
             else:
-                flash("❌ Error al guardar la liquidación en la base de datos", "error")
+                flash("ERROR Error al guardar la liquidación en la base de datos", "error")
                 
             return redirect(url_for('index'))
         # Renderiza la plantilla para agregar liquidación

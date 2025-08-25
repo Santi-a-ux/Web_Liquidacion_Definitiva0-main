@@ -19,7 +19,7 @@ def fix_database_precision():
         )
         cursor = conn.cursor()
 
-        print('🔧 Modificando estructura de tabla liquidacion...')
+        print('MODIFICANDO Modificando estructura de tabla liquidacion...')
 
         # Modificar las columnas para aumentar la precisión de DECIMAL(10,2) a DECIMAL(15,2)
         sql_commands = [
@@ -36,16 +36,16 @@ def fix_database_precision():
             try:
                 cursor.execute(command)
                 column_name = command.split()[4]  # Extrae el nombre de la columna
-                print(f'✅ Columna {column_name} actualizada a DECIMAL(15,2)')
+                print(f'OK Columna {column_name} actualizada a DECIMAL(15,2)')
             except Exception as e:
-                print(f'⚠️  Error ejecutando {command}: {e}')
+                print(f'AVISO  Error ejecutando {command}: {e}')
 
         # Confirmar cambios
         conn.commit()
-        print('✅ Estructura de tabla actualizada correctamente')
+        print('OK Estructura de tabla actualizada correctamente')
 
         # Verificar la nueva estructura
-        print('\n📊 Verificando nueva estructura...')
+        print('\nVERIFICANDO Verificando nueva estructura...')
         cursor.execute("""
             SELECT column_name, data_type, numeric_precision, numeric_scale 
             FROM information_schema.columns 
@@ -55,12 +55,12 @@ def fix_database_precision():
         """)
         
         columns = cursor.fetchall()
-        print('\n📋 Estructura actual de la tabla liquidacion:')
+        print('\nESTRUCTURA Estructura actual de la tabla liquidacion:')
         for col in columns:
             if col[2] is not None:  # Si tiene precisión numérica
-                print(f'  📌 {col[0]}: {col[1]}({col[2]},{col[3]})')
+                print(f'  {col[0]}: {col[1]}({col[2]},{col[3]})')
             else:
-                print(f'  📌 {col[0]}: {col[1]}')
+                print(f'  {col[0]}: {col[1]}')
 
         cursor.close()
         conn.close()
@@ -68,7 +68,7 @@ def fix_database_precision():
         print('🔥 Ahora las liquidaciones pueden manejar valores hasta $999,999,999,999.99')
         
     except Exception as e:
-        print(f'❌ Error general: {e}')
+        print(f'ERROR Error general: {e}')
 
 if __name__ == "__main__":
     fix_database_precision()

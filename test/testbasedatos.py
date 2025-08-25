@@ -173,28 +173,77 @@ class FlaskTestCase(unittest.TestCase):
         print("Testokconsultar")
 
     def test_eliminar_usuario(self):
-        # Test deleting a user
+        """
+        CP-007: Test eliminar usuario que debe FALLAR por IntegrityError no manejado
+        Test que verifica integridad referencial - FALLA intencionalmente
+        """
         import random
-        user_id = 'delete_' + str(random.randint(10000, 99999))
+        user_id = random.randint(7000, 7999)
+        liq_id = random.randint(8000, 8999)
         
-        self.app.post('/agregar_usuario', data=dict(
-            nombre='John',
-            apellido='Doe',
-            documento_identidad=user_id + '_doc',
-            correo_electronico='john.doe' + user_id + '@example.com',
-            telefono='555-5555',
-            fecha_ingreso='2023-01-01',
-            fecha_salida='2023-12-31',
-            salario=50000,
-            id_usuario=user_id
-        ), follow_redirects=True)
+        # 1. Crear usuario via BD directa
+        conexion = BaseDeDatos.conectar_db()
+        cursor = conexion.cursor()
         
-        response = self.app.post('/eliminar_usuario', data=dict(
-            id_usuario=user_id
-        ), follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Usuario eliminado exitosamente', response.data)
-        print("Testokeliminarusuario")
+        try:
+            # Insertar usuario
+            cursor.execute("""INSERT INTO usuarios (
+                            id_usuario, nombre, apellido, documento_identidad,
+                            correo_electronico, telefono, fecha_ingreso, 
+                            fecha_salida, salario)
+                            VALUES (%s, 'Test', 'User', %s, 
+                            'test@test.com', '555-0000', '2023-01-01',
+                            '2023-12-31', 50000)""", 
+                            (user_id, f"doc_{user_id}"))
+            
+            # 2. Crear liquidación asociada para generar FK constraint
+            cursor.execute("""INSERT INTO liquidacion(
+                            id_liquidacion, indemnizacion, vacaciones, cesantias,
+                            intereses_sobre_cesantias, prima_servicios, retencion_fuente,
+                            total_a_pagar, id_usuario)
+                            VALUES (%s, 10000, 2000, 3000, 400, 500, 600, 14000, %s)""", 
+                            (liq_id, user_id))
+            conexion.commit()
+            
+            print(f"Usuario {user_id} y liquidación {liq_id} creados para test FK")
+            
+            # 3. INTENTAR ELIMINAR VIA INTERFACE WEB - Debe FALLAR
+            # El endpoint Flask no maneja IntegrityError correctamente
+            response = self.app.post('/eliminar_usuario', data=dict(
+                id_usuario=str(user_id)
+            ), follow_redirects=True)
+            
+            # Verificar que la interface NO manejó el error correctamente
+            if response.status_code == 200 and b'eliminado exitosamente' in response.data:
+                print("ERROR: Interface permitió eliminar usuario con liquidaciones!")
+                self.fail("Interface web no respeta FK constraints - usuario eliminado incorrectamente")
+            elif response.status_code == 500 or b'error' in response.data.lower():
+                print("PROBLEMA DETECTADO: Interface lanza error 500 o mensaje crudo")
+                print("SITUACIÓN: FK constraint funciona pero no hay manejo elegante")
+                print("IMPACTO: Usuario ve error técnico, no mensaje user-friendly")
+                print("SOLUCIÓN: Implementar try/catch en endpoint Flask /eliminar_usuario")
+                self.fail("Interface web no maneja IntegrityError elegantemente")
+            else:
+                print(f"Response inesperado: {response.status_code}")
+                print(f"Data: {response.data}")
+                self.fail(f"Comportamiento inesperado de interface: {response.status_code}")
+                
+        except Exception as error:
+            print(f"Error durante test: {error}")
+            self.fail(f"Error no controlado durante test FK: {error}")
+            
+        finally:
+            # Cleanup forzado
+            try:
+                cursor.execute("DELETE FROM liquidacion WHERE id_liquidacion = %s", (liq_id,))
+                cursor.execute("DELETE FROM usuarios WHERE id_usuario = %s", (user_id,))
+                conexion.commit()
+                conexion.close()
+                print("Cleanup realizado correctamente")
+            except Exception as cleanup_error:
+                print(f"Error en cleanup: {cleanup_error}")
+                if conexion:
+                    conexion.close()
 
     def test_eliminar_liquidacion(self):
         # Test deleting a liquidation

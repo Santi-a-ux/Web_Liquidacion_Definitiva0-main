@@ -227,10 +227,10 @@ class BaseDeDatos:
             conn.commit()
             cursor.close()
             conn.close()
-            print(f"✅ Liquidación {id_liquidacion} guardada exitosamente para empleado {id_usuario}")
+            print(f"OK Liquidación {id_liquidacion} guardada exitosamente para empleado {id_usuario}")
             return True
         except (Exception, psycopg2.Error) as error:
-            print(f"❌ Error al agregar la liquidación: {error}")
+            print(f"ERROR Error al agregar la liquidación: {error}")
             if conn:
                 conn.close()
             return False

@@ -3,7 +3,13 @@
 Script de prueba para verificar el guardado de liquidaciones
 """
 
-import sys
+import s                print(f"OK Liquidación existente: ID {liquidacion[0]}, Total: ${liquidacion[7]:,.2f}")
+            else:
+                print("AVISO No tiene liquidación - esto es lo esperado si no se ha creado")
+        
+        # Crear nueva liquidación
+        print("
+CREANDO Creando nueva liquidación para empleado 17...")s
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
@@ -11,7 +17,7 @@ from controller.controlador import BaseDeDatos
 
 def test_liquidacion_completa():
     """Prueba el ciclo completo de liquidación: crear empleado -> crear liquidación -> consultar"""
-    print("🧪 PRUEBA COMPLETA DE LIQUIDACIONES")
+    print("PRUEBA COMPLETA DE LIQUIDACIONES")
     print("=" * 50)
     
     try:
@@ -30,7 +36,7 @@ def test_liquidacion_completa():
             rol="usuario",
             password="test123"
         )
-        print("✅ Empleado 100 creado exitosamente")
+        print("Empleado 100 creado exitosamente")
         
         # 2. Crear liquidación para el empleado
         print("\n2. Creando liquidación...")
@@ -47,9 +53,9 @@ def test_liquidacion_completa():
         )
         
         if resultado:
-            print("✅ Liquidación 200 creada exitosamente")
+            print("Liquidación 200 creada exitosamente")
         else:
-            print("❌ Error al crear liquidación")
+            print("Error al crear liquidación")
             return False
         
         # 3. Consultar empleado y verificar liquidación
@@ -57,35 +63,35 @@ def test_liquidacion_completa():
         usuario, liquidacion = BaseDeDatos.consultar_usuario(100)
         
         if usuario:
-            print(f"✅ Empleado encontrado: {usuario[1]} {usuario[2]}")
+            print(f"Empleado encontrado: {usuario[1]} {usuario[2]}")
         else:
-            print("❌ Empleado no encontrado")
+            print("Empleado no encontrado")
             return False
             
         if liquidacion:
-            print(f"✅ Liquidación encontrada: ID {liquidacion[0]}, Total: ${liquidacion[7]:,.2f}")
+            print(f"Liquidación encontrada: ID {liquidacion[0]}, Total: ${liquidacion[7]:,.2f}")
             print(f"   - Indemnización: ${liquidacion[1]:,.2f}")
             print(f"   - Vacaciones: ${liquidacion[2]:,.2f}")
             print(f"   - Cesantías: ${liquidacion[3]:,.2f}")
             print(f"   - Total a pagar: ${liquidacion[7]:,.2f}")
         else:
-            print("❌ Liquidación NO encontrada - ESTE ES EL PROBLEMA")
+            print("Liquidación NO encontrada - ESTE ES EL PROBLEMA")
             return False
         
         print("\n" + "=" * 50)
-        print("🎉 PRUEBA EXITOSA: Liquidación se guarda y consulta correctamente")
+        print("PRUEBA EXITOSA: Liquidación se guarda y consulta correctamente")
         print("=" * 50)
         return True
         
     except Exception as e:
-        print(f"❌ Error en prueba: {e}")
+        print(f"Error en prueba: {e}")
         import traceback
         traceback.print_exc()
         return False
 
 def test_caso_real():
     """Simula el caso real del usuario con empleado ID 17"""
-    print("\n🔍 PRUEBA CON EMPLEADO EXISTENTE (ID 17)")
+    print("\nPRUEBA CON EMPLEADO EXISTENTE (ID 17)")
     print("=" * 50)
     
     try:
@@ -93,18 +99,18 @@ def test_caso_real():
         usuario, liquidacion = BaseDeDatos.consultar_usuario(17)
         
         if usuario:
-            print(f"✅ Empleado 17 encontrado: {usuario[1]} {usuario[2]}")
+            print(f"Empleado 17 encontrado: {usuario[1]} {usuario[2]}")
             print(f"   - Salario: ${usuario[8]:,.2f}")
             print(f"   - Fecha ingreso: {usuario[6]}")
             print(f"   - Fecha salida: {usuario[7]}")
             
             if liquidacion:
-                print(f"✅ Liquidación existente: ID {liquidacion[0]}, Total: ${liquidacion[7]:,.2f}")
+                print(f"OK Liquidación existente: ID {liquidacion[0]}, Total: ${liquidacion[7]:,.2f}")
             else:
-                print("⚠️  No tiene liquidación - esto es lo esperado si no se ha creado")
+                print("AVISO  No tiene liquidación - esto es lo esperado si no se ha creado")
                 
                 # Crear liquidación para empleado 17
-                print("\n📝 Creando nueva liquidación para empleado 17...")
+                print("\nNOTA Creando nueva liquidación para empleado 17...")
                 resultado = BaseDeDatos.agregar_liquidacion(
                     id_liquidacion=300,
                     indemnizacion=400000,
@@ -118,23 +124,23 @@ def test_caso_real():
                 )
                 
                 if resultado:
-                    print("✅ Nueva liquidación creada para empleado 17")
+                    print("OK Nueva liquidación creada para empleado 17")
                     
                     # Verificar que se guardó
                     usuario, liquidacion = BaseDeDatos.consultar_usuario(17)
                     if liquidacion:
-                        print(f"✅ CONFIRMADO: Liquidación guardada correctamente")
+                        print(f"OK CONFIRMADO: Liquidación guardada correctamente")
                         print(f"   - ID Liquidación: {liquidacion[0]}")
                         print(f"   - Total a pagar: ${liquidacion[7]:,.2f}")
                     else:
-                        print("❌ ERROR: Liquidación no se guardó correctamente")
+                        print("ERROR ERROR: Liquidación no se guardó correctamente")
                 else:
-                    print("❌ Error al crear liquidación")
+                    print("ERROR Error al crear liquidación")
         else:
-            print("❌ Empleado 17 no encontrado")
+            print("ERROR Empleado 17 no encontrado")
             
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"ERROR Error: {e}")
 
 if __name__ == "__main__":
     # Ejecutar ambas pruebas
