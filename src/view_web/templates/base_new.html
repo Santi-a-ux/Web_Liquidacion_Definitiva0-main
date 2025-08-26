@@ -16,6 +16,7 @@
         <div class="container">
             <div>
                 <h1>
+                    <i class="fas fa-briefcase"></i>
                     Sistema de Liquidación Definitiva
                 </h1>
                 <p>Plataforma Corporativa de Gestión de Recursos Humanos</p>
@@ -24,21 +25,24 @@
                 {% if session.get('user_id') %}
                 <div style="color: white; text-align: right;">
                     <div style="font-size: 0.95rem; font-weight: 500;">
+                        <i class="fas fa-user-circle"></i> 
                         {{ session.get('nombre') }} {{ session.get('apellido') }}
                     </div>
                     <div style="font-size: 0.85rem; color: #cbd5e1;">
                         {% if session.get('rol') == 'administrador' %}
-                            Administrador de Sistema
+                            <i class="fas fa-shield-alt" style="color: #fbbf24;"></i> Administrador de Sistema
                         {% else %}
-                            Asistente de Recursos Humanos
+                            <i class="fas fa-user-graduate"></i> Asistente de Recursos Humanos
                         {% endif %}
                     </div>
                 </div>
                 <a href="{{ url_for('logout') }}" class="btn btn-outline" style="padding: 0.6rem 1.2rem;">
+                    <i class="fas fa-power-off"></i>
                     Cerrar Sesión
                 </a>
                 {% endif %}
                 <a href="{{ url_for('index') }}" class="btn btn-outline">
+                    <i class="fas fa-home"></i>
                     Inicio
                 </a>
             </div>
@@ -53,11 +57,11 @@
             <div class="alert alert-{{ category }}" style="
                 padding: 1rem 1.5rem; 
                 margin-bottom: 1.5rem; 
-                border-radius: 4px; 
+                border-radius: 12px; 
                 display: flex; 
                 align-items: center; 
-                gap: 0.5rem;
-                font-weight: 400;
+                gap: 1rem;
+                font-weight: 500;
                 {% if category == 'success' %}
                     background: rgba(5, 150, 105, 0.1);
                     border: 1px solid rgba(5, 150, 105, 0.3);
@@ -72,6 +76,7 @@
                     color: #d97706;
                 {% endif %}
             ">
+                <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% else %}info-circle{% endif %}" style="font-size: 1.2rem;"></i>
                 <span>{{ message }}</span>
             </div>
             {% endfor %}
@@ -95,7 +100,8 @@
     ">
         <div class="container">
             <p>
-                2025 Sistema de Liquidación Definitiva - Plataforma Corporativa de RRHH
+                <i class="fas fa-copyright"></i>
+                {{ "now"|strftime("%Y") }} Sistema de Liquidación Definitiva - Plataforma Corporativa de RRHH
             </p>
         </div>
     </footer>

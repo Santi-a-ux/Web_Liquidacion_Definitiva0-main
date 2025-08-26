@@ -1,0 +1,443 @@
+/* SISTEMA DE LIQUIDACIÓN DEFINITIVA - DISEÑO CORPORATIVO */
+
+:root {
+    /* Paleta de colores corporativa */
+    --primary-navy: #1e3a8a;
+    --secondary-navy: #1e40af;
+    --accent-blue: #3b82f6;
+    --light-blue: #dbeafe;
+    --dark-gray: #1f2937;
+    --medium-gray: #374151;
+    --light-gray: #9ca3af;
+    --white: #ffffff;
+    --off-white: #f8fafc;
+    --border-gray: #e5e7eb;
+    --success-green: #059669;
+    --warning-orange: #d97706;
+    --error-red: #dc2626;
+    --text-dark: #111827;
+    --text-medium: #4b5563;
+    --text-light: #6b7280;
+}
+
+/* Reset y base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Times New Roman', 'Georgia', serif;
+    line-height: 1.7;
+    color: var(--text-dark);
+    background: var(--off-white);
+    min-height: 100vh;
+    font-weight: 400;
+}
+
+/* Header corporativo */
+.main-header {
+    background: linear-gradient(135deg, var(--primary-navy) 0%, var(--secondary-navy) 100%);
+    color: var(--white);
+    padding: 1.5rem 0;
+    box-shadow: 0 4px 20px rgba(30, 58, 138, 0.15);
+    border-bottom: 3px solid var(--accent-blue);
+}
+
+.main-header .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    font-family: 'Times New Roman', serif;
+    letter-spacing: 0.5px;
+}
+
+.main-header h1 i {
+    display: none; /* Eliminar icono */
+}
+
+.main-header p {
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    font-weight: 300;
+    font-family: 'Times New Roman', serif;
+    font-style: italic;
+}
+
+/* Container principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Cards corporativas */
+.card {
+    background: var(--white);
+    border: 1px solid var(--border-gray);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); /* Eliminar efectos hover */
+    transform: none;
+}
+
+.card-header {
+    border-bottom: 2px solid var(--light-blue);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.card-header h2 {
+    color: var(--primary-navy);
+    font-size: 1.4rem;
+    font-weight: 600;
+    font-family: 'Times New Roman', serif;
+    letter-spacing: 0.3px;
+}
+
+.card-header h2 i {
+    display: none; /* Eliminar iconos de headers */
+}
+
+/* Grid de funciones */
+.functions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.function-card {
+    background: var(--white);
+    border: 2px solid var(--border-gray);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.function-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-navy) 0%, var(--accent-blue) 100%);
+}
+
+.function-card:hover {
+    border-color: var(--border-gray); /* Hover sutil */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transform: none;
+}
+
+.function-card i {
+    font-size: 2rem;
+    color: var(--primary-navy);
+    margin-bottom: 1rem;
+    display: none; /* Eliminar iconos de las cards */
+}
+
+.function-card h3 {
+    color: var(--text-dark);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    font-family: 'Times New Roman', serif;
+    letter-spacing: 0.3px;
+}
+
+.function-card p {
+    color: var(--text-medium);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-family: 'Times New Roman', serif;
+}
+
+/* Botones corporativos minimalistas */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    letter-spacing: 0.5px;
+    font-family: 'Times New Roman', serif;
+}
+
+.btn i {
+    font-size: 0.8rem; /* Iconos más pequeños en botones */
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-navy) 0%, var(--secondary-navy) 100%);
+    color: var(--white);
+    box-shadow: 0 4px 16px rgba(30, 58, 138, 0.25);
+}
+
+.btn-primary:hover {
+    transform: none; /* Eliminar efectos hover exagerados */
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+}
+
+.btn-secondary {
+    background: var(--white);
+    color: var(--primary-navy);
+    border: 2px solid var(--primary-navy);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-navy);
+    color: var(--white);
+    transform: none; /* Eliminar efectos hover exagerados */
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--white);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--white);
+}
+
+/* Formularios profesionales */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    color: var(--text-dark);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-family: 'Times New Roman', serif;
+    letter-spacing: 0.3px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--border-gray);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background: var(--white);
+    transition: border-color 0.2s ease;
+    font-family: 'Times New Roman', serif;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Tablas corporativas */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.table th {
+    background: var(--primary-navy);
+    color: var(--white);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-gray);
+    color: var(--text-dark);
+}
+
+.table tbody tr:hover {
+    background: var(--off-white);
+}
+
+/* Alertas corporativas */
+.alert-success {
+    background: rgba(5, 150, 105, 0.1);
+    border: 1px solid rgba(5, 150, 105, 0.3);
+    color: var(--success-green);
+}
+
+.alert-error {
+    background: rgba(220, 38, 38, 0.1);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    color: var(--error-red);
+}
+
+.alert-warning {
+    background: rgba(217, 119, 6, 0.1);
+    border: 1px solid rgba(217, 119, 6, 0.3);
+    color: var(--warning-orange);
+}
+
+/* Login corporativo */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-navy) 0%, var(--secondary-navy) 100%);
+    padding: 2rem;
+}
+
+.login-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 3rem;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.login-header h1 {
+    color: var(--primary-navy);
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    font-family: 'Times New Roman', serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.login-header p {
+    color: var(--text-medium);
+    font-size: 0.95rem;
+    font-family: 'Times New Roman', serif;
+    font-style: italic;
+}
+
+.default-users {
+    background: var(--off-white);
+    border: 2px solid var(--light-blue);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.default-users h3 {
+    color: var(--primary-navy);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Times New Roman', serif;
+    letter-spacing: 0.3px;
+}
+
+.user-demo {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    background: var(--white);
+    border-radius: 8px;
+    border: 1px solid var(--border-gray);
+    font-size: 0.9rem;
+}
+
+.user-demo:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-header .container {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .functions-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .container {
+        padding: 1rem;
+    }
+    
+    .function-card {
+        padding: 1.5rem;
+    }
+}
+
+/* Animaciones sutiles */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card, .function-card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Estados de loading */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Utilidades */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Liquidación{% endblock %}</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Header estilo GolfSpace -->
+    <header class="main-header">
+        <div class="container">
+            <div>
+                <h1>
+                    <i class="fas fa-calculator"></i>
+                    Sistema de Liquidación
+                </h1>
+                <p>Gestión profesional de liquidaciones laborales</p>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                {% if session.get('user_id') %}
+                <div style="color: var(--text-white); text-align: right;">
+                    <div style="font-size: 0.9rem;">
+                        <i class="fas fa-user"></i> {{ session.get('nombre') }} {{ session.get('apellido') }}
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">
+                        {% if session.get('rol') == 'administrador' %}
+                            <i class="fas fa-crown" style="color: #ffd700;"></i> Administrador (RRHH)
+                        {% else %}
+                            <i class="fas fa-user-tie"></i> Asistente Administrativo
+                        {% endif %}
+                    </div>
+                </div>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline" style="padding: 0.5rem 1rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Cerrar Sesión
+                </a>
+                {% endif %}
+                <a href="{{ url_for('index') }}" class="btn btn-outline">
+                    <i class="fas fa-home"></i>
+                    Inicio
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mensajes flash estilo GolfSpace -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="container" style="padding-top: 1rem;">
+            {% for category, message in messages %}
+            <div class="alert-{{ category }}" style="background-color: {{ '#84cc16' if category == 'success' else '#ef4444' }}20; border: 1px solid {{ '#84cc16' if category == 'success' else '#ef4444' }}40; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; color: var(--text-white); display: flex; align-items: center; gap: 0.75rem;">
+                <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }}" style="color: {{ '#84cc16' if category == 'success' else '#ef4444' }};"></i>
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Contenido principal -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer eliminado para diseño limpio -->
+</body>
+</html>

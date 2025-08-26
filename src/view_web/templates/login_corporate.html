@@ -48,6 +48,7 @@
             <!-- Header Corporativo -->
             <div class="login-header">
                 <h1>
+                    <i class="fas fa-building"></i>
                     Sistema de Liquidación Definitiva
                 </h1>
                 <p>Plataforma Corporativa de Recursos Humanos</p>
@@ -56,6 +57,7 @@
             <!-- Información de Acceso -->
             <div class="default-users">
                 <h3>
+                    <i class="fas fa-id-badge"></i>
                     Credenciales de Acceso
                 </h3>
                 <div class="user-demo">
@@ -84,6 +86,7 @@
             <form method="POST" action="{{ url_for('login') }}">
                 <div class="form-group">
                     <label for="id_usuario" class="form-label">
+                        <i class="fas fa-id-card"></i>
                         Identificación de Usuario
                     </label>
                     <input type="number" class="form-control" id="id_usuario" name="id_usuario" 
@@ -95,6 +98,7 @@
 
                 <div class="form-group">
                     <label for="password" class="form-label">
+                        <i class="fas fa-key"></i>
                         Contraseña de Acceso
                     </label>
                     <input type="password" class="form-control" id="password" name="password" 
@@ -107,10 +111,11 @@
                     <button type="submit" class="btn btn-primary" style="
                         width: 100%; 
                         padding: 1rem 2rem; 
-                        font-size: 1rem; 
-                        font-weight: 500;
+                        font-size: 1.1rem; 
+                        font-weight: 600;
                         margin-top: 1rem;
                     ">
+                        <i class="fas fa-sign-in-alt"></i>
                         Acceder al Sistema
                     </button>
                 </div>
@@ -124,10 +129,11 @@
                 border-top: 1px solid var(--border-gray);
                 color: var(--text-medium);
             ">
-                <p style="margin-bottom: 0.5rem; font-size: 0.9rem;">
+                <p style="margin-bottom: 0.5rem; font-size: 0.95rem;">
+                    <i class="fas fa-shield-alt"></i>
                     Sistema Seguro de Gestión de Liquidaciones
                 </p>
-                <p style="margin: 0; font-size: 0.8rem; color: var(--text-light);">
+                <p style="margin: 0; font-size: 0.85rem; color: var(--text-light);">
                     Acceso autorizado únicamente para personal de Recursos Humanos
                 </p>
             </div>

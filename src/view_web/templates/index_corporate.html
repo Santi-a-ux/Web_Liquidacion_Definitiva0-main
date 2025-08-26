@@ -12,10 +12,11 @@
     margin-bottom: 3rem;
 ">
     <div class="container">
-        <h1 style="font-size: 2.2rem; font-weight: 600; margin-bottom: 1rem; font-family: 'Times New Roman', serif;">
+        <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem;">
+            <i class="fas fa-building"></i>
             Centro de Control Corporativo
         </h1>
-        <p style="font-size: 1.1rem; color: #cbd5e1; font-weight: 300; font-family: 'Times New Roman', serif;">
+        <p style="font-size: 1.2rem; color: #cbd5e1; font-weight: 300;">
             Plataforma Integral de Gestión de Liquidaciones Laborales
         </p>
     </div>
@@ -27,6 +28,7 @@
     <div class="card" style="margin-bottom: 3rem; background: linear-gradient(135deg, var(--white) 0%, var(--off-white) 100%);">
         <div class="card-header">
             <h2>
+                <i class="fas fa-user-circle"></i>
                 Panel de Usuario
             </h2>
         </div>
@@ -39,11 +41,11 @@
                 <strong>Nivel de Acceso:</strong><br>
                 {% if session.get('rol') == 'administrador' %}
                     <span style="color: var(--primary-navy); font-weight: 600;">
-                        Administrador de Sistema
+                        <i class="fas fa-shield-alt"></i> Administrador de Sistema
                     </span>
                 {% else %}
                     <span style="color: var(--accent-blue); font-weight: 600;">
-                        Asistente de Recursos Humanos
+                        <i class="fas fa-user-graduate"></i> Asistente de Recursos Humanos
                     </span>
                 {% endif %}
             </div>
@@ -55,6 +57,7 @@
     <div class="card">
         <div class="card-header">
             <h2>
+                <i class="fas fa-cogs"></i>
                 Funciones del Sistema
             </h2>
         </div>
@@ -62,57 +65,62 @@
         <div class="functions-grid">
             <!-- Gestión de Empleados -->
             <div class="function-card">
+                <i class="fas fa-users"></i>
                 <h3>Gestión de Empleados</h3>
                 <p>Administre el registro completo de empleados con datos personales y laborales actualizados</p>
                 <div style="display: flex; gap: 0.75rem; justify-content: center;">
                     <a href="{{ url_for('agregar_usuario') }}" class="btn btn-primary">
-                        Agregar
+                        <i class="fas fa-user-plus"></i> Agregar
                     </a>
                     <a href="{{ url_for('consultar_usuario') }}" class="btn btn-secondary">
-                        Consultar
+                        <i class="fas fa-search"></i> Consultar
                     </a>
                 </div>
             </div>
 
             <!-- Modificación de Datos -->
             <div class="function-card">
+                <i class="fas fa-user-edit"></i>
                 <h3>Modificación de Datos</h3>
                 <p>Actualice información personal, salarial y contractual de los empleados registrados</p>
                 <a href="{{ url_for('modificar_usuario') }}" class="btn btn-primary">
-                    Modificar Empleado
+                    <i class="fas fa-edit"></i> Modificar Empleado
                 </a>
             </div>
 
             <!-- Procesamiento de Liquidaciones -->
             <div class="function-card" style="border: 2px solid var(--accent-blue); background: linear-gradient(135deg, var(--white) 0%, var(--light-blue) 20%);">
+                <i class="fas fa-calculator" style="color: var(--primary-navy);"></i>
                 <h3 style="color: var(--primary-navy);">Cálculo de Liquidaciones</h3>
                 <p>Procese liquidaciones definitivas con cálculos automatizados conforme a la legislación laboral</p>
                 <a href="{{ url_for('agregar_liquidacion') }}" class="btn btn-primary" style="font-size: 1rem; padding: 0.875rem 1.75rem;">
-                    Procesar Liquidación
+                    <i class="fas fa-calculator"></i> Procesar Liquidación
                 </a>
             </div>
 
             <!-- Funciones Administrativas (Solo Administrador) -->
             {% if session.get('rol') == 'administrador' %}
             <div class="function-card" style="border: 2px solid var(--warning-orange);">
+                <i class="fas fa-shield-alt" style="color: var(--warning-orange);"></i>
                 <h3>Funciones Administrativas</h3>
                 <p>Acceso completo a funciones de eliminación y gestión avanzada del sistema</p>
                 <div style="display: flex; gap: 0.75rem; justify-content: center;">
                     <a href="{{ url_for('eliminar_usuario') }}" class="btn btn-secondary">
-                        Eliminar Usuario
+                        <i class="fas fa-user-minus"></i> Eliminar
                     </a>
                     <a href="{{ url_for('eliminar_liquidacion') }}" class="btn btn-secondary">
-                        Remover Liquidación
+                        <i class="fas fa-file-excel"></i> Remover
                     </a>
                 </div>
             </div>
 
             <!-- Panel de Control Avanzado -->
             <div class="function-card" style="background: linear-gradient(135deg, var(--primary-navy) 0%, var(--secondary-navy) 100%); color: white;">
+                <i class="fas fa-tachometer-alt" style="color: white;"></i>
                 <h3 style="color: white;">Panel de Control</h3>
                 <p style="color: #cbd5e1;">Estadísticas del sistema, reportes y herramientas de administración avanzada</p>
                 <a href="{{ url_for('admin_panel') }}" class="btn" style="background: white; color: var(--primary-navy); border: none;">
-                    Administrar Sistema
+                    <i class="fas fa-chart-line"></i> Administrar Sistema
                 </a>
             </div>
             {% endif %}
@@ -123,29 +131,33 @@
     <div class="card">
         <div class="card-header">
             <h2>
+                <i class="fas fa-server"></i>
                 Estado del Sistema
             </h2>
         </div>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; text-align: center;">
-            <div style="padding: 2rem; background: var(--off-white); border-radius: 8px;">
-                <div style="font-size: 2rem; font-weight: 600; color: var(--success-green); margin-bottom: 0.5rem;">
-                    Sistema Operativo
+            <div style="padding: 2rem; background: var(--off-white); border-radius: 12px;">
+                <div style="font-size: 2.5rem; font-weight: 700; color: var(--success-green); margin-bottom: 0.5rem;">
+                    <i class="fas fa-check-circle"></i>
                 </div>
+                <div style="font-size: 1.1rem; font-weight: 600; color: var(--text-dark);">Sistema Operativo</div>
                 <div style="font-size: 0.9rem; color: var(--text-medium);">100% Disponibilidad</div>
             </div>
             
-            <div style="padding: 2rem; background: var(--off-white); border-radius: 8px;">
-                <div style="font-size: 2rem; font-weight: 600; color: var(--accent-blue); margin-bottom: 0.5rem;">
-                    Base de Datos
+            <div style="padding: 2rem; background: var(--off-white); border-radius: 12px;">
+                <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-blue); margin-bottom: 0.5rem;">
+                    <i class="fas fa-database"></i>
                 </div>
+                <div style="font-size: 1.1rem; font-weight: 600; color: var(--text-dark);">Base de Datos</div>
                 <div style="font-size: 0.9rem; color: var(--text-medium);">Conexión Estable</div>
             </div>
             
-            <div style="padding: 2rem; background: var(--off-white); border-radius: 8px;">
-                <div style="font-size: 2rem; font-weight: 600; color: var(--primary-navy); margin-bottom: 0.5rem;">
-                    Empleados Activos
+            <div style="padding: 2rem; background: var(--off-white); border-radius: 12px;">
+                <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">
+                    <i class="fas fa-users"></i>
                 </div>
+                <div style="font-size: 1.1rem; font-weight: 600; color: var(--text-dark);">Empleados Activos</div>
                 <div style="font-size: 0.9rem; color: var(--text-medium);">Sistema Actualizado</div>
             </div>
         </div>

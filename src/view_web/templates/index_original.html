@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+
+<!-- DEBUG: Si ves este texto, index.html se está renderizando -->
+<div style="background:#f00;color:#fff;padding:1rem;text-align:center;">DEBUG: index.html se está renderizando</div>
+
+{% block title %}Centro de Control - Sistema de Liquidación{% endblock %}
+
+{% block content %}
+<!-- Hero Section futurista -->
+<div class="page-header">
+    <div class="page-header-content" style="text-align: center; flex-direction: column;">
+        <div>
+            <h1 class="page-title">Centro de Control</h1>
+            <p class="page-subtitle">Sistema avanzado de gestión de liquidaciones laborales</p>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Grid de navegación futurista -->
+    <div class="nav-grid">
+        <!-- Agregar Empleado -->
+        <div class="nav-card">
+            <div class="nav-card-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="nav-card-content">
+                <h3>Agregar Empleado</h3>
+                <p>Registrar nuevos empleados en el sistema con datos completos</p>
+                <a href="{{ url_for('agregar_usuario') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Nuevo Empleado
+                </a>
+            </div>
+        </div>
+
+        <!-- Consultar Empleado -->
+        <div class="nav-card">
+            <div class="nav-card-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="nav-card-content">
+                <h3>Consultar Empleado</h3>
+                <p>Buscar y visualizar información detallada de empleados</p>
+                <a href="{{ url_for('consultar_usuario') }}" class="btn btn-secondary">
+                    <i class="fas fa-search"></i>
+                    Consultar
+                </a>
+            </div>
+        </div>
+
+        <!-- Modificar Empleado -->
+        <div class="nav-card">
+            <div class="nav-card-icon">
+                <i class="fas fa-user-edit"></i>
+            </div>
+            <div class="nav-card-content">
+                <h3>Modificar Empleado</h3>
+                <p>Actualizar información personal y laboral de empleados</p>
+                <a href="{{ url_for('modificar_usuario') }}" class="btn btn-info">
+                    <i class="fas fa-edit"></i>
+                    Modificar
+                </a>
+            </div>
+        </div>
+
+        <!-- Crear Liquidación -->
+        <div class="nav-card featured">
+            <div class="nav-card-icon">
+                <i class="fas fa-calculator"></i>
+            </div>
+            <div class="nav-card-content">
+                <h3>Crear Liquidación</h3>
+                <p>Calcular liquidaciones precisas con todos los componentes legales</p>
+                <a href="{{ url_for('agregar_liquidacion') }}" class="btn btn-primary">
+                    <i class="fas fa-calculator"></i>
+                    Calcular Ahora
+                </a>
+            </div>
+        </div>
+
+        <!-- Eliminar Empleado -->
+        {% if session.get('rol') == 'administrador' %}
+        <div class="nav-card">
+            <div class="nav-card-icon warning">
+                <i class="fas fa-user-minus"></i>
+            </div>
+            <div class="nav-card-content">
+                <h3>Eliminar Empleado</h3>
+                <p>Remover empleados del sistema de forma segura</p>
+                <a href="{{ url_for('eliminar_usuario') }}" class="btn btn-outline">
+                    <i class="fas fa-trash"></i>
+                    Eliminar
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Eliminar Liquidación -->
+        {% if session.get('rol') == 'administrador' %}
+        <div class="nav-card">
+            <div class="nav-card-icon warning">
+                <i class="fas fa-file-excel"></i>
+            </div>
+            <div class="nav-card-content">
+                <h3>Eliminar Liquidación</h3>
+                <p>Remover liquidaciones existentes del historial</p>
+                <a href="{{ url_for('eliminar_liquidacion') }}" class="btn btn-outline">
+                    <i class="fas fa-times"></i>
+                    Remover
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Panel de Administración -->
+        {% if session.get('rol') == 'administrador' %}
+        <div class="nav-card admin-card">
+            <div class="nav-card-icon admin">
+                <i class="fas fa-tachometer-alt"></i>
+            </div>
+            <div class="nav-card-content">
+                <h3>Panel de Administración</h3>
+                <p>Estadísticas avanzadas y gestión completa del sistema</p>
+                <a href="{{ url_for('admin_panel') }}" class="btn btn-primary">
+                    <i class="fas fa-chart-bar"></i>
+                    Administrar
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <h3 class="stats-title">Sistema en Línea</h3>
+        <div class="stats-grid">
+            <div class="stats-card">
+                <div class="stats-number">{{ "7" }}</div>
+                <div class="stats-label">Empleados Activos</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-number">100%</div>
+                <div class="stats-label">Disponibilidad</div>
+            </div>
+            <div class="stats-card neon-pulse">
+                <div class="stats-number">Online</div>
+                <div class="stats-label">Estado del Sistema</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Grid de navegación futurista */
+.nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.nav-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-blue);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(0, 212, 255, 0.1);
+}
+
+.nav-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-neon);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.nav-card:hover::before {
+    opacity: 1;
+}
+
+.nav-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--neon-blue);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(0, 212, 255, 0.3),
+        inset 0 1px 0 rgba(0, 212, 255, 0.2);
+}
+
+.nav-card.featured {
+    border: 2px solid var(--neon-blue);
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(0, 212, 255, 0.05) 100%);
+}
+
+.nav-card.featured::before {
+    opacity: 1;
+    height: 3px;
+    background: var(--gradient-neon);
+    box-shadow: var(--shadow-neon);
+}
+
+.nav-card.admin-card {
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(0, 255, 255, 0.05) 100%);
+    border-color: var(--neon-cyan);
+}
+
+.nav-card-icon {
+    width: 4rem;
+    height: 4rem;
+    background: var(--gradient-neon);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: var(--bg-black);
+    box-shadow: 
+        0 8px 25px rgba(0, 212, 255, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.nav-card-icon.warning {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+    box-shadow: 
+        0 8px 25px rgba(255, 107, 107, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.nav-card-icon.admin {
+    background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 100%);
+    box-shadow: 
+        0 8px 25px rgba(0, 255, 255, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.nav-card:hover .nav-card-icon {
+    transform: rotateY(180deg) scale(1.1);
+    box-shadow: 
+        0 12px 35px rgba(0, 212, 255, 0.6),
+        inset 0 2px 0 rgba(255, 255, 255, 0.4);
+}
+
+.nav-card-content h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-white);
+    margin-bottom: 0.75rem;
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+}
+
+.nav-card-content p {
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+/* Stats section */
+.stats-section {
+    margin-top: 4rem;
+    text-align: center;
+}
+
+.stats-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-white);
+    margin-bottom: 2rem;
+    text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nav-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .nav-card {
+        padding: 1.5rem;
+    }
+    
+    .nav-card-icon {
+        width: 3rem;
+        height: 3rem;
+        font-size: 1.4rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+</style>
+{% endblock %}
