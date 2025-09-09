@@ -1,10 +1,4 @@
 # Calculadora de L4. **Panel de Administración:** Dashboard principal con navegación a todas las funcionalidades administrativas
-5. **Generar Reportes:** Módulo dedicado de análisis avanzado con:
-   - Distribución de salarios por rangos
-   - Ranking de empleados
-   - Análisis de componentes de liquidación
-   - Resumen ejecutivo
-   - Exportación de datos en formato CSVquidación de Empleados
 
 ¿Te ha tocado calcular liquidaciones laborales y terminas con dolor de cabeza entre tantos números y fechas? Esta aplicación nace de esa necesidad real que tienen las empresas, contadores y departamentos de recursos humanos de hacer estos cálculos de manera rápida, precisa y sin errores.
 
