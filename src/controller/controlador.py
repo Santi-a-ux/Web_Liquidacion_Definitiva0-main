@@ -6,7 +6,7 @@ import SecretConfig
 import json
 from datetime import datetime
 class BaseDeDatos:
-    def conectar_db():
+    def conectar_db(self):
         try:
             conn = psycopg2.connect(
                 host=SecretConfig.PGHOST,
@@ -20,7 +20,7 @@ class BaseDeDatos:
             print("Error al conectar a la base de datos:", error)
             return None 
 
-    def crear_tabla():
+    def crear_tabla(self):
         try:
             conn = psycopg2.connect(
                 host=SecretConfig.PGHOST,
