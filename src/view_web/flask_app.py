@@ -50,7 +50,8 @@ class Run:
             password = request.form['password']
             
             # Autenticar usuario
-            resultado = BaseDeDatos.autenticar_usuario(id_usuario, password)
+            bd = BaseDeDatos()
+            resultado = bd.autenticar_usuario(id_usuario, password)
             
             if resultado['autenticado']:
                 session['user_id'] = resultado['id']
@@ -132,7 +133,8 @@ class Run:
             try:
                 # Intenta agregar el empleado a la base de datos
                 print(f"DEBUG: Intentando agregar empleado ID: {id_usuario}, Nombre: {nombre}")
-                BaseDeDatos.agregar_usuario(nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, id_usuario, usuario_sistema=session.get('user_id'))
+                bd = BaseDeDatos()
+                bd.agregar_usuario(nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, id_usuario, usuario_sistema=session.get('user_id'))
                 flash("Empleado agregado exitosamente", "success")
                 print(f"DEBUG: Empleado {id_usuario} agregado exitosamente")
                 return redirect(url_for('index'))
@@ -162,7 +164,8 @@ class Run:
 
             # Obtener TODA la información del empleado desde la base de datos
             try:
-                empleado_data = BaseDeDatos.consultar_usuario(id_usuario)
+                bd = BaseDeDatos()
+                empleado_data = bd.consultar_usuario(id_usuario)
                 if not empleado_data[0]:  # Si no existe el empleado
                     flash(f"No se encontró un empleado con ID: {id_usuario}", "error")
                     return render_template('agregar_liquidacion.html')
@@ -198,7 +201,7 @@ class Run:
                             intereses_sobre_cesantias + prima_servicios - retencion_fuente)
             
             # Agrega la liquidación a la base de datos
-            resultado_guardado = BaseDeDatos.agregar_liquidacion(id_liquidacion, indemnizacion, valor_vacaciones, cesantias, 
+            resultado_guardado = bd.agregar_liquidacion(id_liquidacion, indemnizacion, valor_vacaciones, cesantias, 
                                     intereses_sobre_cesantias, prima_servicios, retencion_fuente, 
                                     total_a_pagar, id_usuario)
             
@@ -224,7 +227,8 @@ class Run:
             id_usuario = int(request.form['id_usuario'])  # Convertir a entero
             print(f"DEBUG: Consultando usuario con ID: {id_usuario}")
             # Consulta el usuario y su liquidación en la base de datos
-            usuario, Liquidacion = BaseDeDatos.consultar_usuario(id_usuario)
+            bd = BaseDeDatos()
+            usuario, Liquidacion = bd.consultar_usuario(id_usuario)
             print(f"DEBUG: Resultado consulta - Usuario: {usuario}, Liquidacion: {Liquidacion}")
             if usuario:
                 # Si el usuario existe, renderiza la plantilla con los datos del usuario y la liquidación
@@ -254,7 +258,8 @@ class Run:
             # Obtiene el ID del usuario del formulario
             id_usuario = request.form['id_usuario']
             # Elimina el usuario de la base de datos
-            resultado = BaseDeDatos.eliminar_usuario(id_usuario, usuario_sistema=session.get('user_id'))
+            bd = BaseDeDatos()
+            resultado = bd.eliminar_usuario(id_usuario, usuario_sistema=session.get('user_id'))
             
             if resultado:
                 flash("Empleado eliminado exitosamente", "success")
@@ -281,7 +286,8 @@ class Run:
             # Obtiene el ID de la liquidación del formulario
             id_liquidacion = request.form['id_liquidacion']
             # Elimina la liquidación de la base de datos
-            resultado = BaseDeDatos.eliminar_liquidacion(id_liquidacion)
+            bd = BaseDeDatos()
+            resultado = bd.eliminar_liquidacion(id_liquidacion)
             
             if resultado:
                 flash("Liquidación eliminada exitosamente", "success")
@@ -312,9 +318,10 @@ class Run:
             
         """Panel de administración para ver todos los datos"""
         try:
-            usuarios = BaseDeDatos.obtener_todos_usuarios()
-            liquidaciones = BaseDeDatos.obtener_todas_liquidaciones()
-            stats = BaseDeDatos.obtener_estadisticas()
+            bd = BaseDeDatos()
+            usuarios = bd.obtener_todos_usuarios()
+            liquidaciones = bd.obtener_todas_liquidaciones()
+            stats = bd.obtener_estadisticas()
             return render_template('admin_panel.html', 
                                  usuarios=usuarios, 
                                  liquidaciones=liquidaciones,
@@ -323,21 +330,17 @@ class Run:
             flash(f"Error al cargar el panel de administración: {str(e)}", "error")
             return redirect(url_for('index'))
 
-
-
-
     @app.route('/admin/usuarios')
     @staticmethod
     def admin_usuarios():
         """Ver solo la lista de usuarios"""
         try:
-            usuarios = BaseDeDatos.obtener_todos_usuarios()
+            bd = BaseDeDatos()
+            usuarios = bd.obtener_todos_usuarios()
             return render_template('admin_usuarios.html', usuarios=usuarios)
         except Exception as e:
             flash(f"Error al cargar usuarios: {str(e)}", "error")
             return redirect(url_for('admin_panel'))
-
-
 
     @app.route('/simple')
     @staticmethod
@@ -368,7 +371,8 @@ class Run:
             
             if id_usuario:
                 # Buscar datos del usuario para prellenar el formulario
-                usuario, _ = BaseDeDatos.consultar_usuario(id_usuario)
+                bd = BaseDeDatos()
+                usuario, _ = bd.consultar_usuario(id_usuario)
                 if usuario:
                     usuario_data = {
                         'id': usuario[0],
@@ -400,7 +404,8 @@ class Run:
                 salario = float(request.form['salario'])
                 
                 # Llamar función de modificación
-                exito, mensaje = BaseDeDatos.modificar_usuario(
+                bd = BaseDeDatos()
+                exito, mensaje = bd.modificar_usuario(
                     id_usuario, nombre, apellido, documento, correo, 
                     telefono, fecha_ingreso, fecha_salida, salario, usuario_sistema=session.get('user_id')
                 )
@@ -464,13 +469,14 @@ class Run:
             from datetime import datetime
             
             # Obtener estadísticas generales
-            stats = BaseDeDatos.obtener_estadisticas()
+            bd = BaseDeDatos()
+            stats = bd.obtener_estadisticas()
             
             # Obtener todos los empleados para análisis
-            empleados = BaseDeDatos.obtener_todos_usuarios()
+            empleados = bd.obtener_todos_usuarios()
             
             # Obtener todas las liquidaciones para análisis
-            liquidaciones = BaseDeDatos.obtener_todas_liquidaciones()
+            liquidaciones = bd.obtener_todas_liquidaciones()
             
             # Análisis por mes (últimos 6 meses)
             empleados_por_mes = {}
@@ -555,8 +561,9 @@ class Run:
             writer = csv.writer(output)
             
             # Obtener datos
-            empleados = BaseDeDatos.obtener_todos_usuarios()
-            liquidaciones = BaseDeDatos.obtener_todas_liquidaciones()
+            bd = BaseDeDatos()
+            empleados = bd.obtener_todos_usuarios()
+            liquidaciones = bd.obtener_todas_liquidaciones()
             
             # Escribir encabezados
             writer.writerow(['REPORTE COMPLETO DEL SISTEMA - GENERADO:', datetime.now().strftime('%Y-%m-%d %H:%M:%S')])
