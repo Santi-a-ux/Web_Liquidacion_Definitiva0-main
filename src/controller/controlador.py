@@ -128,7 +128,7 @@ class BaseDeDatos:
             if conn:
                 conn.close()
 
-    def es_administrador(id_usuario):
+    def es_administrador(self, id_usuario):
         try:
             conn = BaseDeDatos.conectar_db()
             if conn:
