@@ -172,17 +172,17 @@ class BaseDeDatos:
                 conn.close()
             if "duplicate key" in str(e):
                 if "usuarios_pkey" in str(e):
-                    raise Exception(f"Ya existe un empleado con ID {id_usuario}")
+                    raise ValueError(f"Ya existe un empleado con ID {id_usuario}")
                 elif "documento_identidad" in str(e):
-                    raise Exception(f"Ya existe un empleado con documento {documento_identidad}")
+                    raise ValueError(f"Ya existe un empleado con documento {documento_identidad}")
                 elif "correo_electronico" in str(e):
-                    raise Exception(f"Ya existe un empleado con email {correo_electronico}")
-            raise Exception(f"Error de integridad: {str(e)}")
+                    raise ValueError(f"Ya existe un empleado con email {correo_electronico}")
+            raise IntegrityError(f"Error de integridad: {str(e)}")
         except Exception as error:
             if conn:
                 conn.close()
             print(f"Error al agregar el empleado: {error}")
-            raise Exception(f"Error en la base de datos: {str(error)}")
+            raise RuntimeError(f"Error en la base de datos: {str(error)}")
 
     def agregar_liquidacion(self, id_liquidacion, indemnizacion, vacaciones, cesantias, intereses_sobre_cesantias, prima_servicios, retencion_fuente, total_a_pagar, id_usuario):
         conn = None
