@@ -121,7 +121,7 @@ class BaseDeDatos:
                     else:
                         return {'autenticado': False}
                         
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error en autenticación: {error}")
             return {'autenticado': False}
         finally:
