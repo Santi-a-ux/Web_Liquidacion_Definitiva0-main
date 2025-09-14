@@ -143,7 +143,6 @@ class TestPruebasFaltantes(unittest.TestCase):
                 'test@duplicado.com', '9999999999', '2024-01-01', 1000000, NULL
             )""", (test_id,))
             conexion.commit()
-            conexion.close()
             print(f"Usuario {test_id} insertado correctamente")
         except Exception as error:
             error_str = str(error)
@@ -160,6 +159,10 @@ class TestPruebasFaltantes(unittest.TestCase):
             else:
                 print(f"Error inesperado en BD: {error}")
                 assert False, f"Error de base de datos: {error}"
+        finally:
+            if 'conexion' in locals():
+                conexion.rollback()
+                conexion.close()
 
     def test_validar_integridad_referencial(self):
         """
