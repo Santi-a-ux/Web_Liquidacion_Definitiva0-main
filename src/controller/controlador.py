@@ -97,7 +97,7 @@ class BaseDeDatos:
             print("Tabla creada exitosamente")
 
             return conn
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print("Error al conectar a la base de datos:", error)
             return None
     
