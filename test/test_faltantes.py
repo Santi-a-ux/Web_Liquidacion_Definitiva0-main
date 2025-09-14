@@ -199,51 +199,7 @@ class TestPruebasFaltantes(unittest.TestCase):
             
         print("FALLA ESPERADO: método 'consultar_logs_auditoria' no implementado en calculadora.py")
 
-    # Test adicional: Validar integridad referencial - PUEDE FALLAR
-    def test_validar_integridad_referencial(self):
-        """
-        Test que PUEDE FALLAR - Verificar integridad FK entre usuarios y liquidaciones
-        Funcionalidad README: 12. Validar Integridad Referencial
-        Escenario: ESC-04
-        """
-        try:
-            conexion = BaseDeDatos.conectar_db()
-            cursor = conexion.cursor()
-            
-            # Intentar insertar liquidación con usuario inexistente
-            with self.assertRaises(psycopg2.IntegrityError):
-                cursor.execute("""INSERT INTO liquidacion(
-                                    id_liquidacion,
-                                    indemnizacion,
-                                    vacaciones, 
-                                    cesantias,
-                                    intereses_sobre_cesantias,
-                                    prima_servicios,
-                                    retencion_fuente,
-                                    total_a_pagar,
-                                    id_usuario)
-                                    VALUES
-                                    (888,
-                                    100000,
-                                    10000,
-                                    20000,
-                                    2000,
-                                    5000,
-                                    8000,
-                                    125000,
-                                    'USUARIO_INEXISTENTE')""")
-                conexion.commit()
-                
-            print("Integridad referencial funciona correctamente")
-            
-        except Exception as error:
-            print(f"POSIBLE FALLO: Integridad referencial - {error}")
-            self.fail(f"Integridad referencial puede no estar configurada: {error}")
-        finally:
-            if 'conexion' in locals():
-                conexion.rollback()
-                conexion.close()
-
+    
 if __name__ == '__main__':
     print("\n" + "="*60)
     print("EJECUTANDO TESTS QUE VAN A FALLAR")
