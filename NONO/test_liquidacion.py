@@ -3,13 +3,7 @@
 Script de prueba para verificar el guardado de liquidaciones
 """
 
-import s                print(f"OK Liquidación existente: ID {liquidacion[0]}, Total: ${liquidacion[7]:,.2f}")
-            else:
-                print("AVISO No tiene liquidación - esto es lo esperado si no se ha creado")
-        
-        # Crear nueva liquidación
-        print("
-CREANDO Creando nueva liquidación para empleado 17...")s
+import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
