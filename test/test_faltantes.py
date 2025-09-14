@@ -129,35 +129,22 @@ class TestPruebasFaltantes(unittest.TestCase):
 
     # CP-006: test_gestion_claves_duplicadas_bd - VA A FALLAR
     def test_gestion_claves_duplicadas_bd(self):
-        """
-        Test que FALLA - Sistema no maneja adecuadamente claves duplicadas en tests
-        Funcionalidad README: 12. Integridad Referencial
-        Escenario: ESC-05 (Funciones Admin)
-        
-        PROPÓSITO: Demostrar que el sistema no limpia datos de tests anteriores
-        """
         print("PROBANDO: Gestión claves duplicadas BD")
-        
         try:
-            # Intentar insertar usuario con ID fijo que puede ya existir de tests anteriores
-            conexion = BaseDeDatos.conectar_db()
+            bd = BaseDeDatos()
+            conexion = bd.conectar_db()
             cursor = conexion.cursor()
-            
-            # Usar ID fijo que puede generar conflicto con tests previos
             test_id = 9999
             cursor.execute("""INSERT INTO usuarios (
-                id_usuario, nombre, apellido, documento_identidad, 
+                id_usuario, nombre, apellido, documento_identidad,
                 correo_electronico, telefono, fecha_ingreso, salario, fecha_salida
             ) VALUES (
                 %s, 'Test', 'Duplicado', '99999999',
                 'test@duplicado.com', '9999999999', '2024-01-01', 1000000, NULL
             )""", (test_id,))
-            
             conexion.commit()
             conexion.close()
-            
             print(f"Usuario {test_id} insertado correctamente")
-            
         except Exception as error:
             error_str = str(error)
             if "duplicate key value violates unique constraint" in error_str:
@@ -166,17 +153,23 @@ class TestPruebasFaltantes(unittest.TestCase):
                 print("SITUACIÓN: Datos de tests anteriores permanecen en BD")
                 print("IMPACTO: Tests pueden fallar por datos residuales")
                 print("SOLUCIÓN: Implementar cleanup automático o usar IDs aleatorios")
-                
                 print(f"\nERROR ESPECÍFICO PARA EXPLICAR:")
                 print(f"   Clave duplicada: ID {test_id} ya existe de test anterior")
                 print(f"   Constraint violado: usuarios_pkey")
-                
-                self.fail(f"Sistema requiere mejor gestión limpieza datos test: {error}")
+                assert False, f"Sistema requiere mejor gestión limpieza datos test: {error}"
             else:
                 print(f"Error inesperado en BD: {error}")
-                self.fail(f"Error de base de datos: {error}")
-            
-        print("FALLA ESPERADO: Sistema no gestiona claves duplicadas en tests")
+                assert False, f"Error de base de datos: {error}"
+
+    def test_validar_integridad_referencial(self):
+        try:
+            bd = BaseDeDatos()
+            conexion = bd.conectar_db()
+            cursor = conexion.cursor()
+            # ... resto del test ...
+        except Exception as error:
+            print(f"POSIBLE FALLO: Integridad referencial - {error}")
+            assert False, f"Integridad referencial puede no estar configurada: {error}"
 
     # Test adicional: Estadísticas Dashboard - VA A FALLAR
     def test_estadisticas_dashboard(self):
