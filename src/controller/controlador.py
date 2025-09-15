@@ -115,74 +115,114 @@ class BaseDeDatos:
                 conn.close()
 
     def es_administrador(self, id_usuario):
+        try:
+            return self._obtener_rol_usuario(id_usuario) == 'administrador'
+        except psycopg2.Error as error:
+            print(f"Error verificando rol: {error}")
+            return False
+
+
+    def _obtener_rol_usuario(self, id_usuario):
         conn = None
         try:
             conn = self.conectar_db()
-            if conn:
-                with conn.cursor() as cur:
-                    sql = "SELECT Rol FROM usuarios WHERE ID_Usuario = %s"
-                    cur.execute(sql, (id_usuario,))
-                    resultado = cur.fetchone()
-                    if resultado and resultado[0] == 'administrador':
-                        return True
-                    return False
-        except (Exception, psycopg2.Error) as error:
-            print(f"Error verificando rol: {error}")
-            return False
+            with conn.cursor() as cur:
+                cur.execute("SELECT Rol FROM usuarios WHERE ID_Usuario = %s", (id_usuario,))
+                resultado = cur.fetchone()
+                return resultado[0] if resultado else None
         finally:
             if conn:
                 conn.close()
 
-    def agregar_usuario(self, nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, id_usuario, rol='usuario', password='password123', usuario_sistema=None):
+
+    def agregar_usuario(
+        self, nombre, apellido, documento_identidad, correo_electronico,
+        telefono, fecha_ingreso, fecha_salida, salario, id_usuario,
+        rol='usuario', password='password123', usuario_sistema=None
+    ):
         conn = None
         try:
             conn = self.conectar_db()
             cursor = conn.cursor()
-            cursor.execute(
-                "INSERT INTO usuarios (ID_Usuario, Nombre, Apellido, Documento_Identidad, Correo_Electronico, Telefono, Fecha_Ingreso, Fecha_Salida, Salario, Rol, Password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (id_usuario, nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, rol, password)
-            )
+            self._insertar_usuario(cursor, id_usuario, nombre, apellido, documento_identidad,
+                                correo_electronico, telefono, fecha_ingreso, fecha_salida,
+                                salario, rol, password)
             conn.commit()
+
             if usuario_sistema:
-                datos_nuevos = json.dumps({
-                    'id_usuario': id_usuario,
-                    'nombre': nombre,
-                    'apellido': apellido,
-                    'documento': documento_identidad,
-                    'correo': correo_electronico,
-                    'telefono': telefono,
-                    'fecha_ingreso': str(fecha_ingreso),
-                    'fecha_salida': str(fecha_salida) if fecha_salida else None,
-                    'salario': float(salario),
-                    'rol': rol
-                })
-                BaseDeDatos.registrar_auditoria(
-                    usuario_sistema=usuario_sistema,
-                    accion='CREATE',
-                    tabla_afectada='usuarios',
-                    id_registro=id_usuario,
-                    datos_nuevos=datos_nuevos,
-                    descripcion=f'Nuevo empleado creado: {nombre} {apellido}'
-                )
+                self._registrar_auditoria_usuario(usuario_sistema, id_usuario, nombre, apellido,
+                                                documento_identidad, correo_electronico, telefono,
+                                                fecha_ingreso, fecha_salida, salario, rol)
+
             cursor.close()
             conn.close()
             print("Empleado agregado exitosamente")
+
         except psycopg2.IntegrityError as e:
-            if conn:
-                conn.close()
-            if "duplicate key" in str(e):
-                if "usuarios_pkey" in str(e):
-                    raise ValueError(f"Ya existe un empleado con ID {id_usuario}")
-                elif "documento_identidad" in str(e):
-                    raise ValueError(f"Ya existe un empleado con documento {documento_identidad}")
-                elif "correo_electronico" in str(e):
-                    raise ValueError(f"Ya existe un empleado con email {correo_electronico}")
-            raise IntegrityError(f"Error de integridad: {str(e)}")
+            self._manejar_integridad(conn, e, id_usuario, documento_identidad, correo_electronico)
+
         except Exception as error:
             if conn:
                 conn.close()
             print(f"Error al agregar el empleado: {error}")
             raise RuntimeError(f"Error en la base de datos: {str(error)}")
+
+
+    def _insertar_usuario(self, cursor, id_usuario, nombre, apellido, documento_identidad,
+                        correo_electronico, telefono, fecha_ingreso, fecha_salida,
+                        salario, rol, password):
+        cursor.execute(
+            """
+            INSERT INTO usuarios (ID_Usuario, Nombre, Apellido, Documento_Identidad, 
+                                Correo_Electronico, Telefono, Fecha_Ingreso, 
+                                Fecha_Salida, Salario, Rol, Password)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (id_usuario, nombre, apellido, documento_identidad, correo_electronico,
+            telefono, fecha_ingreso, fecha_salida, salario, rol, password)
+        )
+
+
+    def _registrar_auditoria_usuario(self, usuario_sistema, id_usuario, nombre, apellido,
+                                    documento_identidad, correo_electronico, telefono,
+                                    fecha_ingreso, fecha_salida, salario, rol):
+        datos_nuevos = json.dumps({
+            'id_usuario': id_usuario,
+            'nombre': nombre,
+            'apellido': apellido,
+            'documento': documento_identidad,
+            'correo': correo_electronico,
+            'telefono': telefono,
+            'fecha_ingreso': str(fecha_ingreso),
+            'fecha_salida': str(fecha_salida) if fecha_salida else None,
+            'salario': float(salario),
+            'rol': rol
+        })
+        BaseDeDatos.registrar_auditoria(
+            usuario_sistema=usuario_sistema,
+            accion='CREATE',
+            tabla_afectada='usuarios',
+            id_registro=id_usuario,
+            datos_nuevos=datos_nuevos,
+            descripcion=f'Nuevo empleado creado: {nombre} {apellido}'
+        )
+
+
+    def _manejar_integridad(self, conn, error, id_usuario, documento_identidad, correo_electronico):
+        if conn:
+            conn.close()
+
+        msg = str(error)
+        if "duplicate key" in msg:
+            if "usuarios_pkey" in msg:
+                raise ValueError(f"Ya existe un empleado con ID {id_usuario}")
+            elif "documento_identidad" in msg:
+                raise ValueError(f"Ya existe un empleado con documento {documento_identidad}")
+            elif "correo_electronico" in msg:
+                raise ValueError(f"Ya existe un empleado con email {correo_electronico}")
+
+        raise psycopg2.IntegrityError(f"Error de integridad: {msg}")
+
 
     def agregar_liquidacion(self, id_liquidacion, indemnizacion, vacaciones, cesantias, intereses_sobre_cesantias, prima_servicios, retencion_fuente, total_a_pagar, id_usuario):
         conn = None
@@ -218,15 +258,15 @@ class BaseDeDatos:
 
     def consultar_usuario(self, id_usuario):
         conn = None
+        SQL_SELECT_USUARIO = "SELECT * FROM usuarios WHERE ID_Usuario = %s"
+        SQL_SELECT_LIQUIDACION = "SELECT * FROM liquidacion WHERE ID_Usuario = %s"
         try:
             conn = self.conectar_db()
             if conn:
                 with conn.cursor() as cur:
-                    sql = "SELECT * FROM usuarios WHERE ID_Usuario = %s"
-                    cur.execute(sql, (id_usuario,))
+                    cur.execute(SQL_SELECT_USUARIO, (id_usuario,))
                     usuario = cur.fetchone()
-                    sql = "SELECT * FROM liquidacion WHERE ID_Usuario = %s"
-                    cur.execute(sql, (id_usuario,))
+                    cur.execute(SQL_SELECT_LIQUIDACION, (id_usuario,))
                     liquidacion = cur.fetchone()
                     if usuario:
                         print("Datos del usuario:")
