@@ -369,7 +369,7 @@ class BaseDeDatos:
                     cur.execute(sql)
                     liquidaciones = cur.fetchall()
                     return liquidaciones
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al obtener liquidaciones: {error}")
             return []
         finally:
@@ -396,7 +396,7 @@ class BaseDeDatos:
                         'promedio_salario': float(promedio_salario),
                         'total_pagado': float(total_pagado)
                     }
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al obtener estadísticas: {error}")
             return {
                 'total_usuarios': 0,
@@ -465,7 +465,7 @@ class BaseDeDatos:
                         return True, "Empleado modificado exitosamente"
                     else:
                         return False, "No se pudo modificar el empleado"
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al modificar empleado: {error}")
             return False, f"Error al modificar empleado: {str(error)}"
         finally:
