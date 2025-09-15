@@ -211,7 +211,7 @@ class BaseDeDatos:
             conn.close()
             print(f"OK Liquidación {id_liquidacion} guardada exitosamente para empleado {id_usuario}")
             return True
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"ERROR Error al agregar la liquidación: {error}")
             if conn:
                 conn.close()
@@ -253,7 +253,7 @@ class BaseDeDatos:
                         return usuario, liquidacion
                     else:
                         return None, None
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al consultar el usuario: {error}")
             return None, None
         finally:
@@ -308,7 +308,7 @@ class BaseDeDatos:
                     else:
                         print(f"No se encontró un empleado con ID: {id_usuario}")
                         return False
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al eliminar el empleado: {error}")
             return False
         finally:
@@ -330,7 +330,7 @@ class BaseDeDatos:
                     else:
                         print(f"No se encontró una liquidación con ID: {id_liquidacion}")
                         return False
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al eliminar los datos de liquidación: {error}")
             return False
         finally:
@@ -347,7 +347,7 @@ class BaseDeDatos:
                     cur.execute(sql)
                     usuarios = cur.fetchall()
                     return usuarios
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al obtener usuarios: {error}")
             return []
         finally:
