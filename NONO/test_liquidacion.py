@@ -123,7 +123,7 @@ def test_caso_real():
                     # Verificar que se guardó
                     usuario, liquidacion = BaseDeDatos.consultar_usuario(17)
                     if liquidacion:
-                        print(f"OK CONFIRMADO: Liquidación guardada correctamente")
+                        print("OK CONFIRMADO: Liquidación guardada correctamente")
                         print(f"   - ID Liquidación: {liquidacion[0]}")
                         print(f"   - Total a pagar: ${liquidacion[7]:,.2f}")
                     else:
