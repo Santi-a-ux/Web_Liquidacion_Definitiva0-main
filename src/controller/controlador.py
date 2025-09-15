@@ -276,7 +276,7 @@ class BaseDeDatos:
                     cur.execute(sql_check, (id_usuario,))
                     liquidaciones_count = cur.fetchone()[0]
                     if liquidaciones_count > 0:
-                        print(f"Error: No se puede eliminar el empleado. Primero elimina su liquidación.")
+                        print("Error: No se puede eliminar el empleado. Primero elimina su liquidación.")
                         return False
                     sql = "DELETE FROM usuarios WHERE ID_Usuario = %s"
                     cur.execute(sql, (id_usuario,))
@@ -303,7 +303,7 @@ class BaseDeDatos:
                                 datos_anteriores=datos_anteriores,
                                 descripcion=f'Empleado eliminado: {datos_usuario[1]} {datos_usuario[2]}'
                             )
-                        print(f"Empleado eliminado exitosamente")
+                        print("Empleado eliminado exitosamente")
                         return True
                     else:
                         print(f"No se encontró un empleado con ID: {id_usuario}")
