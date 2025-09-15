@@ -29,7 +29,7 @@ jobs:
       - name: Run tests and collect coverage
         shell: pwsh
         run: |
-          coverage run --source=src -m pytest -q -k "not test_faltantes and not testbasedatos"
+          coverage run --source=src -m pytest -q
           coverage xml
 
       - name: SonarQube Scan
