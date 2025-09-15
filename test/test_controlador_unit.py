@@ -1,3 +1,10 @@
+import os, sys
+# Asegura que <repo>/src esté en sys.path aunque se ejecute este archivo directamente
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+_SRC = os.path.join(_ROOT, "src")
+if _SRC not in sys.path:
+    sys.path.insert(0, _SRC)
+
 import controller.controlador as ctrl
 import types
 import pytest

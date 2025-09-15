@@ -485,15 +485,14 @@ class BaseDeDatos:
                 port=SecretConfig.PGPORT
             )
             if conn:
-                cursor = conn.cursor()
-                sql = """
-                    INSERT INTO auditoria (Usuario_Sistema, Accion, Tabla_Afectada, ID_Registro, 
-                                         Datos_Anteriores, Datos_Nuevos, IP_Address, Descripcion)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                """
-                cursor.execute(sql, (usuario_sistema, accion, tabla_afectada, id_registro, datos_anteriores, datos_nuevos, ip_address, descripcion))
-                conn.commit()
-                cursor.close()
+                with conn.cursor() as cur:
+                    sql = """
+                        INSERT INTO auditoria (Usuario_Sistema, Accion, Tabla_Afectada, ID_Registro, 
+                                             Datos_Anteriores, Datos_Nuevos, IP_Address, Descripcion)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    """
+                    cur.execute(sql, (usuario_sistema, accion, tabla_afectada, id_registro, datos_anteriores, datos_nuevos, ip_address, descripcion))
+                    conn.commit()
                 conn.close()
                 return True
         except Exception as error:

@@ -1,5 +1,11 @@
-import types
+import os, sys, types
 import pytest
+
+# Asegura que <repo>/src esté en sys.path aunque se ejecute este archivo directamente
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+_SRC = os.path.join(_ROOT, "src")
+if _SRC not in sys.path:
+    sys.path.insert(0, _SRC)
 
 # Importamos el módulo de la app Flask
 import view_web.flask_app as flask_app
