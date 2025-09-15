@@ -123,7 +123,7 @@ class BaseDeDatos:
                 cur.execute(sql, (id_usuario,))
                 resultado = cur.fetchone()
                 return resultado is not None and resultado[0] == 'administrador'
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error verificando rol: {error}")
             return False
         finally:
