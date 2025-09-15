@@ -130,6 +130,14 @@ class BaseDeDatos:
                 cur.execute("SELECT Rol FROM usuarios WHERE ID_Usuario = %s", (id_usuario,))
                 resultado = cur.fetchone()
                 return resultado[0] if resultado else None
+            with conn.cursor() as cur:
+                sql = "SELECT Rol FROM usuarios WHERE ID_Usuario = %s"
+                cur.execute(sql, (id_usuario,))
+                resultado = cur.fetchone()
+                return resultado is not None and resultado[0] == 'administrador'
+        except (psycopg2.Error) as error:
+            print(f"Error verificando rol: {error}")
+            return False
         finally:
             if conn:
                 conn.close()
@@ -250,7 +258,7 @@ class BaseDeDatos:
             conn.close()
             print(f"OK Liquidación {id_liquidacion} guardada exitosamente para empleado {id_usuario}")
             return True
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"ERROR Error al agregar la liquidación: {error}")
             if conn:
                 conn.close()
@@ -292,7 +300,7 @@ class BaseDeDatos:
                         return usuario, liquidacion
                     else:
                         return None, None
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al consultar el usuario: {error}")
             return None, None
         finally:
@@ -315,7 +323,7 @@ class BaseDeDatos:
                     cur.execute(sql_check, (id_usuario,))
                     liquidaciones_count = cur.fetchone()[0]
                     if liquidaciones_count > 0:
-                        print(f"Error: No se puede eliminar el empleado. Primero elimina su liquidación.")
+                        print("Error: No se puede eliminar el empleado. Primero elimina su liquidación.")
                         return False
                     sql = "DELETE FROM usuarios WHERE ID_Usuario = %s"
                     cur.execute(sql, (id_usuario,))
@@ -342,12 +350,12 @@ class BaseDeDatos:
                                 datos_anteriores=datos_anteriores,
                                 descripcion=f'Empleado eliminado: {datos_usuario[1]} {datos_usuario[2]}'
                             )
-                        print(f"Empleado eliminado exitosamente")
+                        print("Empleado eliminado exitosamente")
                         return True
                     else:
                         print(f"No se encontró un empleado con ID: {id_usuario}")
                         return False
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al eliminar el empleado: {error}")
             return False
         finally:
@@ -369,7 +377,7 @@ class BaseDeDatos:
                     else:
                         print(f"No se encontró una liquidación con ID: {id_liquidacion}")
                         return False
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al eliminar los datos de liquidación: {error}")
             return False
         finally:
@@ -386,7 +394,7 @@ class BaseDeDatos:
                     cur.execute(sql)
                     usuarios = cur.fetchall()
                     return usuarios
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al obtener usuarios: {error}")
             return []
         finally:
@@ -408,7 +416,7 @@ class BaseDeDatos:
                     cur.execute(sql)
                     liquidaciones = cur.fetchall()
                     return liquidaciones
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al obtener liquidaciones: {error}")
             return []
         finally:
@@ -435,7 +443,7 @@ class BaseDeDatos:
                         'promedio_salario': float(promedio_salario),
                         'total_pagado': float(total_pagado)
                     }
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al obtener estadísticas: {error}")
             return {
                 'total_usuarios': 0,
@@ -504,7 +512,7 @@ class BaseDeDatos:
                         return True, "Empleado modificado exitosamente"
                     else:
                         return False, "No se pudo modificar el empleado"
-        except (Exception, psycopg2.Error) as error:
+        except (psycopg2.Error) as error:
             print(f"Error al modificar empleado: {error}")
             return False, f"Error al modificar empleado: {str(error)}"
         finally:
