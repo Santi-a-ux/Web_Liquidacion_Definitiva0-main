@@ -133,56 +133,60 @@ class BaseDeDatos:
             if conn:
                 conn.close()
 
-    def agregar_usuario(self, nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, id_usuario, rol='usuario', password='password123', usuario_sistema=None):
-        conn = None
-        try:
-            conn = self.conectar_db()
-            cursor = conn.cursor()
-            cursor.execute(
-                "INSERT INTO usuarios (ID_Usuario, Nombre, Apellido, Documento_Identidad, Correo_Electronico, Telefono, Fecha_Ingreso, Fecha_Salida, Salario, Rol, Password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (id_usuario, nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, rol, password)
-            )
-            conn.commit()
-            if usuario_sistema:
-                datos_nuevos = json.dumps({
-                    'id_usuario': id_usuario,
-                    'nombre': nombre,
-                    'apellido': apellido,
-                    'documento': documento_identidad,
-                    'correo': correo_electronico,
-                    'telefono': telefono,
-                    'fecha_ingreso': str(fecha_ingreso),
-                    'fecha_salida': str(fecha_salida) if fecha_salida else None,
-                    'salario': float(salario),
-                    'rol': rol
-                })
-                BaseDeDatos.registrar_auditoria(
-                    usuario_sistema=usuario_sistema,
-                    accion='CREATE',
-                    tabla_afectada='usuarios',
-                    id_registro=id_usuario,
-                    datos_nuevos=datos_nuevos,
-                    descripcion=f'Nuevo empleado creado: {nombre} {apellido}'
+        def agregar_usuario(self, nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, id_usuario, rol='usuario', password='password123', usuario_sistema=None):
+            conn = None
+            try:
+                conn = self.conectar_db()
+                cursor = conn.cursor()
+                cursor.execute(
+                    "INSERT INTO usuarios (ID_Usuario, Nombre, Apellido, Documento_Identidad, Correo_Electronico, Telefono, Fecha_Ingreso, Fecha_Salida, Salario, Rol, Password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                    (id_usuario, nombre, apellido, documento_identidad, correo_electronico, telefono, fecha_ingreso, fecha_salida, salario, rol, password)
                 )
-            cursor.close()
-            conn.close()
-            print("Empleado agregado exitosamente")
-        except psycopg2.IntegrityError as e:
-            if conn:
+                conn.commit()
+    
+                if usuario_sistema:
+                    datos_nuevos = json.dumps({
+                        'id_usuario': id_usuario,
+                        'nombre': nombre,
+                        'apellido': apellido,
+                        'documento': documento_identidad,
+                        'correo': correo_electronico,
+                        'telefono': telefono,
+                        'fecha_ingreso': str(fecha_ingreso),
+                        'fecha_salida': str(fecha_salida) if fecha_salida else None,
+                        'salario': float(salario),
+                        'rol': rol
+                    })
+                    BaseDeDatos.registrar_auditoria(
+                        usuario_sistema=usuario_sistema,
+                        accion='CREATE',
+                        tabla_afectada='usuarios',
+                        id_registro=id_usuario,
+                        datos_nuevos=datos_nuevos,
+                        descripcion=f'Nuevo empleado creado: {nombre} {apellido}'
+                    )
+    
+                cursor.close()
                 conn.close()
-            if "duplicate key" in str(e):
-                if "usuarios_pkey" in str(e):
-                    raise ValueError(f"Ya existe un empleado con ID {id_usuario}")
-                elif "documento_identidad" in str(e):
-                    raise ValueError(f"Ya existe un empleado con documento {documento_identidad}")
-                elif "correo_electronico" in str(e):
-                    raise ValueError(f"Ya existe un empleado con email {correo_electronico}")
-            raise IntegrityError(f"Error de integridad: {str(e)}")
-        except Exception as error:
-            if conn:
-                conn.close()
-            print(f"Error al agregar el empleado: {error}")
-            raise RuntimeError(f"Error en la base de datos: {str(error)}")
+                print("Empleado agregado exitosamente")
+    
+            except psycopg2.IntegrityError as e:
+                if conn:
+                    conn.close()
+                if "duplicate key" in str(e):
+                    if "usuarios_pkey" in str(e):
+                        raise ValueError(f"Ya existe un empleado con ID {id_usuario}")
+                    elif "documento_identidad" in str(e):
+                        raise ValueError(f"Ya existe un empleado con documento {documento_identidad}")
+                    elif "correo_electronico" in str(e):
+                        raise ValueError(f"Ya existe un empleado con email {correo_electronico}")
+                raise psycopg2.IntegrityError(f"Error de integridad: {str(e)}")
+    
+            except Exception as error:
+                if conn:
+                    conn.close()
+                print(f"Error al agregar el empleado: {error}")
+                raise RuntimeError(f"Error en la base de datos: {str(error)}")
 
     def agregar_liquidacion(self, id_liquidacion, indemnizacion, vacaciones, cesantias, intereses_sobre_cesantias, prima_servicios, retencion_fuente, total_a_pagar, id_usuario):
         conn = None
