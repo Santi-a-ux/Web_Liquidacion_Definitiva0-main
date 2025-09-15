@@ -114,7 +114,7 @@ class BaseDeDatos:
             if conn:
                 conn.close()
 
-   def es_administrador(self, id_usuario):
+    def es_administrador(self, id_usuario):
         try:
             return self._obtener_rol_usuario(id_usuario) == 'administrador'
         except psycopg2.Error as error:
@@ -248,7 +248,7 @@ class BaseDeDatos:
                     FOREIGN KEY (ID_Usuario)
                     REFERENCES usuarios(ID_Usuario)
                 );""")
-            cursor.execute("INSERT INTO liquidacion (ID_Liquidacion, Indemnizacion, Vacaciones, Cesantias, Intereses_Sobre_Cesantias, Prima_Servicios, Retencion_Fuente, Total_A_Pagar, ID_Usuario) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s)",
+            cursor.execute("INSERT INTO liquidacion (ID_Liquidacion, Indemnizacion, Vacaciones, Cesantias, Intereses_Sobre_Cesantias, Prima_Servicios, Retencion_Fuente, Total_A_Pagar, ID_Usuario) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
                 (id_liquidacion, indemnizacion, vacaciones, cesantias, intereses_sobre_cesantias, prima_servicios, retencion_fuente, total_a_pagar, id_usuario)
             )
             conn.commit()
@@ -262,7 +262,7 @@ class BaseDeDatos:
                 conn.close()
             return False
 
-   def consultar_usuario(self, id_usuario):
+    def consultar_usuario(self, id_usuario):
         conn = None
         SQL_SELECT_USUARIO = "SELECT * FROM usuarios WHERE ID_Usuario = %s"
         SQL_SELECT_LIQUIDACION = "SELECT * FROM liquidacion WHERE ID_Usuario = %s"
