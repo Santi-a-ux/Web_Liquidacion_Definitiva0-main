@@ -184,14 +184,14 @@ class Run:
 
             # Calcula varios valores necesarios para la liquidación
             dias_trabajados_total = dias_trabajados(fecha_ingreso, fecha_salida)
-            años_trabajados = dias_trabajados_total // 360
+            anios_trabajados = dias_trabajados_total // 360  # Cambio de nombre aquí
             salario_anual = salario * 12
             salario_semestral = salario * 6
-            tasa_retencion = 0.1  # Suponiendo una tasa de retención del 10%
+            tasa_retencion = 0.1  
 
-            # Asigna un ID para la liquidación y calcula los valores de la liquidación
+            
             id_liquidacion = asignar_id_liquidacion()
-            indemnizacion = calcular_indemnizacion(salario, años_trabajados)
+            indemnizacion = calcular_indemnizacion(salario, anios_trabajados)  # Cambio de nombre aquí
             valor_vacaciones = calcular_valor_vacaciones(dias_trabajados_total, salario_anual)
             cesantias = calcular_cesantias(dias_trabajados_total, salario)
             intereses_sobre_cesantias = calcular_intereses_sobre_cesantias(cesantias)
@@ -200,7 +200,6 @@ class Run:
             total_a_pagar = (indemnizacion + valor_vacaciones + cesantias + 
                             intereses_sobre_cesantias + prima_servicios - retencion_fuente)
             
-            # Agrega la liquidación a la base de datos
             resultado_guardado = bd.agregar_liquidacion(id_liquidacion, indemnizacion, valor_vacaciones, cesantias, 
                                     intereses_sobre_cesantias, prima_servicios, retencion_fuente, 
                                     total_a_pagar, id_usuario)
@@ -211,7 +210,7 @@ class Run:
                 flash("ERROR Error al guardar la liquidación en la base de datos", "error")
                 
             return redirect(url_for('index'))
-        # Renderiza la plantilla para agregar liquidación
+        
         return render_template('agregar_liquidacion.html')
     
     @app.route('/consultar_usuario', methods=['GET', 'POST'])
