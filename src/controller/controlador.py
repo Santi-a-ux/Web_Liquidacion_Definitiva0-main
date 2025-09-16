@@ -130,11 +130,6 @@ class BaseDeDatos:
                 cur.execute("SELECT Rol FROM usuarios WHERE ID_Usuario = %s", (id_usuario,))
                 resultado = cur.fetchone()
                 return resultado[0] if resultado else None
-            with conn.cursor() as cur:
-                sql = "SELECT Rol FROM usuarios WHERE ID_Usuario = %s"
-                cur.execute(sql, (id_usuario,))
-                resultado = cur.fetchone()
-                return resultado is not None and resultado[0] == 'administrador'
         except (psycopg2.Error) as error:
             print(f"Error verificando rol: {error}")
             return False
