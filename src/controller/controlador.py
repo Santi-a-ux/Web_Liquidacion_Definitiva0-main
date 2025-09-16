@@ -83,7 +83,7 @@ class BaseDeDatos:
             cursor.close()
             conn.close()
             print("Tabla creada exitosamente")
-            return conn
+            return True
         except (psycopg2.Error) as error:
             print("Error al conectar a la base de datos:", error)
             return None
@@ -120,7 +120,6 @@ class BaseDeDatos:
         except psycopg2.Error as error:
             print(f"Error verificando rol: {error}")
             return False
-
 
     def _obtener_rol_usuario(self, id_usuario):
         conn = None
@@ -169,7 +168,6 @@ class BaseDeDatos:
             print(f"Error al agregar el empleado: {error}")
             raise RuntimeError(f"Error en la base de datos: {str(error)}")
 
-
     def _insertar_usuario(self, cursor, id_usuario, nombre, apellido, documento_identidad,
                         correo_electronico, telefono, fecha_ingreso, fecha_salida,
                         salario, rol, password):
@@ -183,7 +181,6 @@ class BaseDeDatos:
             (id_usuario, nombre, apellido, documento_identidad, correo_electronico,
             telefono, fecha_ingreso, fecha_salida, salario, rol, password)
         )
-
 
     def _registrar_auditoria_usuario(self, usuario_sistema, id_usuario, nombre, apellido,
                                     documento_identidad, correo_electronico, telefono,
@@ -208,7 +205,6 @@ class BaseDeDatos:
             datos_nuevos=datos_nuevos,
             descripcion=f'Nuevo empleado creado: {nombre} {apellido}'
         )
-
 
     def _manejar_integridad(self, conn, error, id_usuario, documento_identidad, correo_electronico):
         if conn:
@@ -243,8 +239,12 @@ class BaseDeDatos:
                     FOREIGN KEY (ID_Usuario)
                     REFERENCES usuarios(ID_Usuario)
                 );""")
-            cursor.execute("INSERT INTO liquidacion (ID_Liquidacion, Indemnizacion, Vacaciones, Cesantias, Intereses_Sobre_Cesantias, Prima_Servicios, Retencion_Fuente, Total_A_Pagar, ID_Usuario) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-                (id_liquidacion, indemnizacion, vacaciones, cesantias, intereses_sobre_cesantias, prima_servicios, retencion_fuente, total_a_pagar, id_usuario)
+            cursor.execute(
+                "INSERT INTO liquidacion (ID_Liquidacion, Indemnizacion, Vacaciones, Cesantias, "
+                "Intereses_Sobre_Cesantias, Prima_Servicios, Retencion_Fuente, Total_A_Pagar, ID_Usuario) "
+                "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                (id_liquidacion, indemnizacion, vacaciones, cesantias,
+                 intereses_sobre_cesantias, prima_servicios, retencion_fuente, total_a_pagar, id_usuario)
             )
             conn.commit()
             cursor.close()
@@ -270,26 +270,6 @@ class BaseDeDatos:
                     cur.execute(SQL_SELECT_LIQUIDACION, (id_usuario,))
                     liquidacion = cur.fetchone()
                     if usuario:
-                        print("Datos del usuario:")
-                        print(f"ID_Usuario: {usuario[0]}")
-                        print(f"Nombre: {usuario[1]}")
-                        print(f"Apellido: {usuario[2]}")
-                        print(f"Documento_Identidad: {usuario[3]}")
-                        print(f"Correo_Electronico: {usuario[4]}")
-                        print(f"Telefono: {usuario[5]}")
-                        print(f"Fecha_Ingreso: {usuario[6]}")
-                        print(f"Fecha_Salida: {usuario[7]}")
-                        print(f"Salario: {usuario[8]}")
-                        if liquidacion:
-                            print("\nDatos de la liquidación:")
-                            print(f"Id_Liquidacion: {liquidacion[0]}")
-                            print(f"Indemnización: {liquidacion[1]}")
-                            print(f"Vacaciones: {liquidacion[2]}")
-                            print(f"Cesantías: {liquidacion[3]}")
-                            print(f"Intereses sobre cesantías: {liquidacion[4]}")
-                            print(f"Prima de servicios: {liquidacion[5]}")
-                            print(f"Retención en la fuente: {liquidacion[6]}")
-                            print(f"Total a pagar: {liquidacion[7]}")
                         return usuario, liquidacion
                     else:
                         return None, None
