@@ -211,3 +211,19 @@ def test_exportar_datos_success_csv(client, monkeypatch):
 def test_simple_and_test_routes(client):
     assert client.get("/simple").status_code == 200
     assert client.get("/test").status_code == 200
+
+# --- Auditoría: ruta /auditoria (éxito y error)
+def test_auditoria_success(client, monkeypatch):
+    login_as(client, role="administrador")
+    monkeypatch.setattr(flask_app.BaseDeDatos, "obtener_auditoria", staticmethod(lambda **kw: []))
+    monkeypatch.setattr(flask_app.BaseDeDatos, "obtener_estadisticas_auditoria", staticmethod(lambda: {"total_registros":0}))
+    monkeypatch.setattr(flask_app, "render_template", lambda tpl, **kw: "AUDITORIA OK")
+    resp = client.get("/auditoria?limite=10&usuario_filtro=1&accion_filtro=LOGIN&tabla_filtro=usuarios")
+    assert resp.status_code == 200 and "AUDITORIA OK" in resp.get_data(as_text=True)
+
+def test_auditoria_exception_redirects(client, monkeypatch):
+    login_as(client, role="administrador")
+    def boom(**kw): raise Exception("x")
+    monkeypatch.setattr(flask_app.BaseDeDatos, "obtener_auditoria", staticmethod(boom))
+    resp = client.get("/auditoria")
+    assert resp.status_code in (301, 302) and "/admin_panel" in resp.headers.get("Location","")
