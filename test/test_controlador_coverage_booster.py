@@ -1,4 +1,4 @@
-import os, sys, pytest
+import os, sys, pytest, types
 _ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 _SRC = os.path.join(_ROOT, "src")
 if _SRC not in sys.path:
@@ -124,7 +124,7 @@ def test_agregar_usuario_integridad_other(monkeypatch):
     with pytest.raises(psycopg2.IntegrityError):
         bd.agregar_usuario("N","A","D3","z@w.com","300","2024-01-01",None,1000.0,4)
 
-# --- agregar_liquidacion: camino feliz (con cursor fake el SQL "[...]" no afecta)
+# --- agregar_liquidacion: camino feliz (con cursor fake)
 def test_agregar_liquidacion_success(monkeypatch):
     cur = FakeCursor()
     conn = FakeConn(cur)
@@ -301,7 +301,6 @@ def test_obtener_auditoria_with_filters(monkeypatch):
     monkeypatch.setattr(ctrl.psycopg2, "connect", lambda **kw: conn)
     res = ctrl.BaseDeDatos.obtener_auditoria(limite=10, usuario_filtro=1, accion_filtro="UPDATE", tabla_filtro="usuarios")
     assert res == rows
-    # Se esperaría que el cursor recibió 4 parámetros (usuario, acción, tabla, límite)
     assert len(cur.last_params) == 4 and cur.last_params[-1] == 10
 
 def test_obtener_auditoria_exception(monkeypatch):
@@ -309,20 +308,16 @@ def test_obtener_auditoria_exception(monkeypatch):
     assert ctrl.BaseDeDatos.obtener_auditoria() == []
 
 def test_obtener_estadisticas_auditoria_success(monkeypatch):
-    # COUNT(*), acciones, usuarios, actividad
+    # COUNT(*)
     cur = FakeCursor(fetch_seq=[(5,)])
-    cur.all = []  # para fetchall en secuencia
-    conn = FakeConn(cur)
-    monkeypatch.setattr(ctrl.psycopg2, "connect", lambda **kw: conn)
-    # Simular fetchall devolviendo algo en cada consulta; nos basta con listas vacías o simples
-    def fake_fetchall():
-        return [("x", 1)]
-    # parcheamos el método para devolver algo simple
+    # Para las múltiples fetchall(), devolvemos algo simple
     orig_fetchall = FakeCursor.fetchall
     FakeCursor.fetchall = lambda self: [("x", 1)]
+    conn = FakeConn(cur)
+    monkeypatch.setattr(ctrl.psycopg2, "connect", lambda **kw: conn)
     stats = ctrl.BaseDeDatos.obtener_estadisticas_auditoria()
     FakeCursor.fetchall = orig_fetchall
-    assert "total_registros" in stats
+    assert "total_registros" in stats and stats["total_registros"] == 5
 
 def test_obtener_estadisticas_auditoria_exception(monkeypatch):
     monkeypatch.setattr(ctrl.psycopg2, "connect", lambda **kw: (_ for _ in ()).throw(Exception("x")))
