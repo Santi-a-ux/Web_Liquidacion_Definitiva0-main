@@ -13,7 +13,6 @@ import sys
 sys.path.append("src")
 from model.calculadora import CalculadoraLiquidacion 
 
-# Añade la ruta donde está la fuente Roboto
 resource_add_path('fonts')
 
 ROBOTO_FONT_PATH = 'fonts/Roboto-Regular.ttf'
@@ -39,12 +38,9 @@ class ResultadosScreen(Screen):
 
 class LiquidacionApp(App):
     def build(self):
-        self.calculadora = CalculadoraLiquidacion()
-
-        # Configura el administrador de pantallas
         self.screen_manager = ScreenManager()
 
-        # Parte donde se agregan los datos
+        # Pantalla de ingreso de datos
         self.ingreso_screen = Screen(name="ingreso")
         self.ingreso_layout = GridLayout(cols=2, padding=20, spacing=10)
         self.ingreso_screen.add_widget(self.ingreso_layout)
@@ -98,41 +94,54 @@ class LiquidacionApp(App):
         self.calcular_button.bind(on_press=self.calcular)
         self.ingreso_layout.add_widget(self.calcular_button)
 
-       
         self.screen_manager.add_widget(self.ingreso_screen)
 
-       
+        # Pantalla de resultados
         self.resultados_screen = ResultadosScreen(name="resultados")
         self.screen_manager.add_widget(self.resultados_screen)
         return self.screen_manager
 
     def calcular(self, instance):
-        try:
-            # Verifica si algún campo está en blanco
-            if '' in [self.salario_input.text, self.fecha_inicio_input.text, self.fecha_vacaciones_input.text, self.dias_vacaciones_input.text, self.motivo_salida_input.text]:
-                # Si hay campos en blanco, muestra un mensaje de error y no realiza el cálculo
-                self.resultados_screen.mostrar_resultados("Error: Por favor completa todos los campos.")
-                self.screen_manager.current = "resultados"
-                return
+        # Validación de campos
+        if (not self.salario_input.text or
+            not self.fecha_inicio_input.text or
+            not self.fecha_vacaciones_input.text or
+            not self.dias_vacaciones_input.text or
+            not self.motivo_salida_input.text):
+            self.resultados_screen.mostrar_resultados("Por favor, llene todos los campos.")
+            self.screen_manager.current = "resultados"
+            return
 
-      
-            salario = float(self.salario_input.text)
-            fecha_inicio = self.fecha_inicio_input.text
-            fecha_vacaciones = self.fecha_vacaciones_input.text
-            dias_vacaciones = int(self.dias_vacaciones_input.text)
-            indemnizacion, vacaciones, cesantias, intereses_cesantias, primas, retencion_fuente, total_pagar = self.calculadora.calcular_resultados_prueba(
-                salario_basico=salario,
-                fecha_inicio_labores=fecha_inicio,
-                fecha_ultimas_vacaciones=fecha_vacaciones,
-                dias_acumulados_vacaciones=dias_vacaciones
-            )
+        # Si todos los campos están llenos, procede con el cálculo
+        salario = float(self.salario_input.text)
+        fecha_inicio = self.fecha_inicio_input.text
+        fecha_vacaciones = self.fecha_vacaciones_input.text
+        dias_vacaciones = int(self.dias_vacaciones_input.text)
+        motivo_salida = self.motivo_salida_input.text
 
-            resultado_text = f"Indemnización: {indemnizacion}\nVacaciones: {vacaciones}\nCesantías: {cesantias}\nIntereses sobre cesantías: {intereses_cesantias}\nPrima de servicios: {primas}\nRetención en la fuente: {retencion_fuente}\nTotal a pagar: {total_pagar}"
-            self.resultados_screen.mostrar_resultados(resultado_text)
-            self.screen_manager.current = "resultados"  # Se hace el cambio de pantalla a donde están los resultados
-        except Exception as e:
-            print("Error durante el cálculo:", e)
+        
+        if not hasattr(self, 'calculadora'):
+            self.calculadora = CalculadoraLiquidacion()
 
+        indemnizacion, vacaciones, cesantias, intereses_cesantias, primas, retencion_fuente, total_pagar = self.calculadora.calcular_resultados_prueba(
+            salario_basico=salario,
+            fecha_inicio_labores=fecha_inicio,
+            fecha_ultimas_vacaciones=fecha_vacaciones,
+            dias_acumulados_vacaciones=dias_vacaciones,
+            motivo_salida=motivo_salida
+        )
+
+        resultados_text = (
+            f"Indemnización: {indemnizacion}\n"
+            f"Vacaciones: {vacaciones}\n"
+            f"Cesantías: {cesantias}\n"
+            f"Intereses Cesantías: {intereses_cesantias}\n"
+            f"Primas: {primas}\n"
+            f"Retención en la fuente: {retencion_fuente}\n"
+            f"Total a pagar: {total_pagar}"
+        )
+        self.resultados_screen.mostrar_resultados(resultados_text)
+        self.screen_manager.current = "resultados"
 
     def on_start(self):
         self.root_window.title = "Bienvenido a la Calculadora Definitiva"
