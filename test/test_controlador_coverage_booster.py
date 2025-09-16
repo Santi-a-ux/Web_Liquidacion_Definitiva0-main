@@ -323,3 +323,17 @@ def test_obtener_estadisticas_auditoria_exception(monkeypatch):
     monkeypatch.setattr(ctrl.psycopg2, "connect", lambda **kw: (_ for _ in ()).throw(Exception("x")))
     s = ctrl.BaseDeDatos.obtener_estadisticas_auditoria()
     assert s["total_registros"] == 0 and isinstance(s["acciones_comunes"], list)
+
+# --- cubrir crear_tabla: éxito y excepción
+def test_crear_tabla_success(monkeypatch):
+    cur = FakeCursor()
+    conn = FakeConn(cur)
+    monkeypatch.setattr(ctrl.psycopg2, "connect", lambda **kw: conn)
+    bd = ctrl.BaseDeDatos()
+    ok = bd.crear_tabla()
+    assert ok is True and conn.commits == 1 and conn.closed is True
+
+def test_crear_tabla_error(monkeypatch):
+    monkeypatch.setattr(ctrl.psycopg2, "connect", lambda **kw: (_ for _ in ()).throw(psycopg2.Error("x")))
+    bd = ctrl.BaseDeDatos()
+    assert bd.crear_tabla() is None
