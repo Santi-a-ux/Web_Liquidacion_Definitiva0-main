@@ -1,4 +1,5 @@
 from datetime import datetime
+NEGATIVE_DAYS_ERROR = "Los días trabajados no pueden ser negativos"
 
 class CalculadoraLiquidacion:
     def __init__(self, valor_uvt=39205):
@@ -19,37 +20,29 @@ class CalculadoraLiquidacion:
         total_pagar = indemnizacion + vacaciones + cesantias + intereses_cesantias + primas - retencion_fuente
         return indemnizacion, vacaciones, cesantias, intereses_cesantias, primas, retencion_fuente, total_pagar
 
-    def calcular_indemnizacion(self, salario_basico, tiempo_trabajado_anos):
-        meses_maximos = 12
-        dias_por_anio = 20
-        dias_maximos = meses_maximos * dias_por_anio
-        dias_indemnizacion = min(tiempo_trabajado_anos * dias_por_anio, dias_maximos)
-        indemnizacion = (salario_basico * dias_indemnizacion) / 30 
-        return round(indemnizacion, 2)
-
     def calcular_vacaciones(self, salario_mensual, dias_trabajados):
         if dias_trabajados < 0:
-            raise ValueError("Los días trabajados no pueden ser negativos")
+            raise ValueError(NEGATIVE_DAYS_ERROR)
         valor_vacaciones = (salario_mensual * dias_trabajados) / 720
         return round(valor_vacaciones, 2)
-
+    
     def calcular_cesantias(self, salario_mensual, dias_trabajados):
         if dias_trabajados < 0:
-            raise ValueError("Los días trabajados no pueden ser negativos")
+            raise ValueError(NEGATIVE_DAYS_ERROR)
         cesantias = (salario_mensual * dias_trabajados) / 360
         return round(cesantias, 2)
-
+    
     def calcular_intereses_cesantias(self, cesantias, dias_trabajados):
         if cesantias < 0:
             raise ValueError("El valor de las cesantías no puede ser negativo")
         if dias_trabajados < 0:
-            raise ValueError("Los días trabajados no pueden ser negativos")
+            raise ValueError(NEGATIVE_DAYS_ERROR)
         intereses_cesantias = (cesantias * dias_trabajados * 0.12) / 360
         return round(intereses_cesantias, 2)
-
+    
     def calcular_prima(self, salario_mensual, dias_trabajados):
         if dias_trabajados < 0:
-            raise ValueError("Los días trabajados no pueden ser negativos")
+            raise ValueError(NEGATIVE_DAYS_ERROR)
         prima = salario_mensual * (dias_trabajados / 360)
         return round(prima, 2)
 
@@ -61,7 +54,7 @@ class CalculadoraLiquidacion:
         ingreso_uvt = salario_basico / self.valor_uvt
 
         if ingreso_uvt <= 95:
-            pass
+            retencion = 0  
         elif ingreso_uvt <= 150:
             base_uvt = ingreso_uvt - 95
             retencion = base_uvt * 0.19 * self.valor_uvt
@@ -81,6 +74,5 @@ class CalculadoraLiquidacion:
             base_uvt = ingreso_uvt - 2300
             retencion = base_uvt * 0.39 * self.valor_uvt + 770 * self.valor_uvt
         return round(retencion, 2)
-    
-    
+            
     
