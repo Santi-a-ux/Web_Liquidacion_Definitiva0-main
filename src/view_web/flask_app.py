@@ -37,7 +37,7 @@ try:
 except Exception:
     HAS_FLASK_WTF = False
 
-    class _CSRFProtect:  # stub mínimo
+    class _CSRFProtect:  # stub mínimo para entornos sin Flask-WTF
         def __init__(self, app=None):
             if app is not None:
                 self.init_app(app)
@@ -582,7 +582,7 @@ def exportar_datos():
         output.seek(0)
         response = make_response(output.getvalue())
         response.headers['Content-Type'] = 'text/csv'
-        response.headers['Content-Disposition'] = f'attachment; filename=reporte_liquidaciones_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
+        response.headers['Content-Disposition'] = f'attachment; filename=reporte_liquidaciones_' + datetime.now().strftime("%Y%m%d_%H%M%S") + '.csv'
         return response
 
     except Exception as e:
