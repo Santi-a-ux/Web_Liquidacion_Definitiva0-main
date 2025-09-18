@@ -17,7 +17,7 @@
                 <div class="card-body">
                     
                     {% if not usuario %}
-                    <!-- Formulario de búsqueda -->
+                    <!-- Formulario de búsqueda (GET: no requiere CSRF) -->
                     <div class="search-section mb-4">
                         <h5 class="mb-3">
                             <i class="fas fa-search text-info"></i>
@@ -52,7 +52,7 @@
                     </div>
                     
                     {% else %}
-                    <!-- Formulario de modificación -->
+                    <!-- Formulario de modificación (POST: requiere CSRF) -->
                     <div class="modification-section">
                         <div class="alert alert-success">
                             <h6><i class="fas fa-check-circle"></i> Empleado Encontrado:</h6>
@@ -60,6 +60,7 @@
                         </div>
                         
                         <form method="POST" action="{{ url_for('modificar_usuario') }}">
+                            {% include "_csrf_field.html" %}
                             <input type="hidden" name="id_usuario" value="{{ usuario.id }}">
                             
                             <div class="row">
