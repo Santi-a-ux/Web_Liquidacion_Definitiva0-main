@@ -28,6 +28,9 @@ from view.console.consolacontrolador import (
 
 from flask import Flask, render_template, request, redirect, url_for, flash, session, make_response
 
+# NUEVO: Protección CSRF
+from flask_wtf import CSRFProtect
+
 # Constantes
 LOGIN_REQUIRED_MSG = "Debes iniciar sesión para acceder"
 TEMPLATE_AGREGAR_LIQUIDACION = 'agregar_liquidacion.html'  # Evita duplicar el literal
@@ -35,10 +38,15 @@ TEMPLATE_AGREGAR_LIQUIDACION = 'agregar_liquidacion.html'  # Evita duplicar el l
 # Instancia global de Flask
 app = Flask(__name__, template_folder='templates')
 
-# NUNCA hardcodees la secret key. Toma del entorno o genera una efímera segura.
-# - En producción/CI: define FLASK_SECRET_KEY en variables de entorno o secretos del pipeline.
-# - En dev/testing local: si no está definida, se usa una clave aleatoria por proceso.
+# Secret key NO hardcodeada
 app.secret_key = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
+
+# Configuración CSRF (opcionalmente ajustable)
+app.config.setdefault("WTF_CSRF_ENABLED", True)
+app.config.setdefault("WTF_CSRF_TIME_LIMIT", None)
+
+# Inicializa CSRF global
+csrf = CSRFProtect(app)
 
 
 # Decoradores a nivel de módulo
