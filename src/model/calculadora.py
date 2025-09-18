@@ -6,7 +6,9 @@ from typing import Tuple
 # Constantes para evitar números mágicos y mejorar legibilidad (SonarQube)
 DAYS_PER_YEAR: float = 365.0
 DAYS_PER_MONTH: float = 30.0
-INDEMN_DAYS_PER_YEAR: float = 30.0
+# Reglas esperadas por los tests
+INDEMN_DAYS_PER_YEAR: float = 20.0
+MAX_INDEMN_DAYS: float = 240.0
 DATE_FORMAT_UI: str = "%d/%m/%Y"
 
 # Mensajes de error reutilizables
@@ -67,8 +69,10 @@ class CalculadoraLiquidacion:
 
     def calcular_indemnizacion(self, salario_mensual: float, tiempo_trabajado_anos: float) -> float:
         """
-        Calcula la indemnización proporcional al tiempo trabajado.
-        Regla base: 30 días por año trabajado, prorrateado, multiplicado por salario diario.
+        Calcula la indemnización:
+        - 20 días por año trabajado (prorrateado)
+        - Tope máximo de 240 días en total
+        Fórmula: (salario_mensual / 30) * min(20 * años, 240)
         """
         if salario_mensual <= 0:
             raise ValueError(SALARY_POSITIVE_ERROR)
@@ -77,6 +81,7 @@ class CalculadoraLiquidacion:
 
         salario_diario = salario_mensual / DAYS_PER_MONTH
         dias_indemnizacion = INDEMN_DAYS_PER_YEAR * tiempo_trabajado_anos
+        dias_indemnizacion = min(dias_indemnizacion, MAX_INDEMN_DAYS)
         valor = salario_diario * dias_indemnizacion
         return round(valor, 2)
 
