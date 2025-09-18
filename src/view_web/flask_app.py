@@ -28,7 +28,9 @@ from view.console.consolacontrolador import (
 
 from flask import Flask, render_template, request, redirect, url_for, flash, session, make_response
 
+# Constantes
 LOGIN_REQUIRED_MSG = "Debes iniciar sesión para acceder"
+TEMPLATE_AGREGAR_LIQUIDACION = 'agregar_liquidacion.html'  # Evita duplicar el literal
 
 # Instancia global de Flask
 app = Flask(__name__, template_folder='templates')
@@ -39,6 +41,7 @@ app = Flask(__name__, template_folder='templates')
 app.secret_key = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
 
 
+# Decoradores a nivel de módulo
 def login_required(f):
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
@@ -62,6 +65,8 @@ def admin_required(f):
     return decorated_function
 
 
+# =============== RUTAS ===============
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -77,6 +82,7 @@ def login():
             session['apellido'] = resultado['apellido']
             session['rol'] = resultado['rol']
 
+            # Registrar auditoría de login (mejor esfuerzo)
             try:
                 BaseDeDatos.registrar_auditoria(
                     usuario_sistema=resultado['id'],
@@ -169,14 +175,15 @@ def agregar_liquidacion():
             id_usuario = int(request.form['id_usuario'])
         except ValueError:
             flash("ID de empleado inválido. Por favor, ingresa un valor numérico.", "error")
-            return render_template('agregar_liquidacion.html')
+            return render_template(TEMPLATE_AGREGAR_LIQUIDACION)
 
+        # Obtener datos del empleado
         try:
             bd = BaseDeDatos()
             empleado_data = bd.consultar_usuario(id_usuario)
             if not empleado_data or not empleado_data[0]:
                 flash(f"No se encontró un empleado con ID: {id_usuario}", "error")
-                return render_template('agregar_liquidacion.html')
+                return render_template(TEMPLATE_AGREGAR_LIQUIDACION)
 
             empleado = empleado_data[0]
             salario = float(empleado[8])
@@ -185,8 +192,9 @@ def agregar_liquidacion():
             print(f"DEBUG: Empleado {id_usuario} - Salario: {salario}, Ingreso: {fecha_ingreso}, Salida: {fecha_salida}")
         except Exception as e:
             flash(f"Error al obtener información del empleado: {str(e)}", "error")
-            return render_template('agregar_liquidacion.html')
+            return render_template(TEMPLATE_AGREGAR_LIQUIDACION)
 
+        # Cálculos
         dias_trabajados_total = dias_trabajados(fecha_ingreso, fecha_salida)
         anios_trabajados = dias_trabajados_total // 360
         salario_anual = salario * 12
@@ -218,7 +226,7 @@ def agregar_liquidacion():
 
         return redirect(url_for('index'))
 
-    return render_template('agregar_liquidacion.html')
+    return render_template(TEMPLATE_AGREGAR_LIQUIDACION)
 
 
 @app.route('/consultar_usuario', methods=['GET', 'POST'])
@@ -228,11 +236,11 @@ def consultar_usuario():
         id_usuario = int(request.form['id_usuario'])
         print(f"DEBUG: Consultando usuario con ID: {id_usuario}")
         bd = BaseDeDatos()
-        usuario, Liquidacion = bd.consultar_usuario(id_usuario)
-        print(f"DEBUG: Resultado consulta - Usuario: {usuario}, Liquidacion: {Liquidacion}")
+        usuario, liquidacion = bd.consultar_usuario(id_usuario)  # nombre en minúscula
+        print(f"DEBUG: Resultado consulta - Usuario: {usuario}, Liquidacion: {liquidacion}")
         if usuario:
             print("DEBUG: Usuario encontrado, renderizando template")
-            return render_template('consultar_usuario.html', usuario=usuario, liquidacion=Liquidacion)
+            return render_template('consultar_usuario.html', usuario=usuario, liquidacion=liquidacion)
         else:
             print("DEBUG: Usuario no encontrado")
             flash("Usuario no encontrado")
@@ -325,6 +333,74 @@ def simple():
     """
 
 
+# ===== Helpers para reportes (reducen complejidad cognitiva de la vista) =====
+
+def _empleados_por_mes(empleados):
+    """Dict {YYYY-MM: count} a partir de la fecha de ingreso (emp[6])"""
+    conteo = {}
+    if not empleados:
+        return conteo
+    for emp in empleados:
+        fecha_ingreso = emp[6]
+        if fecha_ingreso:
+            mes = f"{fecha_ingreso.year}-{fecha_ingreso.month:02d}"
+            conteo[mes] = conteo.get(mes, 0) + 1
+    return conteo
+
+
+def _rangos_salariales(empleados):
+    """Distribución por rangos definidos"""
+    rangos = {
+        'Menos de 2M': 0,
+        '2M - 5M': 0,
+        '5M - 10M': 0,
+        'Más de 10M': 0
+    }
+    if not empleados:
+        return rangos
+    for emp in empleados:
+        salario = float(emp[8]) if emp[8] else 0
+        if salario < 2_000_000:
+            rangos['Menos de 2M'] += 1
+        elif salario < 5_000_000:
+            rangos['2M - 5M'] += 1
+        elif salario < 10_000_000:
+            rangos['5M - 10M'] += 1
+        else:
+            rangos['Más de 10M'] += 1
+    return rangos
+
+
+def _top_empleados(empleados, n=10):
+    """Top N por salario (emp[8])"""
+    if not empleados:
+        return []
+    empleados_ordenados = sorted(empleados, key=lambda x: float(x[8]) if x[8] else 0, reverse=True)
+    return empleados_ordenados[:n]
+
+
+def _total_por_componente(liquidaciones):
+    """Suma por componente a partir de filas de liquidación"""
+    totales = {
+        'indemnizacion': 0,
+        'vacaciones': 0,
+        'cesantias': 0,
+        'intereses': 0,
+        'prima': 0,
+        'retencion': 0
+    }
+    if not liquidaciones:
+        return totales
+    for liq in liquidaciones:
+        totales['indemnizacion'] += float(liq[1]) if liq[1] else 0
+        totales['vacaciones'] += float(liq[2]) if liq[2] else 0
+        totales['cesantias'] += float(liq[3]) if liq[3] else 0
+        totales['intereses'] += float(liq[4]) if liq[4] else 0
+        totales['prima'] += float(liq[5]) if liq[5] else 0
+        totales['retencion'] += float(liq[6]) if liq[6] else 0
+    return totales
+
+
 @app.route('/modificar_usuario', methods=['GET', 'POST'])
 @login_required
 def modificar_usuario():
@@ -381,98 +457,22 @@ def modificar_usuario():
         return redirect(url_for('modificar_usuario'))
 
 
-@app.route('/auditoria')
-@admin_required
-def auditoria():
-    """Página principal de auditoría - solo para administradores RRHH"""
-    try:
-        usuario_filtro = request.args.get('usuario_filtro')
-        accion_filtro = request.args.get('accion_filtro')
-        tabla_filtro = request.args.get('tabla_filtro')
-        limite = int(request.args.get('limite', 50))
-
-        registros = BaseDeDatos.obtener_auditoria(
-            limite=limite,
-            usuario_filtro=usuario_filtro,
-            accion_filtro=accion_filtro,
-            tabla_filtro=tabla_filtro
-        )
-
-        estadisticas = BaseDeDatos.obtener_estadisticas_auditoria()
-
-        return render_template('auditoria.html',
-                               registros=registros,
-                               estadisticas=estadisticas,
-                               filtros={
-                                   'usuario_filtro': usuario_filtro,
-                                   'accion_filtro': accion_filtro,
-                                   'tabla_filtro': tabla_filtro,
-                                   'limite': limite
-                               })
-    except Exception as e:
-        flash(f"Error al cargar auditoría: {str(e)}", "error")
-        return redirect(url_for('admin_panel'))
-
+# =============== REPORTES Y EXPORTACIÓN ===============
 
 @app.route('/reportes')
 @admin_required
 def reportes():
     """Página dedicada de reportes avanzados - solo para administradores RRHH"""
     try:
-        from datetime import datetime
-
         bd = BaseDeDatos()
         stats = bd.obtener_estadisticas()
         empleados = bd.obtener_todos_usuarios()
         liquidaciones = bd.obtener_todas_liquidaciones()
 
-        empleados_por_mes = {}
-        if empleados:
-            for emp in empleados:
-                fecha_ingreso = emp[6]
-                if fecha_ingreso:
-                    mes = f"{fecha_ingreso.year}-{fecha_ingreso.month:02d}"
-                    empleados_por_mes[mes] = empleados_por_mes.get(mes, 0) + 1
-
-        rangos_salariales = {
-            'Menos de 2M': 0,
-            '2M - 5M': 0,
-            '5M - 10M': 0,
-            'Más de 10M': 0
-        }
-        if empleados:
-            for emp in empleados:
-                salario = float(emp[8]) if emp[8] else 0
-                if salario < 2_000_000:
-                    rangos_salariales['Menos de 2M'] += 1
-                elif salario < 5_000_000:
-                    rangos_salariales['2M - 5M'] += 1
-                elif salario < 10_000_000:
-                    rangos_salariales['5M - 10M'] += 1
-                else:
-                    rangos_salariales['Más de 10M'] += 1
-
-        top_empleados = []
-        if empleados:
-            empleados_ordenados = sorted(empleados, key=lambda x: float(x[8]) if x[8] else 0, reverse=True)
-            top_empleados = empleados_ordenados[:10]
-
-        total_por_componente = {
-            'indemnizacion': 0,
-            'vacaciones': 0,
-            'cesantias': 0,
-            'intereses': 0,
-            'prima': 0,
-            'retencion': 0
-        }
-        if liquidaciones:
-            for liq in liquidaciones:
-                total_por_componente['indemnizacion'] += float(liq[1]) if liq[1] else 0
-                total_por_componente['vacaciones'] += float(liq[2]) if liq[2] else 0
-                total_por_componente['cesantias'] += float(liq[3]) if liq[3] else 0
-                total_por_componente['intereses'] += float(liq[4]) if liq[4] else 0
-                total_por_componente['prima'] += float(liq[5]) if liq[5] else 0
-                total_por_componente['retencion'] += float(liq[6]) if liq[6] else 0
+        empleados_por_mes = _empleados_por_mes(empleados)
+        rangos_salariales = _rangos_salariales(empleados)
+        top_empleados = _top_empleados(empleados, n=10)
+        total_por_componente = _total_por_componente(liquidaciones)
 
         return render_template('reportes.html',
                                stats=stats,
