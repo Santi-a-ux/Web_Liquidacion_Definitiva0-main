@@ -16,6 +16,7 @@
     </div>
     <div class="card-body">
         <form method="POST" action="{{ url_for('agregar_liquidacion') }}">
+            {% include "_csrf_field.html" %}
             <div class="row justify-content-center">
                 <!-- Información simplificada -->
                 <div class="col-md-6">
@@ -86,4 +87,3 @@
     </div>
 </div>
 {% endblock %}
-
