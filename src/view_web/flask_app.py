@@ -11,6 +11,7 @@ from view.console.consolacontrolador import asignar_id_liquidacion, calcular_ind
 
 # Importa módulos de Flask para crear la aplicación web
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+LOGIN_REQUIRED_MSG = "Debes iniciar sesión para acceder"
 
 # Clase principal de la aplicación
 class Run:
@@ -22,7 +23,7 @@ class Run:
     def login_required(f):
         def decorated_function(*args, **kwargs):
             if 'user_id' not in session:
-                flash("Debes iniciar sesión para acceder", "error")
+                flash(LOGIN_REQUIRED_MSG, "error")
                 return redirect(url_for('login'))
             return f(*args, **kwargs)
         decorated_function.__name__ = f.__name__
@@ -33,7 +34,7 @@ class Run:
     def admin_required(f):
         def decorated_function(*args, **kwargs):
             if 'user_id' not in session:
-                flash("Debes iniciar sesión para acceder", "error")
+                flash(LOGIN_REQUIRED_MSG, "error")
                 return redirect(url_for('login'))
             if session.get('rol') != 'administrador':
                 flash("Acceso denegado. Solo personal de Recursos Humanos", "error")
@@ -115,7 +116,7 @@ class Run:
     def agregar_usuario():
         # Verificar sesión
         if 'user_id' not in session:
-            flash("Debes iniciar sesión para acceder", "error")
+            flash(LOGIN_REQUIRED_MSG, "error")
             return redirect(url_for('login'))
             
         if request.method == 'POST':
@@ -149,10 +150,10 @@ class Run:
 
     @app.route('/agregar_liquidacion', methods=['GET', 'POST'])
     @staticmethod
-    def agregar_liquidacion():
+     def agregar_liquidacion():
         # Verificar sesión
         if 'user_id' not in session:
-            flash("Debes iniciar sesión para acceder", "error")
+            flash(LOGIN_REQUIRED_MSG, "error")
             return redirect(url_for('login'))
             
         if request.method == 'POST':
@@ -218,7 +219,7 @@ class Run:
     def consultar_usuario():
         # Verificar sesión
         if 'user_id' not in session:
-            flash("Debes iniciar sesión para acceder", "error")
+            flash(LOGIN_REQUIRED_MSG, "error")
             return redirect(url_for('login'))
             
         if request.method == 'POST':
@@ -243,10 +244,10 @@ class Run:
 
     @app.route('/eliminar_usuario', methods=['GET', 'POST'])
     @staticmethod
-    def eliminar_usuario():
+     def eliminar_usuario():
         # Verificar sesión y rol de administrador
         if 'user_id' not in session:
-            flash("Debes iniciar sesión para acceder", "error")
+            flash(LOGIN_REQUIRED_MSG, "error")
             return redirect(url_for('login'))
         
         if session.get('rol') != 'administrador':
@@ -274,7 +275,7 @@ class Run:
     def eliminar_liquidacion():
         # Verificar sesión y rol de administrador
         if 'user_id' not in session:
-            flash("Debes iniciar sesión para acceder", "error")
+            flash(LOGIN_REQUIRED_MSG, "error")
             return redirect(url_for('login'))
         
         if session.get('rol') != 'administrador':
@@ -308,7 +309,7 @@ class Run:
     def admin_panel():
         # Verificar sesión y rol de administrador
         if 'user_id' not in session:
-            flash("Debes iniciar sesión para acceder", "error")
+            flash(LOGIN_REQUIRED_MSG, "error")
             return redirect(url_for('login'))
         
         if session.get('rol') != 'administrador':
@@ -360,7 +361,7 @@ class Run:
     def modificar_usuario():
         # Verificar sesión
         if 'user_id' not in session:
-            flash("Debes iniciar sesión para acceder", "error")
+            flash(LOGIN_REQUIRED_MSG, "error")
             return redirect(url_for('login'))
         
         if request.method == 'GET':
