@@ -16,6 +16,7 @@
     </div>
     <div class="card-body">
         <form method="POST" action="{{ url_for('agregar_usuario') }}">
+            {% include "_csrf_field.html" %}
             <div class="row">
                 <!-- Columna izquierda -->
                 <div class="col-md-6">
