@@ -5,6 +5,8 @@ import psycopg2
 import SecretConfig
 import json
 from datetime import datetime
+SQL_SELECT_USUARIO = "SELECT * FROM usuarios WHERE ID_Usuario = %s"
+SQL_SELECT_LIQUIDACION = "SELECT * FROM liquidacion WHERE ID_Usuario = %s"
 
 class BaseDeDatos:
     def conectar_db(self):
@@ -259,8 +261,6 @@ class BaseDeDatos:
 
     def consultar_usuario(self, id_usuario):
         conn = None
-        SQL_SELECT_USUARIO = "SELECT * FROM usuarios WHERE ID_Usuario = %s"
-        SQL_SELECT_LIQUIDACION = "SELECT * FROM liquidacion WHERE ID_Usuario = %s"
         try:
             conn = self.conectar_db()
             if conn:
@@ -270,6 +270,26 @@ class BaseDeDatos:
                     cur.execute(SQL_SELECT_LIQUIDACION, (id_usuario,))
                     liquidacion = cur.fetchone()
                     if usuario:
+                        print("Datos del usuario:")
+                        print(f"ID_Usuario: {usuario[0]}")
+                        print(f"Nombre: {usuario[1]}")
+                        print(f"Apellido: {usuario[2]}")
+                        print(f"Documento_Identidad: {usuario[3]}")
+                        print(f"Correo_Electronico: {usuario[4]}")
+                        print(f"Telefono: {usuario[5]}")
+                        print(f"Fecha_Ingreso: {usuario[6]}")
+                        print(f"Fecha_Salida: {usuario[7]}")
+                        print(f"Salario: {usuario[8]}")
+                        if liquidacion:
+                            print("\nDatos de la liquidación:")
+                            print(f"Id_Liquidacion: {liquidacion[0]}")
+                            print(f"Indemnización: {liquidacion[1]}")
+                            print(f"Vacaciones: {liquidacion[2]}")
+                            print(f"Cesantías: {liquidacion[3]}")
+                            print(f"Intereses sobre cesantías: {liquidacion[4]}")
+                            print(f"Prima de servicios: {liquidacion[5]}")
+                            print(f"Retención en la fuente: {liquidacion[6]}")
+                            print(f"Total a pagar: {liquidacion[7]}")
                         return usuario, liquidacion
                     else:
                         return None, None
@@ -280,60 +300,71 @@ class BaseDeDatos:
             if conn:
                 conn.close()
 
+
     def eliminar_usuario(self, id_usuario, usuario_sistema=None):
         conn = None
         try:
             conn = self.conectar_db()
-            if conn:
-                with conn.cursor() as cur:
-                    sql_datos = "SELECT * FROM usuarios WHERE ID_Usuario = %s"
-                    cur.execute(sql_datos, (id_usuario,))
-                    datos_usuario = cur.fetchone()
-                    if not datos_usuario:
-                        print(f"No se encontró un usuario con ID: {id_usuario}")
-                        return False
-                    sql_check = "SELECT COUNT(*) FROM liquidacion WHERE ID_Usuario = %s"
-                    cur.execute(sql_check, (id_usuario,))
-                    liquidaciones_count = cur.fetchone()[0]
-                    if liquidaciones_count > 0:
-                        print("Error: No se puede eliminar el empleado. Primero elimina su liquidación.")
-                        return False
-                    sql = "DELETE FROM usuarios WHERE ID_Usuario = %s"
-                    cur.execute(sql, (id_usuario,))
-                    if cur.rowcount > 0:
-                        conn.commit()
-                        if usuario_sistema:
-                            datos_anteriores = json.dumps({
-                                'id_usuario': datos_usuario[0],
-                                'nombre': datos_usuario[1],
-                                'apellido': datos_usuario[2],
-                                'documento': datos_usuario[3],
-                                'correo': datos_usuario[4],
-                                'telefono': datos_usuario[5],
-                                'fecha_ingreso': str(datos_usuario[6]),
-                                'fecha_salida': str(datos_usuario[7]) if datos_usuario[7] else None,
-                                'salario': float(datos_usuario[8]),
-                                'rol': datos_usuario[9]
-                            })
-                            BaseDeDatos.registrar_auditoria(
-                                usuario_sistema=usuario_sistema,
-                                accion='DELETE',
-                                tabla_afectada='usuarios',
-                                id_registro=id_usuario,
-                                datos_anteriores=datos_anteriores,
-                                descripcion=f'Empleado eliminado: {datos_usuario[1]} {datos_usuario[2]}'
-                            )
-                        print("Empleado eliminado exitosamente")
-                        return True
-                    else:
-                        print(f"No se encontró un empleado con ID: {id_usuario}")
-                        return False
+            if not conn:
+                return False
+    
+            with conn.cursor() as cur:
+            
+                cur.execute(SQL_SELECT_USUARIO, (id_usuario,))
+                datos_usuario = cur.fetchone()
+                if not datos_usuario:
+                    print(f"No se encontró un usuario con ID: {id_usuario}")
+                    return False
+    
+                
+                sql_check = "SELECT COUNT(*) FROM liquidacion WHERE ID_Usuario = %s"
+                cur.execute(sql_check, (id_usuario,))
+                liquidaciones_count = cur.fetchone()[0]
+                if liquidaciones_count > 0:
+                    print("Error: No se puede eliminar el empleado. Primero elimina su liquidación.")
+                    return False
+    
+              
+                sql = "DELETE FROM usuarios WHERE ID_Usuario = %s"
+                cur.execute(sql, (id_usuario,))
+                if cur.rowcount == 0:
+                    print(f"No se encontró un empleado con ID: {id_usuario}")
+                    return False
+    
+                conn.commit()
+                print("Empleado eliminado exitosamente")
+    
+             
+                if usuario_sistema:
+                    datos_anteriores = json.dumps({
+                        'id_usuario': datos_usuario[0],
+                        'nombre': datos_usuario[1],
+                        'apellido': datos_usuario[2],
+                        'documento': datos_usuario[3],
+                        'correo': datos_usuario[4],
+                        'telefono': datos_usuario[5],
+                        'fecha_ingreso': str(datos_usuario[6]),
+                        'fecha_salida': str(datos_usuario[7]) if datos_usuario[7] else None,
+                        'salario': float(datos_usuario[8]),
+                        'rol': datos_usuario[9]
+                    })
+                    BaseDeDatos.registrar_auditoria(
+                        usuario_sistema=usuario_sistema,
+                        accion='DELETE',
+                        tabla_afectada='usuarios',
+                        id_registro=id_usuario,
+                        datos_anteriores=datos_anteriores,
+                        descripcion=f'Empleado eliminado: {datos_usuario[1]} {datos_usuario[2]}'
+                    )
+                return True
+    
         except (psycopg2.Error) as error:
             print(f"Error al eliminar el empleado: {error}")
             return False
         finally:
             if conn:
                 conn.close()
+
 
     def eliminar_liquidacion(self, id_liquidacion):
         conn = None
@@ -432,59 +463,65 @@ class BaseDeDatos:
         conn = None
         try:
             conn = self.conectar_db()
-            if conn:
-                with conn.cursor() as cur:
-                    cur.execute("SELECT * FROM usuarios WHERE ID_Usuario = %s", (id_usuario,))
-                    datos_anteriores_tuple = cur.fetchone()
-                    if not datos_anteriores_tuple:
-                        return False, "Empleado no encontrado"
-                    datos_anteriores_dict = {
-                        'id_usuario': datos_anteriores_tuple[0],
-                        'nombre': datos_anteriores_tuple[1],
-                        'apellido': datos_anteriores_tuple[2],
-                        'documento': datos_anteriores_tuple[3],
-                        'correo': datos_anteriores_tuple[4],
-                        'telefono': datos_anteriores_tuple[5],
-                        'fecha_ingreso': str(datos_anteriores_tuple[6]),
-                        'fecha_salida': str(datos_anteriores_tuple[7]) if datos_anteriores_tuple[7] else None,
-                        'salario': float(datos_anteriores_tuple[8]),
-                        'rol': datos_anteriores_tuple[9]
+            if not conn:
+                return False, "No se pudo conectar a la base de datos"
+    
+            with conn.cursor() as cur:
+                cur.execute(SQL_SELECT_USUARIO, (id_usuario,))
+                datos_anteriores_tuple = cur.fetchone()
+                if not datos_anteriores_tuple:
+                    return False, "Empleado no encontrado"
+    
+                datos_anteriores_dict = {
+                    'id_usuario': datos_anteriores_tuple[0],
+                    'nombre': datos_anteriores_tuple[1],
+                    'apellido': datos_anteriores_tuple[2],
+                    'documento': datos_anteriores_tuple[3],
+                    'correo': datos_anteriores_tuple[4],
+                    'telefono': datos_anteriores_tuple[5],
+                    'fecha_ingreso': str(datos_anteriores_tuple[6]),
+                    'fecha_salida': str(datos_anteriores_tuple[7]) if datos_anteriores_tuple[7] else None,
+                    'salario': float(datos_anteriores_tuple[8]),
+                    'rol': datos_anteriores_tuple[9]
+                }
+    
+                sql = """
+                UPDATE usuarios 
+                SET Nombre = %s, Apellido = %s, Documento_Identidad = %s, 
+                    Correo_Electronico = %s, Telefono = %s, Fecha_Ingreso = %s, 
+                    Fecha_Salida = %s, Salario = %s
+                WHERE ID_Usuario = %s
+                """
+                cur.execute(sql, (nombre, apellido, documento, correo, telefono, fecha_ingreso, fecha_salida, salario, id_usuario))
+                if cur.rowcount == 0:
+                    return False, "No se pudo modificar el empleado"
+    
+                conn.commit()
+    
+                if usuario_sistema:
+                    datos_nuevos_dict = {
+                        'id_usuario': id_usuario,
+                        'nombre': nombre,
+                        'apellido': apellido,
+                        'documento': documento,
+                        'correo': correo,
+                        'telefono': telefono,
+                        'fecha_ingreso': str(fecha_ingreso),
+                        'fecha_salida': str(fecha_salida) if fecha_salida else None,
+                        'salario': float(salario),
+                        'rol': datos_anteriores_dict['rol']
                     }
-                    sql = """
-                    UPDATE usuarios 
-                    SET Nombre = %s, Apellido = %s, Documento_Identidad = %s, 
-                        Correo_Electronico = %s, Telefono = %s, Fecha_Ingreso = %s, 
-                        Fecha_Salida = %s, Salario = %s
-                    WHERE ID_Usuario = %s
-                    """
-                    cur.execute(sql, (nombre, apellido, documento, correo, telefono, fecha_ingreso, fecha_salida, salario, id_usuario))
-                    if cur.rowcount > 0:
-                        conn.commit()
-                        if usuario_sistema:
-                            datos_nuevos_dict = {
-                                'id_usuario': id_usuario,
-                                'nombre': nombre,
-                                'apellido': apellido,
-                                'documento': documento,
-                                'correo': correo,
-                                'telefono': telefono,
-                                'fecha_ingreso': str(fecha_ingreso),
-                                'fecha_salida': str(fecha_salida) if fecha_salida else None,
-                                'salario': float(salario),
-                                'rol': datos_anteriores_dict['rol']
-                            }
-                            BaseDeDatos.registrar_auditoria(
-                                usuario_sistema=usuario_sistema,
-                                accion='UPDATE',
-                                tabla_afectada='usuarios',
-                                id_registro=id_usuario,
-                                datos_anteriores=json.dumps(datos_anteriores_dict),
-                                datos_nuevos=json.dumps(datos_nuevos_dict),
-                                descripcion=f'Empleado modificado: {nombre} {apellido}'
-                            )
-                        return True, "Empleado modificado exitosamente"
-                    else:
-                        return False, "No se pudo modificar el empleado"
+                    BaseDeDatos.registrar_auditoria(
+                        usuario_sistema=usuario_sistema,
+                        accion='UPDATE',
+                        tabla_afectada='usuarios',
+                        id_registro=id_usuario,
+                        datos_anteriores=json.dumps(datos_anteriores_dict),
+                        datos_nuevos=json.dumps(datos_nuevos_dict),
+                        descripcion=f'Empleado modificado: {nombre} {apellido}'
+                    )
+    
+                return True, "Empleado modificado exitosamente"
         except (psycopg2.Error) as error:
             print(f"Error al modificar empleado: {error}")
             return False, f"Error al modificar empleado: {str(error)}"
