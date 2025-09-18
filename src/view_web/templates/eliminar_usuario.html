@@ -20,7 +20,8 @@
             <strong>¡Advertencia!</strong> Esta acción eliminará permanentemente el empleado del sistema.
         </div>
 
-        <form method="POST" action="{{ url_for('eliminar_usuario') }}">
+        <form method="POST" action="{{ url_for('eliminar_usuario_post') }}">
+            {% include "_csrf_field.html" %}
             <div class="form-group">
                 <label for="id_usuario" class="form-label">
                     <i class="fas fa-hashtag"></i> ID del Empleado a Eliminar *
@@ -57,7 +58,7 @@
         </ul>
         
         <div class="mt-3">
-            <a href="{{ url_for('consultar_usuario') }}" class="btn btn-sm btn-info">
+            <a href="{{ url_for('consultar_usuario_get') }}" class="btn btn-sm btn-info">
                 <i class="fas fa-search"></i> Consultar Usuario
             </a>
             <a href="{{ url_for('admin_panel') }}" class="btn btn-sm btn-primary">

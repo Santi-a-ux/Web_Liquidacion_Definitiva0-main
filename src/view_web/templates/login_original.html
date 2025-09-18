@@ -108,7 +108,8 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ url_for('login') }}">
+            <form method="POST" action="{{ url_for('login_post') }}">
+                {% include "_csrf_field.html" %}
                 <div class="form-group">
                     <label for="id_usuario" class="form-label">
                         <i class="fas fa-user"></i> ID del Usuario del Sistema

@@ -27,7 +27,7 @@
             <div class="nav-card-content">
                 <h3>Agregar Empleado</h3>
                 <p>Registrar nuevos empleados en el sistema con datos completos</p>
-                <a href="{{ url_for('agregar_usuario') }}" class="btn btn-primary">
+                <a href="{{ url_for('agregar_usuario_get') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i>
                     Nuevo Empleado
                 </a>
@@ -42,7 +42,7 @@
             <div class="nav-card-content">
                 <h3>Consultar Empleado</h3>
                 <p>Buscar y visualizar información detallada de empleados</p>
-                <a href="{{ url_for('consultar_usuario') }}" class="btn btn-secondary">
+                <a href="{{ url_for('consultar_usuario_get') }}" class="btn btn-secondary">
                     <i class="fas fa-search"></i>
                     Consultar
                 </a>
@@ -57,7 +57,7 @@
             <div class="nav-card-content">
                 <h3>Modificar Empleado</h3>
                 <p>Actualizar información personal y laboral de empleados</p>
-                <a href="{{ url_for('modificar_usuario') }}" class="btn btn-info">
+                <a href="{{ url_for('modificar_usuario_get') }}" class="btn btn-info">
                     <i class="fas fa-edit"></i>
                     Modificar
                 </a>
@@ -72,7 +72,7 @@
             <div class="nav-card-content">
                 <h3>Crear Liquidación</h3>
                 <p>Calcular liquidaciones precisas con todos los componentes legales</p>
-                <a href="{{ url_for('agregar_liquidacion') }}" class="btn btn-primary">
+                <a href="{{ url_for('agregar_liquidacion_get') }}" class="btn btn-primary">
                     <i class="fas fa-calculator"></i>
                     Calcular Ahora
                 </a>
@@ -88,7 +88,7 @@
             <div class="nav-card-content">
                 <h3>Eliminar Empleado</h3>
                 <p>Remover empleados del sistema de forma segura</p>
-                <a href="{{ url_for('eliminar_usuario') }}" class="btn btn-outline">
+                <a href="{{ url_for('eliminar_usuario_get') }}" class="btn btn-outline">
                     <i class="fas fa-trash"></i>
                     Eliminar
                 </a>
@@ -105,7 +105,7 @@
             <div class="nav-card-content">
                 <h3>Eliminar Liquidación</h3>
                 <p>Remover liquidaciones existentes del historial</p>
-                <a href="{{ url_for('eliminar_liquidacion') }}" class="btn btn-outline">
+                <a href="{{ url_for('eliminar_liquidacion_get') }}" class="btn btn-outline">
                     <i class="fas fa-times"></i>
                     Remover
                 </a>

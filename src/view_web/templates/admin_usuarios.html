@@ -15,7 +15,7 @@
                 <div class="stats-number">{{ usuarios|length }}</div>
                 <div class="stats-label">Total usuarios</div>
             </div>
-            <a href="{{ url_for('agregar_usuario') }}" class="btn btn-primary">
+            <a href="{{ url_for('agregar_usuario_get') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i>
                 Nuevo Usuario
             </a>
@@ -88,10 +88,10 @@
                     </td>
                     <td>
                         <div class="btn-group">
-                            <a href="{{ url_for('consultar_usuario') }}" class="btn btn-outline" title="Ver">
+                            <a href="{{ url_for('consultar_usuario_get') }}" class="btn btn-outline" title="Ver">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <a href="{{ url_for('eliminar_usuario') }}" class="btn btn-outline" title="Eliminar">
+                            <a href="{{ url_for('eliminar_usuario_get') }}" class="btn btn-outline" title="Eliminar">
                                 <i class="fas fa-trash"></i>
                             </a>
                         </div>
@@ -109,7 +109,7 @@
         </div>
         <h3>Sin usuarios registrados</h3>
         <p>Comienza agregando tu primer usuario al sistema</p>
-        <a href="{{ url_for('agregar_usuario') }}" class="btn btn-primary">
+        <a href="{{ url_for('agregar_usuario_get') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i>
             Agregar Usuario
         </a>
@@ -124,7 +124,7 @@
         </a>
         {% if usuarios %}
         <div style="display: flex; gap: 1rem;">
-            <a href="{{ url_for('eliminar_usuario') }}" class="btn btn-outline">
+            <a href="{{ url_for('eliminar_usuario_get') }}" class="btn btn-outline">
                 <i class="fas fa-trash"></i>
                 Eliminar Usuario
             </a>

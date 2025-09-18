@@ -65,10 +65,10 @@
                 <h3>Gestión de Empleados</h3>
                 <p>Administre el registro completo de empleados con datos personales y laborales actualizados</p>
                 <div style="display: flex; gap: 0.75rem; justify-content: center;">
-                    <a href="{{ url_for('agregar_usuario') }}" class="btn btn-primary">
+                    <a href="{{ url_for('agregar_usuario_get') }}" class="btn btn-primary">
                         Agregar
                     </a>
-                    <a href="{{ url_for('consultar_usuario') }}" class="btn btn-secondary">
+                    <a href="{{ url_for('consultar_usuario_get') }}" class="btn btn-secondary">
                         Consultar
                     </a>
                 </div>
@@ -78,7 +78,7 @@
             <div class="function-card">
                 <h3>Modificación de Datos</h3>
                 <p>Actualice información personal, salarial y contractual de los empleados registrados</p>
-                <a href="{{ url_for('modificar_usuario') }}" class="btn btn-primary">
+                <a href="{{ url_for('modificar_usuario_get') }}" class="btn btn-primary">
                     Modificar Empleado
                 </a>
             </div>
@@ -87,7 +87,7 @@
             <div class="function-card" style="border: 2px solid var(--accent-blue); background: linear-gradient(135deg, var(--white) 0%, var(--light-blue) 20%);">
                 <h3 style="color: var(--primary-navy);">Cálculo de Liquidaciones</h3>
                 <p>Procese liquidaciones definitivas con cálculos automatizados conforme a la legislación laboral</p>
-                <a href="{{ url_for('agregar_liquidacion') }}" class="btn btn-primary" style="font-size: 1rem; padding: 0.875rem 1.75rem;">
+                <a href="{{ url_for('agregar_liquidacion_get') }}" class="btn btn-primary" style="font-size: 1rem; padding: 0.875rem 1.75rem;">
                     Procesar Liquidación
                 </a>
             </div>
@@ -98,10 +98,10 @@
                 <h3>Funciones Administrativas</h3>
                 <p>Acceso completo a funciones de eliminación y gestión avanzada del sistema</p>
                 <div style="display: flex; gap: 0.75rem; justify-content: center;">
-                    <a href="{{ url_for('eliminar_usuario') }}" class="btn btn-secondary">
+                    <a href="{{ url_for('eliminar_usuario_get') }}" class="btn btn-secondary">
                         Eliminar Usuario
                     </a>
-                    <a href="{{ url_for('eliminar_liquidacion') }}" class="btn btn-secondary">
+                    <a href="{{ url_for('eliminar_liquidacion_get') }}" class="btn btn-secondary">
                         Remover Liquidación
                     </a>
                 </div>

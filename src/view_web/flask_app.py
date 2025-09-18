@@ -27,6 +27,7 @@ from view.console.consolacontrolador import (
 )
 
 from flask import Flask, render_template, request, redirect, url_for, flash, session, make_response
+from flask_wtf import CSRFProtect
 
 # Constantes
 LOGIN_REQUIRED_MSG = "Debes iniciar sesión para acceder"
@@ -40,13 +41,17 @@ app = Flask(__name__, template_folder='templates')
 # - En dev/testing local: si no está definida, se usa una clave aleatoria por proceso.
 app.secret_key = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
 
+# Configurar CSRF Protection
+app.config["WTF_CSRF_ENABLED"] = True
+csrf = CSRFProtect(app)
+
 
 # Decoradores a nivel de módulo
 def login_required(f):
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
             flash(LOGIN_REQUIRED_MSG, "error")
-            return redirect(url_for('login'))
+            return redirect(url_for('login_get'))
         return f(*args, **kwargs)
     decorated_function.__name__ = f.__name__
     return decorated_function
@@ -56,7 +61,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
             flash(LOGIN_REQUIRED_MSG, "error")
-            return redirect(url_for('login'))
+            return redirect(url_for('login_get'))
         if session.get('rol') != 'administrador':
             flash("Acceso denegado. Solo personal de Recursos Humanos", "error")
             return redirect(url_for('index'))
@@ -67,53 +72,56 @@ def admin_required(f):
 
 # =============== RUTAS ===============
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        id_usuario = request.form['id_usuario']
-        password = request.form['password']
-
-        bd = BaseDeDatos()
-        resultado = bd.autenticar_usuario(id_usuario, password)
-
-        if resultado.get('autenticado'):
-            session['user_id'] = resultado['id']
-            session['nombre'] = resultado['nombre']
-            session['apellido'] = resultado['apellido']
-            session['rol'] = resultado['rol']
-
-            # Registrar auditoría de login (mejor esfuerzo)
-            try:
-                BaseDeDatos.registrar_auditoria(
-                    usuario_sistema=resultado['id'],
-                    accion='LOGIN',
-                    tabla_afectada='usuarios',
-                    id_registro=resultado['id'],
-                    ip_address=request.remote_addr,
-                    descripcion=f'Inicio de sesión exitoso: {resultado["nombre"]} {resultado["apellido"]} ({resultado["rol"]})'
-                )
-            except Exception as e:
-                print(f"Error al registrar auditoría de login: {e}")
-
-            flash(f"Bienvenido {resultado['nombre']} ({resultado['rol']})", "success")
-            return redirect(url_for('index'))
-        else:
-            flash("Credenciales incorrectas", "error")
-
+@app.route('/login', methods=['GET'])
+def login_get():
     return render_template('login.html')
+
+
+@app.route('/login', methods=['POST'])
+def login_post():
+    id_usuario = request.form['id_usuario']
+    password = request.form['password']
+
+    bd = BaseDeDatos()
+    resultado = bd.autenticar_usuario(id_usuario, password)
+
+    if resultado.get('autenticado'):
+        session['user_id'] = resultado['id']
+        session['nombre'] = resultado['nombre']
+        session['apellido'] = resultado['apellido']
+        session['rol'] = resultado['rol']
+
+        # Registrar auditoría de login (mejor esfuerzo)
+        try:
+            BaseDeDatos.registrar_auditoria(
+                usuario_sistema=resultado['id'],
+                accion='LOGIN',
+                tabla_afectada='usuarios',
+                id_registro=resultado['id'],
+                ip_address=request.remote_addr,
+                descripcion=f'Inicio de sesión exitoso: {resultado["nombre"]} {resultado["apellido"]} ({resultado["rol"]})'
+            )
+        except Exception as e:
+            print(f"Error al registrar auditoría de login: {e}")
+
+        flash(f"Bienvenido {resultado['nombre']} ({resultado['rol']})", "success")
+        return redirect(url_for('index'))
+    else:
+        flash("Credenciales incorrectas", "error")
+        return redirect(url_for('login_get'))
 
 
 @app.route('/logout')
 def logout():
     session.clear()
     flash("Sesión cerrada exitosamente", "success")
-    return redirect(url_for('login'))
+    return redirect(url_for('login_get'))
 
 
 @app.route('/')
 def index():
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('login_get'))
 
     return render_template('index.html',
                            usuario_nombre=session.get('nombre'),
@@ -133,154 +141,171 @@ def test():
     """
 
 
-@app.route('/agregar_usuario', methods=['GET', 'POST'])
+@app.route('/agregar_usuario', methods=['GET'])
 @login_required
-def agregar_usuario():
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        apellido = request.form['apellido']
-        documento_identidad = request.form['documento_identidad']
-        correo_electronico = request.form['correo_electronico']
-        telefono = request.form['telefono']
-        fecha_ingreso = request.form['fecha_ingreso']
-        fecha_salida = request.form['fecha_salida']
-        salario = request.form['salario']
-        id_usuario = request.form['id_usuario']
-
-        try:
-            print(f"DEBUG: Intentando agregar empleado ID: {id_usuario}, Nombre: {nombre}")
-            bd = BaseDeDatos()
-            bd.agregar_usuario(
-                nombre, apellido, documento_identidad, correo_electronico, telefono,
-                fecha_ingreso, fecha_salida, salario, id_usuario,
-                usuario_sistema=session.get('user_id')
-            )
-            flash("Empleado agregado exitosamente", "success")
-            print(f"DEBUG: Empleado {id_usuario} agregado exitosamente")
-            return redirect(url_for('index'))
-        except Exception as e:
-            error_msg = f"Error al agregar el empleado: {str(e)}"
-            print(f"DEBUG: {error_msg}")
-            flash(error_msg, "error")
-            return redirect(url_for('agregar_usuario'))
-
+def agregar_usuario_get():
     return render_template('agregar_usuario.html')
 
 
-@app.route('/agregar_liquidacion', methods=['GET', 'POST'])
+@app.route('/agregar_usuario', methods=['POST'])
 @login_required
-def agregar_liquidacion():
-    if request.method == 'POST':
-        try:
-            id_usuario = int(request.form['id_usuario'])
-        except ValueError:
-            flash("ID de empleado inválido. Por favor, ingresa un valor numérico.", "error")
-            return render_template(TEMPLATE_AGREGAR_LIQUIDACION)
+def agregar_usuario_post():
+    nombre = request.form['nombre']
+    apellido = request.form['apellido']
+    documento_identidad = request.form['documento_identidad']
+    correo_electronico = request.form['correo_electronico']
+    telefono = request.form['telefono']
+    fecha_ingreso = request.form['fecha_ingreso']
+    fecha_salida = request.form['fecha_salida']
+    salario = request.form['salario']
+    id_usuario = request.form['id_usuario']
 
-        # Obtener datos del empleado
-        try:
-            bd = BaseDeDatos()
-            empleado_data = bd.consultar_usuario(id_usuario)
-            if not empleado_data or not empleado_data[0]:
-                flash(f"No se encontró un empleado con ID: {id_usuario}", "error")
-                return render_template(TEMPLATE_AGREGAR_LIQUIDACION)
-
-            empleado = empleado_data[0]
-            salario = float(empleado[8])
-            fecha_ingreso = str(empleado[6])  # YYYY-MM-DD
-            fecha_salida = str(empleado[7])   # YYYY-MM-DD
-            print(f"DEBUG: Empleado {id_usuario} - Salario: {salario}, Ingreso: {fecha_ingreso}, Salida: {fecha_salida}")
-        except Exception as e:
-            flash(f"Error al obtener información del empleado: {str(e)}", "error")
-            return render_template(TEMPLATE_AGREGAR_LIQUIDACION)
-
-        # Cálculos
-        dias_trabajados_total = dias_trabajados(fecha_ingreso, fecha_salida)
-        anios_trabajados = dias_trabajados_total // 360
-        salario_anual = salario * 12
-        salario_semestral = salario * 6
-        tasa_retencion = 0.1
-
-        id_liquidacion = asignar_id_liquidacion()
-        indemnizacion = calcular_indemnizacion(salario, anios_trabajados)
-        valor_vacaciones = calcular_valor_vacaciones(dias_trabajados_total, salario_anual)
-        cesantias = calcular_cesantias(dias_trabajados_total, salario)
-        intereses_sobre_cesantias = calcular_intereses_sobre_cesantias(cesantias)
-        prima_servicios = calcular_prima_servicios(salario_semestral)
-        retencion_fuente = calcular_retencion_fuente(salario_anual, tasa_retencion)
-        total_a_pagar = (
-            indemnizacion + valor_vacaciones + cesantias +
-            intereses_sobre_cesantias + prima_servicios - retencion_fuente
+    try:
+        print(f"DEBUG: Intentando agregar empleado ID: {id_usuario}, Nombre: {nombre}")
+        bd = BaseDeDatos()
+        bd.agregar_usuario(
+            nombre, apellido, documento_identidad, correo_electronico, telefono,
+            fecha_ingreso, fecha_salida, salario, id_usuario,
+            usuario_sistema=session.get('user_id')
         )
-
-        resultado_guardado = bd.agregar_liquidacion(
-            id_liquidacion, indemnizacion, valor_vacaciones, cesantias,
-            intereses_sobre_cesantias, prima_servicios, retencion_fuente,
-            total_a_pagar, id_usuario
-        )
-
-        if resultado_guardado:
-            flash(f"OK Liquidación creada exitosamente para el empleado {id_usuario}. Total a pagar: ${total_a_pagar:,.2f}", "success")
-        else:
-            flash("ERROR Error al guardar la liquidación en la base de datos", "error")
-
+        flash("Empleado agregado exitosamente", "success")
+        print(f"DEBUG: Empleado {id_usuario} agregado exitosamente")
         return redirect(url_for('index'))
+    except Exception as e:
+        error_msg = f"Error al agregar el empleado: {str(e)}"
+        print(f"DEBUG: {error_msg}")
+        flash(error_msg, "error")
+        return redirect(url_for('agregar_usuario_get'))
 
+
+@app.route('/agregar_liquidacion', methods=['GET'])
+@login_required
+def agregar_liquidacion_get():
     return render_template(TEMPLATE_AGREGAR_LIQUIDACION)
 
 
-@app.route('/consultar_usuario', methods=['GET', 'POST'])
+@app.route('/agregar_liquidacion', methods=['POST'])
 @login_required
-def consultar_usuario():
-    if request.method == 'POST':
+def agregar_liquidacion_post():
+    try:
         id_usuario = int(request.form['id_usuario'])
-        print(f"DEBUG: Consultando usuario con ID: {id_usuario}")
-        bd = BaseDeDatos()
-        usuario, liquidacion = bd.consultar_usuario(id_usuario)  # nombre en minúscula
-        print(f"DEBUG: Resultado consulta - Usuario: {usuario}, Liquidacion: {liquidacion}")
-        if usuario:
-            print("DEBUG: Usuario encontrado, renderizando template")
-            return render_template('consultar_usuario.html', usuario=usuario, liquidacion=liquidacion)
-        else:
-            print("DEBUG: Usuario no encontrado")
-            flash("Usuario no encontrado")
-            return redirect(url_for('consultar_usuario'))
+    except ValueError:
+        flash("ID de empleado inválido. Por favor, ingresa un valor numérico.", "error")
+        return render_template(TEMPLATE_AGREGAR_LIQUIDACION)
 
+    # Obtener datos del empleado
+    try:
+        bd = BaseDeDatos()
+        empleado_data = bd.consultar_usuario(id_usuario)
+        if not empleado_data or not empleado_data[0]:
+            flash(f"No se encontró un empleado con ID: {id_usuario}", "error")
+            return render_template(TEMPLATE_AGREGAR_LIQUIDACION)
+
+        empleado = empleado_data[0]
+        salario = float(empleado[8])
+        fecha_ingreso = str(empleado[6])  # YYYY-MM-DD
+        fecha_salida = str(empleado[7])   # YYYY-MM-DD
+        print(f"DEBUG: Empleado {id_usuario} - Salario: {salario}, Ingreso: {fecha_ingreso}, Salida: {fecha_salida}")
+    except Exception as e:
+        flash(f"Error al obtener información del empleado: {str(e)}", "error")
+        return render_template(TEMPLATE_AGREGAR_LIQUIDACION)
+
+    # Cálculos
+    dias_trabajados_total = dias_trabajados(fecha_ingreso, fecha_salida)
+    anios_trabajados = dias_trabajados_total // 360
+    salario_anual = salario * 12
+    salario_semestral = salario * 6
+    tasa_retencion = 0.1
+
+    id_liquidacion = asignar_id_liquidacion()
+    indemnizacion = calcular_indemnizacion(salario, anios_trabajados)
+    valor_vacaciones = calcular_valor_vacaciones(dias_trabajados_total, salario_anual)
+    cesantias = calcular_cesantias(dias_trabajados_total, salario)
+    intereses_sobre_cesantias = calcular_intereses_sobre_cesantias(cesantias)
+    prima_servicios = calcular_prima_servicios(salario_semestral)
+    retencion_fuente = calcular_retencion_fuente(salario_anual, tasa_retencion)
+    total_a_pagar = (
+        indemnizacion + valor_vacaciones + cesantias +
+        intereses_sobre_cesantias + prima_servicios - retencion_fuente
+    )
+
+    resultado_guardado = bd.agregar_liquidacion(
+        id_liquidacion, indemnizacion, valor_vacaciones, cesantias,
+        intereses_sobre_cesantias, prima_servicios, retencion_fuente,
+        total_a_pagar, id_usuario
+    )
+
+    if resultado_guardado:
+        flash(f"OK Liquidación creada exitosamente para el empleado {id_usuario}. Total a pagar: ${total_a_pagar:,.2f}", "success")
+    else:
+        flash("ERROR Error al guardar la liquidación en la base de datos", "error")
+
+    return redirect(url_for('index'))
+
+
+@app.route('/consultar_usuario', methods=['GET'])
+@login_required
+def consultar_usuario_get():
     return render_template('consultar_usuario.html')
 
 
-@app.route('/eliminar_usuario', methods=['GET', 'POST'])
+@app.route('/consultar_usuario', methods=['POST'])
+@login_required
+def consultar_usuario_post():
+    id_usuario = int(request.form['id_usuario'])
+    print(f"DEBUG: Consultando usuario con ID: {id_usuario}")
+    bd = BaseDeDatos()
+    usuario, liquidacion = bd.consultar_usuario(id_usuario)  # nombre en minúscula
+    print(f"DEBUG: Resultado consulta - Usuario: {usuario}, Liquidacion: {liquidacion}")
+    if usuario:
+        print("DEBUG: Usuario encontrado, renderizando template")
+        return render_template('consultar_usuario.html', usuario=usuario, liquidacion=liquidacion)
+    else:
+        print("DEBUG: Usuario no encontrado")
+        flash("Usuario no encontrado")
+        return redirect(url_for('consultar_usuario_get'))
+
+
+@app.route('/eliminar_usuario', methods=['GET'])
 @admin_required
-def eliminar_usuario():
-    if request.method == 'POST':
-        id_usuario = request.form['id_usuario']
-        bd = BaseDeDatos()
-        resultado = bd.eliminar_usuario(id_usuario, usuario_sistema=session.get('user_id'))
-
-        if resultado:
-            flash("Empleado eliminado exitosamente", "success")
-        else:
-            flash("Error: No se pudo eliminar el empleado. Verifica que no tenga liquidaciones pendientes.", "error")
-
-        return redirect(url_for('index'))
+def eliminar_usuario_get():
     return render_template('eliminar_usuario.html')
 
 
-@app.route('/eliminar_liquidacion', methods=['GET', 'POST'])
+@app.route('/eliminar_usuario', methods=['POST'])
 @admin_required
-def eliminar_liquidacion():
-    if request.method == 'POST':
-        id_liquidacion = request.form['id_liquidacion']
-        bd = BaseDeDatos()
-        resultado = bd.eliminar_liquidacion(id_liquidacion)
+def eliminar_usuario_post():
+    id_usuario = request.form['id_usuario']
+    bd = BaseDeDatos()
+    resultado = bd.eliminar_usuario(id_usuario, usuario_sistema=session.get('user_id'))
 
-        if resultado:
-            flash("Liquidación eliminada exitosamente", "success")
-        else:
-            flash("Error: No se encontró la liquidación con ese ID.", "error")
+    if resultado:
+        flash("Empleado eliminado exitosamente", "success")
+    else:
+        flash("Error: No se pudo eliminar el empleado. Verifica que no tenga liquidaciones pendientes.", "error")
 
-        return redirect(url_for('index'))
+    return redirect(url_for('index'))
+
+
+@app.route('/eliminar_liquidacion', methods=['GET'])
+@admin_required
+def eliminar_liquidacion_get():
     return render_template('eliminar_liquidacion.html')
+
+
+@app.route('/eliminar_liquidacion', methods=['POST'])
+@admin_required
+def eliminar_liquidacion_post():
+    id_liquidacion = request.form['id_liquidacion']
+    bd = BaseDeDatos()
+    resultado = bd.eliminar_liquidacion(id_liquidacion)
+
+    if resultado:
+        flash("Liquidación eliminada exitosamente", "success")
+    else:
+        flash("Error: No se encontró la liquidación con ese ID.", "error")
+
+    return redirect(url_for('index'))
 
 
 @app.route('/admin')
@@ -401,32 +426,35 @@ def _total_por_componente(liquidaciones):
     return totales
 
 
-@app.route('/modificar_usuario', methods=['GET', 'POST'])
+@app.route('/modificar_usuario', methods=['GET'])
 @login_required
-def modificar_usuario():
-    if request.method == 'GET':
-        id_usuario = request.args.get('id')
-        usuario_data = None
+def modificar_usuario_get():
+    id_usuario = request.args.get('id')
+    usuario_data = None
 
-        if id_usuario:
-            bd = BaseDeDatos()
-            usuario, _ = bd.consultar_usuario(id_usuario)
-            if usuario:
-                usuario_data = {
-                    'id': usuario[0],
-                    'nombre': usuario[1],
-                    'apellido': usuario[2],
-                    'documento': usuario[3],
-                    'correo': usuario[4],
-                    'telefono': usuario[5],
-                    'fecha_ingreso': usuario[6],
-                    'fecha_salida': usuario[7],
-                    'salario': usuario[8]
-                }
-            else:
-                flash("Usuario no encontrado", "error")
-        return render_template('modificar_usuario.html', usuario=usuario_data)
+    if id_usuario:
+        bd = BaseDeDatos()
+        usuario, _ = bd.consultar_usuario(id_usuario)
+        if usuario:
+            usuario_data = {
+                'id': usuario[0],
+                'nombre': usuario[1],
+                'apellido': usuario[2],
+                'documento': usuario[3],
+                'correo': usuario[4],
+                'telefono': usuario[5],
+                'fecha_ingreso': usuario[6],
+                'fecha_salida': usuario[7],
+                'salario': usuario[8]
+            }
+        else:
+            flash("Usuario no encontrado", "error")
+    return render_template('modificar_usuario.html', usuario=usuario_data)
 
+
+@app.route('/modificar_usuario', methods=['POST'])
+@login_required
+def modificar_usuario_post():
     try:
         id_usuario = request.form['id_usuario']
         nombre = request.form['nombre']
@@ -450,11 +478,11 @@ def modificar_usuario():
             return redirect(url_for('index'))
         else:
             flash(mensaje, "error")
-            return redirect(url_for('modificar_usuario', id=id_usuario))
+            return redirect(url_for('modificar_usuario_get', id=id_usuario))
 
     except Exception as e:
         flash(f"Error al procesar modificación: {str(e)}", "error")
-        return redirect(url_for('modificar_usuario'))
+        return redirect(url_for('modificar_usuario_get'))
 
 
 # =============== REPORTES Y EXPORTACIÓN ===============
