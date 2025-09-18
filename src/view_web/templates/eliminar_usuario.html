@@ -21,6 +21,7 @@
         </div>
 
         <form method="POST" action="{{ url_for('eliminar_usuario') }}">
+            {% include "_csrf_field.html" %}
             <div class="form-group">
                 <label for="id_usuario" class="form-label">
                     <i class="fas fa-hashtag"></i> ID del Empleado a Eliminar *
