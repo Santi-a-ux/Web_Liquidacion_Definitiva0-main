@@ -1,5 +1,13 @@
 import sys
 import os
+import secrets  # Para generar una clave aleatoria segura
+
+# Carga opcional de variables desde .env en desarrollo (no requerido para CI)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    pass
 
 # Permite importar desde src/
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -22,12 +30,15 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 
 LOGIN_REQUIRED_MSG = "Debes iniciar sesión para acceder"
 
-# Instancia global de Flask (más sencillo y seguro para el registro de rutas)
+# Instancia global de Flask
 app = Flask(__name__, template_folder='templates')
-app.secret_key = "supersecretkey"
+
+# NUNCA hardcodees la secret key. Toma del entorno o genera una efímera segura.
+# - En producción/CI: define FLASK_SECRET_KEY en variables de entorno o secretos del pipeline.
+# - En dev/testing local: si no está definida, se usa una clave aleatoria por proceso.
+app.secret_key = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
 
 
-# Decoradores a nivel de módulo
 def login_required(f):
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
@@ -51,8 +62,6 @@ def admin_required(f):
     return decorated_function
 
 
-# =============== RUTAS ===============
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -68,7 +77,6 @@ def login():
             session['apellido'] = resultado['apellido']
             session['rol'] = resultado['rol']
 
-            # Registrar auditoría de login (mejor esfuerzo)
             try:
                 BaseDeDatos.registrar_auditoria(
                     usuario_sistema=resultado['id'],
@@ -163,7 +171,6 @@ def agregar_liquidacion():
             flash("ID de empleado inválido. Por favor, ingresa un valor numérico.", "error")
             return render_template('agregar_liquidacion.html')
 
-        # Obtener datos del empleado
         try:
             bd = BaseDeDatos()
             empleado_data = bd.consultar_usuario(id_usuario)
@@ -180,7 +187,6 @@ def agregar_liquidacion():
             flash(f"Error al obtener información del empleado: {str(e)}", "error")
             return render_template('agregar_liquidacion.html')
 
-        # Cálculos
         dias_trabajados_total = dias_trabajados(fecha_ingreso, fecha_salida)
         anios_trabajados = dias_trabajados_total // 360
         salario_anual = salario * 12
@@ -322,7 +328,6 @@ def simple():
 @app.route('/modificar_usuario', methods=['GET', 'POST'])
 @login_required
 def modificar_usuario():
-    # GET: mostrar formulario
     if request.method == 'GET':
         id_usuario = request.args.get('id')
         usuario_data = None
@@ -346,7 +351,6 @@ def modificar_usuario():
                 flash("Usuario no encontrado", "error")
         return render_template('modificar_usuario.html', usuario=usuario_data)
 
-    # POST: procesar modificación
     try:
         id_usuario = request.form['id_usuario']
         nombre = request.form['nombre']
@@ -376,8 +380,6 @@ def modificar_usuario():
         flash(f"Error al procesar modificación: {str(e)}", "error")
         return redirect(url_for('modificar_usuario'))
 
-
-# =============== AUDITORÍA ===============
 
 @app.route('/auditoria')
 @admin_required
@@ -411,8 +413,6 @@ def auditoria():
         flash(f"Error al cargar auditoría: {str(e)}", "error")
         return redirect(url_for('admin_panel'))
 
-
-# =============== REPORTES Y EXPORTACIÓN ===============
 
 @app.route('/reportes')
 @admin_required
@@ -535,6 +535,5 @@ class Run:
     app = app
 
 
-# Bloque de ejecución directa
 if __name__ == "__main__":  # pragma: no cover
     Run.app.run(debug=True)
