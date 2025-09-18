@@ -82,6 +82,7 @@
 
             <!-- Formulario de Acceso -->
             <form method="POST" action="{{ url_for('login') }}">
+                {% include "_csrf_field.html" %}
                 <div class="form-group">
                     <label for="id_usuario" class="form-label">
                         Identificación de Usuario
