@@ -1,1 +1,7 @@
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{% if form is defined and form.csrf_token is defined %}
+  {{ form.csrf_token }}
+{% elif csrf_token is defined %}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+{% else %}
+  <!-- CSRF deshabilitado o no disponible -->
+{% endif %}
