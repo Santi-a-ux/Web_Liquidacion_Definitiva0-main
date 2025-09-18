@@ -1,6 +1,8 @@
 import sys
 import os
 import secrets  # Para generar una clave aleatoria segura
+import logging
+from datetime import date  # Para manejar fecha_salida None
 
 # Carga opcional de variables desde .env en desarrollo (no requerido para CI)
 try:
@@ -34,6 +36,8 @@ from flask_wtf import CSRFProtect
 # Constantes
 LOGIN_REQUIRED_MSG = "Debes iniciar sesión para acceder"
 TEMPLATE_AGREGAR_LIQUIDACION = 'agregar_liquidacion.html'  # Evita duplicar el literal
+
+logger = logging.getLogger(__name__)
 
 # Instancia global de Flask
 app = Flask(__name__, template_folder='templates')
@@ -196,7 +200,8 @@ def agregar_liquidacion():
             empleado = empleado_data[0]
             salario = float(empleado[8])
             fecha_ingreso = str(empleado[6])  # YYYY-MM-DD
-            fecha_salida = str(empleado[7])   # YYYY-MM-DD
+            # USAR fecha actual si no tiene fecha de salida para evitar fallo en dias_trabajados
+            fecha_salida = str(empleado[7]) if empleado[7] else date.today().strftime('%Y-%m-%d')
             print(f"DEBUG: Empleado {id_usuario} - Salario: {salario}, Ingreso: {fecha_ingreso}, Salida: {fecha_salida}")
         except Exception as e:
             flash(f"Error al obtener información del empleado: {str(e)}", "error")
@@ -339,6 +344,34 @@ def simple():
     <p>Si ves esto, el backend y el navegador funcionan.</p>
     </body></html>
     """
+
+
+# Nueva ruta: Auditoría (requerida por tests)
+@app.route('/auditoria', methods=['GET'])
+@admin_required
+def auditoria():
+    try:
+        limite_str = request.args.get('limite', '100')
+        try:
+            limite = int(limite_str)
+        except ValueError:
+            limite = 100
+
+        usuario_filtro = request.args.get('usuario_filtro')
+        accion_filtro = request.args.get('accion_filtro')
+        tabla_filtro = request.args.get('tabla_filtro')
+
+        registros = BaseDeDatos.obtener_auditoria(
+            limite=limite,
+            usuario_filtro=int(usuario_filtro) if usuario_filtro else None,
+            accion_filtro=accion_filtro,
+            tabla_filtro=tabla_filtro
+        )
+        stats = BaseDeDatos.obtener_estadisticas_auditoria()
+        return render_template('auditoria.html', registros=registros, stats=stats)
+    except Exception as exc:
+        flash(f"Error al cargar auditoría: {exc}", "error")
+        return redirect(url_for('admin_panel'))
 
 
 # ===== Helpers para reportes (reducen complejidad cognitiva de la vista) =====
