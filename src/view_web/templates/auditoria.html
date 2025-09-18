@@ -136,7 +136,7 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label>&nbsp;</label>
+                            <span class="d-block">&nbsp;</span>
                             <div>
                                 <button type="submit" class="btn btn-primary btn-block">
                                     <i class="fas fa-search"></i> Filtrar
@@ -302,8 +302,8 @@
 </div>
 
 <!-- Modal para detalles -->
-<div class="modal fade" id="detallesModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
+<dialog class="modal fade" id="detallesModal">
+    <div class="modal-dialog modal-lg"
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
@@ -330,7 +330,7 @@
             </div>
         </div>
     </div>
-</div>
+</dialog>
 
 <script>
 function mostrarDetalles(id, datosAnteriores, datosNuevos) {
