@@ -84,6 +84,7 @@
 
             <!-- Formulario de Acceso -->
             <form method="POST" action="{{ url_for('login') }}">
+                {% include "_csrf_field.html" %}
                 <div class="form-group">
                     <label for="id_usuario" class="form-label">
                         <i class="fas fa-id-card"></i>
@@ -142,12 +143,9 @@
 
     <!-- Script para mejorar la experiencia de usuario -->
     <script>
-        // Auto-focus en el primer campo
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('id_usuario').focus();
         });
-
-        // Mejorar navegación con Enter
         document.getElementById('id_usuario').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
