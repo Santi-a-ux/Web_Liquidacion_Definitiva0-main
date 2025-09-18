@@ -79,7 +79,7 @@
         {% if messages %}
         <div style="position: fixed; top: 1rem; right: 1rem; z-index: 1000; width: 300px;">
             {% for category, message in messages %}
-            <div class="alert-{{ category }}" style="background-color: {{ '#84cc16' if category == 'success' else '#ef4444' }}20; border: 1px solid {{ '#84cc16' if category == 'success' else '#ef4444' }}40; border-radius: 8px; padding: 1rem; margin-bottom: 0.5rem; color: var(--text-white); display: flex; align-items: center; gap: 0.75rem;">
+            <div class="alert-{{ category }}" style="background-color: {{ '#84cc16' if category == 'success' else '#ef4444' }}20; border: 1px solid {{ '#84cc16' if category == 'success' else '#ef4444' }}20; padding: .75rem 1rem; border-radius: .5rem; margin-bottom: .5rem;">
                 <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }}" style="color: {{ '#84cc16' if category == 'success' else '#ef4444' }};"></i>
                 <span>{{ message }}</span>
             </div>
@@ -109,6 +109,7 @@
             </div>
 
             <form method="POST" action="{{ url_for('login') }}">
+                {% include "_csrf_field.html" %}
                 <div class="form-group">
                     <label for="id_usuario" class="form-label">
                         <i class="fas fa-user"></i> ID del Usuario del Sistema
