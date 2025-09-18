@@ -342,6 +342,7 @@ function mostrarDetalles(id, datosAnteriores, datosNuevos) {
             document.getElementById('datosAnteriores').textContent = 'No hay datos anteriores';
         }
     } catch (e) {
+        console.error("Error al procesar datos anteriores:", e);
         document.getElementById('datosAnteriores').textContent = datosAnteriores || 'No hay datos anteriores';
     }
     
@@ -352,9 +353,10 @@ function mostrarDetalles(id, datosAnteriores, datosNuevos) {
             document.getElementById('datosNuevos').textContent = 'No hay datos nuevos';
         }
     } catch (e) {
+        console.error("Error al procesar datos nuevos:", e);
         document.getElementById('datosNuevos').textContent = datosNuevos || 'No hay datos nuevos';
     }
-    
+
     // Mostrar modal
     $('#detallesModal').modal('show');
 }
