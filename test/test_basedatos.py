@@ -6,6 +6,8 @@ import sqlite3
 from view_web.flask_app import Run
 from controller.controlador import BaseDeDatos
 import psycopg2
+from assertpy import assert_that, soft_assertions
+
 
 class FlaskTestCase(unittest.TestCase):
     
@@ -167,9 +169,12 @@ class FlaskTestCase(unittest.TestCase):
         response = self.app.post('/consultar_usuario', data=dict(
             id_usuario=user_id
         ), follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'John', response.data)
-        self.assertIn(b'Doe', response.data)
+
+        # Migración a estilo FluentAssertions con AssertPy
+        with soft_assertions():
+            assert_that(response.status_code).is_equal_to(200)
+            assert_that(response.data).contains(b'John')
+            assert_that(response.data).contains(b'Doe')
         print("Testokconsultar")
 
     def test_eliminar_usuario(self):
@@ -279,9 +284,13 @@ class FlaskTestCase(unittest.TestCase):
         response = self.app.post('/eliminar_liquidacion', data=dict(
             id_liquidacion=1
         ), follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Liquidaci\xc3\xb3n eliminada exitosamente', response.data)
+
+        # Migración a estilo FluentAssertions con AssertPy
+        with soft_assertions():
+            assert_that(response.status_code).is_equal_to(200)
+            assert_that(response.data).contains(b'Liquidaci\xc3\xb3n eliminada exitosamente')
         print("Testokeliminarliquidacion")
+
 
 if __name__ == '__main__':
     unittest.main()
