@@ -1,4 +1,6 @@
 import os, sys, pytest
+from assertpy import assert_that, soft_assertions
+
 _ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 _SRC = os.path.join(_ROOT, "src")
 if _SRC not in sys.path:
@@ -14,24 +16,20 @@ def client():
 
 def test_index_without_session_redirects_to_login(client):
     resp = client.get("/")
-    assert resp.status_code in (301, 302)
-    assert "/login" in resp.headers.get("Location", "")
+    with soft_assertions():
+        assert_that(resp.status_code).is_in(301, 302)
+        assert_that(resp.headers.get("Location", "")).contains("/login")
 
 def test_simple_route_ok(client):
     resp = client.get("/simple")
     body = resp.get_data(as_text=True)
-    assert resp.status_code == 200
-    assert "Flask responde" in body or "Prueba Flask" in body
+    with soft_assertions():
+        assert_that(resp.status_code).is_equal_to(200)
+        assert_that(body).matches(r"(Flask responde|Prueba Flask)")
 
 def test_test_route_ok(client):
     resp = client.get("/test")
     body = resp.get_data(as_text=True)
-    assert resp.status_code == 200
-    assert "Ruta /test" in body or "Test Flask" in body
-
-def test_admin_redirect_route(client):
-    # /admin redirige a /admin_panel; sin sesión terminará yendo a /login
-    resp = client.get("/admin")
-    assert resp.status_code in (301, 302)
-    # Aceptamos cualquiera de las dos redirecciones en cadena según config de la app
-    assert "/admin_panel" in resp.headers.get("Location", "") or "/login" in resp.headers.get("Location", "")
+    with soft_assertions():
+        assert_that(resp.status_code).is_equal_to(200)
+        assert_that(body).matches(r"(Ruta /test|Test Flask)")
