@@ -1,0 +1,29 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install test deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install assertpy pytest coverage
+          # Si tu proyecto es instalable, puedes usar:
+          # pip install -e .
+
+      - name: Run tests with coverage
+        env:
+          PYTHONPATH: src
+        run: |
+          coverage run --source=src -m pytest -q
+          coverage xml
