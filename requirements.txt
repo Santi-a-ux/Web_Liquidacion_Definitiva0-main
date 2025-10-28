@@ -1,0 +1,9 @@
+Flask
+psycopg2-binary
+SQLAlchemy
+pytest
+pytest-cov
+selenium
+screenpy
+screenpy-selenium
+behave
