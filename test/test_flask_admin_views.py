@@ -30,7 +30,7 @@ def patch_render(monkeypatch):
 @pytest.fixture
 def client():
     app = flask_app.Run.app
-    app.config.update(TESTING=True)
+    app.config.update(TESTING=True, WTF_CSRF_ENABLED=False)
     return app.test_client()
 
 def test_auditoria_requires_login(client):

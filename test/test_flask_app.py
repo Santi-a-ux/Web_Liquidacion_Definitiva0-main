@@ -70,7 +70,7 @@ def patch_app_mocks(monkeypatch):
 @pytest.fixture
 def client():
     app = flask_app.Run.app
-    app.config.update(TESTING=True)
+    app.config.update(TESTING=True, WTF_CSRF_ENABLED=False)
     return app.test_client()
 
 

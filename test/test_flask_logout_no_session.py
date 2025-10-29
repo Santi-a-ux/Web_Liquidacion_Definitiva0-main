@@ -9,7 +9,7 @@ import view_web.flask_app as flask_app
 @pytest.fixture
 def client():
     app = flask_app.Run.app
-    app.config.update(TESTING=True)
+    app.config.update(TESTING=True, WTF_CSRF_ENABLED=False)
     return app.test_client()
 
 def test_logout_without_session_redirects_to_login(client):

@@ -44,7 +44,7 @@ def test_agregar_usuario_duplicate_documento_raises_valueerror(dummy_conn, monke
     bd = ctrl.BaseDeDatos()
     with pytest.raises(ValueError) as ex:
         bd.agregar_usuario("N","A","D1","n@a.com","300","2024-01-01",None,1000.0, 2)
-    assert "documento D1" in str(ex.value).lower()
+    assert "documento d1" in str(ex.value).lower()
 
 def test_agregar_usuario_duplicate_correo_raises_valueerror(dummy_conn, monkeypatch):
     monkeypatch.setattr(ctrl.BaseDeDatos, "_insertar_usuario",
