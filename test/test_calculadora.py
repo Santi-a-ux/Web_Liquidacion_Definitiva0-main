@@ -3,7 +3,7 @@ from datetime import datetime
 import os
 import sys
 directorio_actual = os.path.dirname(os.path.abspath(__file__))
-ruta_src = os.path.join(directorio_actual, '..', 'src')
+ruta_src = os.path.join(directorio_actual, '..', '..', 'src')
 sys.path.insert(0, ruta_src)
 from model.calculadora import CalculadoraLiquidacion
 
@@ -12,6 +12,7 @@ class TestCalculadoraLiquidacion(unittest.TestCase):
         self.calculadora = CalculadoraLiquidacion()
 
     def test_calculo_liquidacion(self):
+        # Arrange
         salario = 1500000
         fecha_inicio = "01/01/2022"
         fecha_fin = "01/01/2023"
@@ -19,12 +20,16 @@ class TestCalculadoraLiquidacion(unittest.TestCase):
         fecha_fin_dt = datetime.strptime(fecha_fin, "%d/%m/%Y")
         dias_trabajados = (fecha_fin_dt - fecha_inicio_dt).days
         tiempo_trabajado_anos = dias_trabajados / 365
+        
+        # Act
         indemnizacion, _, _, _, _, _, _ = self.calculadora.calcular_resultados_prueba(
             salario_basico=salario,
             fecha_inicio_labores=fecha_inicio,
             fecha_ultimas_vacaciones=fecha_fin,
             dias_acumulados_vacaciones=0
     )
+        
+        # Assert
         meses_maximos = 12
         dias_por_anio = 20
         dias_maximos = meses_maximos * dias_por_anio
@@ -33,23 +38,38 @@ class TestCalculadoraLiquidacion(unittest.TestCase):
         self.assertEqual(indemnizacion, liquidacion_esperada)
 
     def test_calculo_indemnizacion(self):
+        # Arrange
         salario = 2500000
         meses_trabajados = 6
-        tiempo_trabajado_anos = meses_trabajados / 12  
+        tiempo_trabajado_anos = meses_trabajados / 12
+        
+        # Act
         valor_indemnizacion = self.calculadora.calcular_indemnizacion(salario, tiempo_trabajado_anos)
+        
+        # Assert
         valor_esperado = round(salario * tiempo_trabajado_anos * 20 / 30, 2)
         self.assertEqual(valor_indemnizacion, valor_esperado)
 
     def test_calculo_vacaciones(self):
+        # Arrange
         salario = 1500000
         dias_trabajados = 10
+        
+        # Act
         result = self.calculadora.calcular_vacaciones(salario, dias_trabajados)
+        
+        # Assert
         self.assertAlmostEqual(result, 20833.33, places=2)
 
     def test_calculo_cesantias(self):
+        # Arrange
         salario_mensual = 3000000
         dias_trabajados = 15
+        
+        # Act
         result = self.calculadora.calcular_cesantias(salario_mensual, dias_trabajados)
+        
+        # Assert
         self.assertEqual(result, 125000)
 
     def calcular_prima(self, salario_mensual, dias_trabajados):
@@ -57,8 +77,13 @@ class TestCalculadoraLiquidacion(unittest.TestCase):
         return round(prima, 2)
 
     def test_calculo_retencion(self):
+        # Arrange
         ingreso_laboral = 5000000
+        
+        # Act
         result = self.calculadora.calcular_retencion(ingreso_laboral)
+        
+        # Assert
         self.assertEqual(result, 242349.75)
 
     def test_formato_fecha_invalido_calculo_liquidacion(self):

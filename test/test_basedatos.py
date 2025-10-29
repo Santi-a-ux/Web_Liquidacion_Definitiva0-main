@@ -1,6 +1,12 @@
 import sys
+import os
 
-sys.path.append("src")
+# Add src to path
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+_SRC = os.path.join(_ROOT, "src")
+if _SRC not in sys.path:
+    sys.path.insert(0, _SRC)
+
 import unittest
 import sqlite3
 from view_web.flask_app import Run
