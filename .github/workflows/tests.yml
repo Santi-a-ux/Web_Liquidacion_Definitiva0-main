@@ -17,13 +17,35 @@ jobs:
       - name: Install test deps
         run: |
           python -m pip install --upgrade pip
-          python -m pip install assertpy pytest coverage
+          python -m pip install assertpy pytest coverage psycopg2-binary Flask
           # Si tu proyecto es instalable, puedes usar:
           # pip install -e .
 
-      - name: Run tests with coverage
+      - name: Run tests with coverage and generate reports
         env:
           PYTHONPATH: src
         run: |
-          coverage run --source=src -m pytest -q
+          coverage run --source=src -m pytest -q --junitxml=pytest-report.xml
           coverage xml
+          coverage html
+
+      - name: Upload JUnit test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-report
+          path: pytest-report.xml
+          if-no-files-found: error
+
+      - name: Upload coverage XML
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+          if-no-files-found: error
+
+      - name: Upload coverage HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: htmlcov
+          if-no-files-found: error
