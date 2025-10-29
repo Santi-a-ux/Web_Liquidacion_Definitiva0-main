@@ -36,6 +36,7 @@ jobs:
         with:
           name: junit-report
           path: pytest-report.xml
+          retention-days: 30
           if-no-files-found: error
 
       - name: Upload coverage XML
@@ -43,6 +44,7 @@ jobs:
         with:
           name: coverage-xml
           path: coverage.xml
+          retention-days: 30
           if-no-files-found: error
 
       - name: Upload coverage HTML
@@ -50,6 +52,7 @@ jobs:
         with:
           name: coverage-html
           path: htmlcov
+          retention-days: 30
           if-no-files-found: error
 
   sonarqube:
