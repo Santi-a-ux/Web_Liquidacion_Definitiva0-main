@@ -1,0 +1,127 @@
+{
+  "id": "liquidation-suite",
+  "version": "2.0",
+  "name": "Web Liquidacion - Liquidation Tests",
+  "url": "http://127.0.0.1:8080",
+  "tests": [{
+    "id": "create-liquidation-test",
+    "name": "Create Employee Liquidation",
+    "commands": [{
+      "id": "1",
+      "comment": "Navigate to create liquidation page",
+      "command": "open",
+      "target": "/agregar_liquidacion",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2",
+      "comment": "Enter employee ID",
+      "command": "type",
+      "target": "name=id_usuario",
+      "targets": [
+        ["name=id_usuario", "name"]
+      ],
+      "value": "1234"
+    }, {
+      "id": "3",
+      "comment": "Click create liquidation button",
+      "command": "click",
+      "target": "css=button[type='submit']",
+      "targets": [
+        ["css=button[type='submit']", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "4",
+      "comment": "Verify liquidation created",
+      "command": "assertElementPresent",
+      "target": "css=.liquidation-result",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "5",
+      "comment": "Verify total amount displayed",
+      "command": "assertElementPresent",
+      "target": "css=.total-amount",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "consult-liquidation-test",
+    "name": "Consult Liquidation Details",
+    "commands": [{
+      "id": "1",
+      "comment": "Navigate to consult liquidation page",
+      "command": "open",
+      "target": "/consultar_liquidacion",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2",
+      "comment": "Enter liquidation ID",
+      "command": "type",
+      "target": "name=id_liquidacion",
+      "targets": [
+        ["name=id_liquidacion", "name"]
+      ],
+      "value": "5678"
+    }, {
+      "id": "3",
+      "comment": "Click consult button",
+      "command": "click",
+      "target": "css=button[type='submit']",
+      "targets": [
+        ["css=button[type='submit']", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "4",
+      "comment": "Verify liquidation details displayed",
+      "command": "assertElementPresent",
+      "target": "css=.liquidation-details",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "list-liquidations-test",
+    "name": "List All Liquidations",
+    "commands": [{
+      "id": "1",
+      "comment": "Navigate to list liquidations page",
+      "command": "open",
+      "target": "/listar_liquidaciones",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2",
+      "comment": "Verify liquidations table displayed",
+      "command": "assertElementPresent",
+      "target": "css=.liquidations-table",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "3",
+      "comment": "Verify table has rows",
+      "command": "assertElementPresent",
+      "target": "css=.liquidations-table tr",
+      "targets": [],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "liquidation-suite",
+    "name": "Liquidation Test Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": [
+      "create-liquidation-test",
+      "consult-liquidation-test",
+      "list-liquidations-test"
+    ]
+  }],
+  "urls": [
+    "http://127.0.0.1:8080"
+  ],
+  "plugins": []
+}

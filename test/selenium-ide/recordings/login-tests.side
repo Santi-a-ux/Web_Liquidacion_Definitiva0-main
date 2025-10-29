@@ -1,0 +1,165 @@
+{
+  "id": "login-test-suite",
+  "version": "2.0",
+  "name": "Web Liquidacion - Login Tests",
+  "url": "http://127.0.0.1:8080",
+  "tests": [{
+    "id": "admin-login-test",
+    "name": "Admin Login Success",
+    "commands": [{
+      "id": "1",
+      "comment": "Open login page",
+      "command": "open",
+      "target": "/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2",
+      "comment": "Enter admin username",
+      "command": "type",
+      "target": "name=username",
+      "targets": [
+        ["name=username", "name"],
+        ["css=input[name='username']", "css:finder"],
+        ["xpath=//input[@name='username']", "xpath:attributes"]
+      ],
+      "value": "admin"
+    }, {
+      "id": "3",
+      "comment": "Enter admin password",
+      "command": "type",
+      "target": "name=password",
+      "targets": [
+        ["name=password", "name"],
+        ["css=input[name='password']", "css:finder"],
+        ["xpath=//input[@name='password']", "xpath:attributes"]
+      ],
+      "value": "admin123"
+    }, {
+      "id": "4",
+      "comment": "Click login button",
+      "command": "click",
+      "target": "css=button[type='submit']",
+      "targets": [
+        ["css=button[type='submit']", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"]
+      ],
+      "value": ""
+    }, {
+      "id": "5",
+      "comment": "Verify redirected to dashboard",
+      "command": "assertElementPresent",
+      "target": "css=.dashboard",
+      "targets": [
+        ["css=.dashboard", "css:finder"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "assistant-login-test",
+    "name": "Assistant Login Success",
+    "commands": [{
+      "id": "1",
+      "comment": "Open login page",
+      "command": "open",
+      "target": "/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2",
+      "comment": "Enter assistant username",
+      "command": "type",
+      "target": "name=username",
+      "targets": [
+        ["name=username", "name"]
+      ],
+      "value": "asistente"
+    }, {
+      "id": "3",
+      "comment": "Enter assistant password",
+      "command": "type",
+      "target": "name=password",
+      "targets": [
+        ["name=password", "name"]
+      ],
+      "value": "asistente123"
+    }, {
+      "id": "4",
+      "comment": "Click login button",
+      "command": "click",
+      "target": "css=button[type='submit']",
+      "targets": [
+        ["css=button[type='submit']", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "5",
+      "comment": "Verify successful login",
+      "command": "assertElementPresent",
+      "target": "css=.user-dashboard",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "invalid-login-test",
+    "name": "Invalid Login Attempt",
+    "commands": [{
+      "id": "1",
+      "comment": "Open login page",
+      "command": "open",
+      "target": "/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2",
+      "comment": "Enter invalid username",
+      "command": "type",
+      "target": "name=username",
+      "targets": [
+        ["name=username", "name"]
+      ],
+      "value": "invalid_user"
+    }, {
+      "id": "3",
+      "comment": "Enter invalid password",
+      "command": "type",
+      "target": "name=password",
+      "targets": [
+        ["name=password", "name"]
+      ],
+      "value": "wrong_password"
+    }, {
+      "id": "4",
+      "comment": "Click login button",
+      "command": "click",
+      "target": "css=button[type='submit']",
+      "targets": [
+        ["css=button[type='submit']", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "5",
+      "comment": "Verify error message displayed",
+      "command": "assertText",
+      "target": "css=.error-message",
+      "targets": [],
+      "value": "*invalid*"
+    }]
+  }],
+  "suites": [{
+    "id": "login-suite",
+    "name": "Login Test Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": [
+      "admin-login-test",
+      "assistant-login-test",
+      "invalid-login-test"
+    ]
+  }],
+  "urls": [
+    "http://127.0.0.1:8080"
+  ],
+  "plugins": []
+}

@@ -1,0 +1,30 @@
+{
+  "validEmployee": {
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "documento": "1234567890",
+    "correo": "juan.perez@example.com",
+    "telefono": "3001234567",
+    "fecha_inicio": "2024-01-15",
+    "fecha_fin": "2024-12-31",
+    "salario": "2500000"
+  },
+  "highSalaryEmployee": {
+    "nombre": "María",
+    "apellido": "García",
+    "documento": "9876543210",
+    "correo": "maria.garcia@example.com",
+    "telefono": "3009876543",
+    "fecha_inicio": "2023-06-01",
+    "fecha_fin": "2024-12-31",
+    "salario": "5000000"
+  },
+  "minimalEmployee": {
+    "nombre": "Carlos",
+    "apellido": "Rodríguez",
+    "documento": "1122334455",
+    "correo": "carlos@example.com",
+    "telefono": "3005555555",
+    "salario": "1500000"
+  }
+}
