@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 
 # Configuración de rutas igual que controllertest.py
 directorio_actual = os.path.dirname(os.path.abspath(__file__))
-ruta_src = os.path.join(directorio_actual, '..', 'src')
+ruta_src = os.path.join(directorio_actual, '..', '..', 'src')
 sys.path.insert(0, ruta_src)
 sys.path.append("src")
 

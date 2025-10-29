@@ -1,7 +1,7 @@
 import os, sys, pytest
 from assertpy import assert_that
 
-_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 _SRC = os.path.join(_ROOT, "src")
 if _SRC not in sys.path:
     sys.path.insert(0, _SRC)
@@ -30,7 +30,7 @@ def patch_render(monkeypatch):
 @pytest.fixture
 def client():
     app = flask_app.Run.app
-    app.config.update(TESTING=True)
+    app.config.update(TESTING=True, WTF_CSRF_ENABLED=False)
     return app.test_client()
 
 def test_auditoria_requires_login(client):

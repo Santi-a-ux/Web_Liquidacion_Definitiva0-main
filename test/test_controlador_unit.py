@@ -1,6 +1,6 @@
 import os, sys
 # Asegura que <repo>/src esté en sys.path aunque se ejecute este archivo directamente
-_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 _SRC = os.path.join(_ROOT, "src")
 if _SRC not in sys.path:
     sys.path.insert(0, _SRC)
@@ -52,20 +52,26 @@ class FakeConn:
 
 
 def test_es_administrador_true(monkeypatch):
-    # SELECT Rol ... -> ('administrador',)
+    # Arrange
     cur = FakeCursor(fetchone_values=[("administrador",)])
     conn = FakeConn(cur)
     monkeypatch.setattr(ctrl.psycopg2, "connect", lambda **kwargs: conn)
-
     bd = ctrl.BaseDeDatos()
-    assert bd.es_administrador(1) is True
+
+    # Act
+    result = bd.es_administrador(1)
+    
+    # Assert
+    assert result is True
 
 
 def test_registrar_auditoria_success(monkeypatch):
+    # Arrange
     cur = FakeCursor()
     conn = FakeConn(cur)
     monkeypatch.setattr(ctrl.psycopg2, "connect", lambda **kwargs: conn)
 
+    # Act
     ok = ctrl.BaseDeDatos.registrar_auditoria(
         usuario_sistema=1,
         accion="LOGIN",
@@ -76,31 +82,41 @@ def test_registrar_auditoria_success(monkeypatch):
         ip_address="127.0.0.1",
         descripcion="inicio de sesión"
     )
+    
+    # Assert
     assert ok is True
 
 
 def test_registrar_auditoria_fail_returns_false(monkeypatch):
+    # Arrange
     def boom(**kwargs):
         raise RuntimeError("No DB")
     monkeypatch.setattr(ctrl.psycopg2, "connect", boom)
+    
+    # Act
     ok = ctrl.BaseDeDatos.registrar_auditoria(
         usuario_sistema=1,
         accion="LOGIN",
         tabla_afectada="usuarios"
     )
+    
+    # Assert
     assert ok is False
 
 
 def test_obtener_estadisticas(monkeypatch):
+    # Arrange
     # Orden de fetchone() en obtener_estadisticas():
     # COUNT usuarios, COUNT liquidacion, AVG Salario, SUM Total_A_Pagar
     cur = FakeCursor(fetchone_values=[(10,), (3,), (3_500_000,), (12_345_678,)])
     conn = FakeConn(cur)
     monkeypatch.setattr(ctrl.psycopg2, "connect", lambda **kwargs: conn)
-
     bd = ctrl.BaseDeDatos()
+
+    # Act
     stats = bd.obtener_estadisticas()
 
+    # Assert
     assert stats["total_usuarios"] == 10
     assert stats["total_liquidaciones"] == 3
     assert stats["promedio_salario"] == 3_500_000.0

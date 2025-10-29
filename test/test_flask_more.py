@@ -2,7 +2,7 @@ import os, sys, types
 import pytest
 
 # Asegura que <repo>/src esté en sys.path aunque se ejecute este archivo directamente
-_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 _SRC = os.path.join(_ROOT, "src")
 if _SRC not in sys.path:
     sys.path.insert(0, _SRC)
@@ -80,7 +80,7 @@ def patch_render_and_calcs(monkeypatch):
 @pytest.fixture
 def client():
     app = flask_app.Run.app
-    app.config.update(TESTING=True)
+    app.config.update(TESTING=True, WTF_CSRF_ENABLED=False)
     return app.test_client()
 
 
