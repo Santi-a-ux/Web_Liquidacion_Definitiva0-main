@@ -83,6 +83,18 @@ Este documento proporciona un análisis completo y detallado de todas las prueba
 - **Archivos:** `login.cy.js`, `employee-management.cy.js`, `liquidation-management.cy.js`
 - **Características:** Espera automática, time-travel debugging, screenshots
 
+#### Screenplay Pattern
+- **Ubicación:** `test/screenplay/`
+- **Uso:** Patrón de diseño para pruebas E2E mantenibles con enfoque en actores y tareas
+- **Archivos:** `test_screenplay_examples.py`, `test_screenplay_real.py`, `test_screenplay_add_employee.py`
+- **Características:**
+  - 👤 Actores (AdminUser, AssistantUser)
+  - 💪 Habilidades (BrowseTheWeb, MakeAPIRequests)
+  - 📋 Tareas (Login, AddEmployee, CreateLiquidation)
+  - ⚡ Interacciones (Click, Fill, Open, Navigate)
+  - ❓ Preguntas (TheUrl, TheElement, TheText)
+- **Ventaja:** Separación clara entre "qué" hacer y "cómo" hacerlo, pruebas muy legibles
+
 #### Playwright
 - **Ubicación:** Integrado en SerenityJS
 - **Uso:** Motor de automatización para ejecutar pruebas Cucumber/BDD
