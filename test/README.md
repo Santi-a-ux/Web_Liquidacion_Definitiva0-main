@@ -26,121 +26,141 @@ Además de la suite existente de pytest, se han implementado cuatro nuevos frame
 ### Pruebas Pytest (Unitarias e Integración)
 
 ```bash
-# Run all pytest tests (uses pytest.ini configuration)
+# Ejecutar todas las pruebas pytest (usa configuración de pytest.ini)
 python -m pytest
 
-# Run tests with verbose output
+# Ejecutar pruebas con salida detallada
 python -m pytest -v
 
-# Run specific test file
+# Ejecutar archivo de prueba específico
 python -m pytest test/test_calculadora.py
 
-# Run specific test category
+# Ejecutar categoría de prueba específica
 python -m pytest -k "test_flask"
 python -m pytest -k "test_controlador"
 
-# Include database tests (requires PostgreSQL setup)
+# Incluir pruebas de base de datos (requiere configuración de PostgreSQL)
 python -m pytest -k "not test_faltantes"
 ```
 
-### Screenplay Pattern Tests
+### Pruebas con Patrón Screenplay
 
 ```bash
-# Run screenplay examples
+# Ejecutar ejemplos de screenplay
 python -m pytest test/screenplay/test_screenplay_examples.py -v
 
-# See test/screenplay/README.md for more details
+# Ver test/screenplay/README.md para más detalles
 ```
 
-### Selenium IDE Tests
+### Pruebas con Selenium IDE
 
 ```bash
-# Run Python-converted Selenium tests
+# Ejecutar pruebas de Selenium convertidas a Python
 python -m pytest test/selenium-ide/python-tests/ -v
 
-# Note: .side files can be opened in Selenium IDE browser extension
-# See test/selenium-ide/README.md for more details
+# Nota: Los archivos .side pueden abrirse en la extensión de navegador Selenium IDE
+# Ver test/selenium-ide/README.md para más detalles
 ```
 
-### Cypress E2E Tests
+### Pruebas E2E con Cypress
 
 ```bash
-# Install dependencies (first time only)
+# Instalar dependencias (solo la primera vez)
 cd test/cypress
 npm install
 
-# Open Cypress Test Runner (GUI)
+# Abrir Cypress Test Runner (GUI)
 npm run cypress:open
 
-# Run headless (CI/CD)
+# Ejecutar sin interfaz gráfica (CI/CD)
 npm run cypress:run
 
-# See test/cypress/README.md for more details
+# Ver test/cypress/README.md para más detalles
 ```
 
-## Test Organization
+### Pruebas SerenityBDD
 
-Tests are organized by naming convention following Python best practices:
+```bash
+# Instalar dependencias
+cd test/serenity-bdd
+pip install -r requirements.txt
 
-### Unit Tests (Pure Business Logic)
-- **test_calculadora.py** - Tests for CalculadoraLiquidacion class
-  - Calculation logic for liquidation, indemnification, vacations, cesantías, etc.
-  - ✅ Includes AAA (Arrange-Act-Assert) comments
+# Ejecutar pruebas BDD con archivos .feature
+pytest
 
-### Controller Tests (18 files)
-All files prefixed with `test_controlador_*`:
-- **test_controlador_unit.py** - Unit tests with mocks (FakeCursor, FakeConn)
-  - ✅ Includes AAA comments
-- **test_controlador_auth_and_audit_success.py** - Authentication and audit success cases
-- **test_controlador_auth_delete.py** - Authorization for delete operations
-- **test_controlador_consultar_paths.py** - Consultation path tests
-- **test_controlador_coverage_booster.py** - Additional coverage tests
-- **test_controlador_db_create_and_roles.py** - Database creation and role tests
-- **test_controlador_delete_and_table_errors.py** - Delete and table error handling
-- **test_controlador_eliminar_rowcount_zero.py** - Zero rowcount deletion tests
-- **test_controlador_es_admin_and_agregar_without_audit.py** - Admin checks and non-audited additions
-- **test_controlador_integrity.py** - Data integrity and constraint tests
-- **test_controlador_more.py** - Additional controller tests
-- **test_controlador_obtener_auditoria_with_filters.py** - Audit retrieval with filters
-- **test_controlador_stats_none.py** - Statistics with null/none values
-- **test_controlador_success_more.py** - Additional success scenarios
+# Ejecutar pruebas simples de ejemplo
+pytest test_login_simple.py -v
 
-### Flask Application Tests (12 files)
-All files prefixed with `test_flask_*`:
-- **test_flask_app.py** - Core Flask application tests
-- **test_flask_admin_exceptions.py** - Admin exception handling
-- **test_flask_admin_views.py** - Admin view tests
-- **test_flask_coverage_booster.py** - Additional Flask coverage
-- **test_flask_export_simple.py** - Export functionality tests
-- **test_flask_extra.py** - Extra Flask route tests
-- **test_flask_logout_no_session.py** - Logout without session tests
-- **test_flask_misc_routes.py** - Miscellaneous route tests
-- **test_flask_more.py** - Additional Flask tests
-- **test_flask_more_undercovered_paths.py** - Under-covered path tests
-- **test_flask_reports_audit.py** - Reports and audit tests (✅ uses assertpy)
-- **test_flask_success_more.py** - Additional success scenarios
+# Generar reportes Allure
+pytest --alluredir=allure-results
+allure serve allure-results
 
-### GUI/Console Tests
-- **test_gui_coverage.py** - GUI interface tests (with Kivy mocks)
-- **test_consola_coverage.py** - Console interface tests
+# Ver test/serenity-bdd/README.md para documentación completa
+```
 
-### Integration Tests (Database Operations)
-- **test_basedatos.py** - Database integration tests
-  - ✅ Uses assertpy for fluent assertions
-  - ⚠️ Excluded by default (requires PostgreSQL)
-- **test_faltantes.py** - Tests for missing/pending functionality
-  - ⚠️ Excluded by default (intentionally failing tests for TDD)
+## Organización de las Pruebas
 
-## Test Practices Implemented
+Las pruebas están organizadas por convención de nombres siguiendo las mejores prácticas de Python:
 
-### 1. FluentAssertions (assertpy)
-The project uses `assertpy` for fluent, readable assertions in several test files:
+### Pruebas Unitarias (Lógica de Negocio Pura)
+- **test_calculadora.py** - Pruebas para la clase CalculadoraLiquidacion
+  - Lógica de cálculo para liquidación, indemnización, vacaciones, cesantías, etc.
+  - ✅ Incluye comentarios AAA (Arrange-Act-Assert)
+
+### Pruebas de Controlador (18 archivos)
+Todos los archivos con prefijo `test_controlador_*`:
+- **test_controlador_unit.py** - Pruebas unitarias con mocks (FakeCursor, FakeConn)
+  - ✅ Incluye comentarios AAA
+- **test_controlador_auth_and_audit_success.py** - Casos de éxito de autenticación y auditoría
+- **test_controlador_auth_delete.py** - Autorización para operaciones de eliminación
+- **test_controlador_consultar_paths.py** - Pruebas de rutas de consulta
+- **test_controlador_coverage_booster.py** - Pruebas de cobertura adicionales
+- **test_controlador_db_create_and_roles.py** - Pruebas de creación de base de datos y roles
+- **test_controlador_delete_and_table_errors.py** - Manejo de errores de eliminación y tablas
+- **test_controlador_eliminar_rowcount_zero.py** - Pruebas de eliminación con conteo cero
+- **test_controlador_es_admin_and_agregar_without_audit.py** - Verificaciones de admin y adiciones no auditadas
+- **test_controlador_integrity.py** - Pruebas de integridad de datos y restricciones
+- **test_controlador_more.py** - Pruebas de controlador adicionales
+- **test_controlador_obtener_auditoria_with_filters.py** - Obtención de auditoría con filtros
+- **test_controlador_stats_none.py** - Estadísticas con valores null/none
+- **test_controlador_success_more.py** - Escenarios de éxito adicionales
+
+### Pruebas de Aplicación Flask (12 archivos)
+Todos los archivos con prefijo `test_flask_*`:
+- **test_flask_app.py** - Pruebas principales de la aplicación Flask
+- **test_flask_admin_exceptions.py** - Manejo de excepciones de admin
+- **test_flask_admin_views.py** - Pruebas de vistas de admin
+- **test_flask_coverage_booster.py** - Cobertura adicional de Flask
+- **test_flask_export_simple.py** - Pruebas de funcionalidad de exportación
+- **test_flask_extra.py** - Pruebas de rutas adicionales de Flask
+- **test_flask_logout_no_session.py** - Pruebas de cierre de sesión sin sesión
+- **test_flask_misc_routes.py** - Pruebas de rutas misceláneas
+- **test_flask_more.py** - Pruebas adicionales de Flask
+- **test_flask_more_undercovered_paths.py** - Pruebas de rutas con poca cobertura
+- **test_flask_reports_audit.py** - Pruebas de reportes y auditoría (✅ usa assertpy)
+- **test_flask_success_more.py** - Escenarios de éxito adicionales
+
+### Pruebas de GUI/Consola
+- **test_gui_coverage.py** - Pruebas de interfaz GUI (con mocks de Kivy)
+- **test_consola_coverage.py** - Pruebas de interfaz de consola
+
+### Pruebas de Integración (Operaciones de Base de Datos)
+- **test_basedatos.py** - Pruebas de integración de base de datos
+  - ✅ Usa assertpy para aserciones fluidas
+  - ⚠️ Excluido por defecto (requiere PostgreSQL)
+- **test_faltantes.py** - Pruebas para funcionalidad faltante/pendiente
+  - ⚠️ Excluido por defecto (pruebas que fallan intencionalmente para TDD)
+
+## Prácticas de Pruebas Implementadas
+
+### 1. Aserciones Fluidas (assertpy)
+El proyecto usa `assertpy` para aserciones fluidas y legibles en varios archivos de prueba:
 - test_basedatos.py
 - test_flask_reports_audit.py
 - test_flask_misc_routes.py
 - test_flask_export_simple.py
 
-Example:
+Ejemplo:
 ```python
 from assertpy import assert_that, soft_assertions
 
@@ -149,150 +169,169 @@ with soft_assertions():
     assert_that(response.data).contains(b'Expected Text')
 ```
 
-### 2. AAA Pattern (Arrange-Act-Assert)
-Key test files include explicit AAA comments for clarity:
-- **test_calculadora.py**: 5 main test methods
-- **test_controlador_unit.py**: 4 test methods
+### 2. Patrón AAA (Arrange-Act-Assert / Organizar-Actuar-Afirmar)
+Los archivos de prueba clave incluyen comentarios AAA explícitos para claridad:
+- **test_calculadora.py**: 5 métodos de prueba principales
+- **test_controlador_unit.py**: 4 métodos de prueba
 
-Example:
+Ejemplo:
 ```python
 def test_example(self):
-    # Arrange
+    # Arrange (Organizar)
     data = prepare_test_data()
     
-    # Act
+    # Act (Actuar)
     result = function_under_test(data)
     
-    # Assert
+    # Assert (Afirmar)
     assert result == expected_value
 ```
 
-### 3. FIRST Principles
-- **Fast**: Unit tests use mocks (FakeCursor, FakeConn, DummyBD)
-- **Isolated**: Fixtures (pytest) and setUp/tearDown (unittest) ensure isolation
-- **Repeatable**: Tests use random IDs to prevent conflicts
-- **Self-Validating**: All tests use automated assertions
-- **Timely**: 32 test files covering all major functionality
+### 3. Principios FIRST
+- **Fast (Rápido)**: Las pruebas unitarias usan mocks (FakeCursor, FakeConn, DummyBD)
+- **Isolated (Aislado)**: Fixtures (pytest) y setUp/tearDown (unittest) aseguran aislamiento
+- **Repeatable (Repetible)**: Las pruebas usan IDs aleatorios para prevenir conflictos
+- **Self-Validating (Auto-validante)**: Todas las pruebas usan aserciones automatizadas
+- **Timely (Oportuno)**: 32 archivos de prueba cubriendo toda la funcionalidad principal
 
-### 4. Test Fixtures
-The project uses:
-- **pytest fixtures** for Flask test clients
-- **unittest setUp/tearDown** for test class initialization
-- **monkeypatch** for dependency injection and mocking
-- **conftest.py** for shared test configuration
+### 4. Fixtures de Prueba
+El proyecto usa:
+- **pytest fixtures** para clientes de prueba de Flask
+- **unittest setUp/tearDown** para inicialización de clases de prueba
+- **monkeypatch** para inyección de dependencias y mocking
+- **conftest.py** para configuración compartida de pruebas
 
-## Test Coverage by Layer
+## Cobertura de Pruebas por Capa
 
-| Layer | Files | Tests | Coverage |
-|-------|-------|-------|----------|
-| Model (Business Logic) | 1 | 20 | Unit tests |
-| Controller | 18 | ~92 | Unit + Integration |
-| View (Flask) | 12 | ~74 | Integration tests |
-| View (GUI/Console) | 2 | ~22 | Mock-based tests |
-| **Total** | **32** | **~208** | **Comprehensive** |
+| Capa | Archivos | Pruebas | Cobertura |
+|------|----------|---------|-----------|
+| Modelo (Lógica de Negocio) | 1 | 20 | Pruebas unitarias |
+| Controlador | 18 | ~92 | Unitarias + Integración |
+| Vista (Flask) | 12 | ~74 | Pruebas de integración |
+| Vista (GUI/Consola) | 2 | ~22 | Pruebas basadas en mocks |
+| **Total** | **32** | **~208** | **Completo** |
 
-## Configuration Files
+## Archivos de Configuración
 
-- **pytest.ini** - Pytest configuration
-  - Excludes slow database tests by default
-  - Sets test discovery patterns
-  - Configures quiet mode for cleaner output
+- **pytest.ini** - Configuración de Pytest
+  - Excluye pruebas lentas de base de datos por defecto
+  - Establece patrones de descubrimiento de pruebas
+  - Configura modo silencioso para salida más limpia
   
-- **conftest.py** - Shared test fixtures and mocks
-  - Adds `src/` to Python path
-  - Mocks SecretConfig for CI/CD
-  - Mocks view.console.consolacontrolador
+- **conftest.py** - Fixtures y mocks compartidos de pruebas
+  - Agrega `src/` al path de Python
+  - Mockea SecretConfig para CI/CD
+  - Mockea view.console.consolacontrolador
 
-## Recommendations from ANALISIS_PRUEBAS.md
+## Recomendaciones de ANALISIS_PRUEBAS.md
 
-✅ **Completed**:
-- FluentAssertions (assertpy) in use in 4-5 files
-- AAA pattern implemented in key test files
-- Tests organized by naming convention
-- All FIRST principles mostly implemented
-- Self-validating tests with automated assertions
+✅ **Completado**:
+- Aserciones fluidas (assertpy) en uso en 4-5 archivos
+- Patrón AAA implementado en archivos de prueba clave
+- Pruebas organizadas por convención de nombres
+- Todos los principios FIRST mayormente implementados
+- Pruebas auto-validantes con aserciones automatizadas
 
-🔧 **Future Improvements**:
-- Complete migration to assertpy in all test files
-- Add AAA comments to remaining test files
-- Implement separate test database for integration tests
-- ✅ **COMPLETED**: E2E tests with Screenplay, Selenium IDE, and Cypress
+🔧 **Mejoras Futuras**:
+- Completar migración a assertpy en todos los archivos de prueba
+- Agregar comentarios AAA a archivos de prueba restantes
+- Implementar base de datos de prueba separada para pruebas de integración
+- ✅ **COMPLETADO**: Pruebas E2E con Screenplay, Selenium IDE, Cypress y SerenityBDD
 
-## New Testing Frameworks
+## Nuevos Frameworks de Pruebas
 
-### Screenplay Pattern (`test/screenplay/`)
+### Patrón Screenplay (`test/screenplay/`)
 
-**What it is**: A user-centered design pattern for writing maintainable automated tests that focuses on what actors do, not how they do it.
+**Qué es**: Un patrón de diseño centrado en el usuario para escribir pruebas automatizadas mantenibles que se enfoca en qué hacen los actores, no en cómo lo hacen.
 
-**Key Features**:
-- 👤 **Actors**: Represent users (Admin, Assistant)
-- 💪 **Abilities**: What actors can do (BrowseTheWeb, MakeAPIRequests)
-- 📋 **Tasks**: High-level goals (Login, AddEmployee, CreateLiquidation)
-- ⚡ **Interactions**: Low-level actions (Click, Fill, Open)
-- ❓ **Questions**: Verify system state (TheUrl, TheElement, TheText)
+**Características Clave**:
+- 👤 **Actores**: Representan usuarios (Admin, Asistente)
+- 💪 **Habilidades**: Qué pueden hacer los actores (BrowseTheWeb, MakeAPIRequests)
+- 📋 **Tareas**: Objetivos de alto nivel (Login, AddEmployee, CreateLiquidation)
+- ⚡ **Interacciones**: Acciones de bajo nivel (Click, Fill, Open)
+- ❓ **Preguntas**: Verificar estado del sistema (TheUrl, TheElement, TheText)
 
-**Documentation**: See [test/screenplay/README.md](screenplay/README.md)
+**Documentación**: Ver [test/screenplay/README.md](screenplay/README.md)
 
 ### Selenium IDE (`test/selenium-ide/`)
 
-**What it is**: A record-and-playback tool for browser automation that creates automated test scripts without coding.
+**Qué es**: Una herramienta de grabar y reproducir para automatización de navegador que crea scripts de prueba automatizados sin codificar.
 
-**Key Features**:
-- 🎥 **Record** user interactions in the browser
-- 📝 **Export** to Python, Java, C#, and other languages
-- 🔄 **Replay** tests across different browsers
-- 📦 **.side files**: Test recordings in JSON format
+**Características Clave**:
+- 🎥 **Grabar** interacciones de usuario en el navegador
+- 📝 **Exportar** a Python, Java, C#, y otros lenguajes
+- 🔄 **Reproducir** pruebas en diferentes navegadores
+- 📦 **Archivos .side**: Grabaciones de pruebas en formato JSON
 
-**Test Suites**:
-- `login-tests.side` - Authentication tests
-- `employee-management.side` - CRUD operations
-- `liquidation-tests.side` - Liquidation workflows
-- `python-tests/` - Python-converted tests
+**Suites de Pruebas**:
+- `login-tests.side` - Pruebas de autenticación
+- `employee-management.side` - Operaciones CRUD
+- `liquidation-tests.side` - Flujos de liquidación
+- `python-tests/` - Pruebas convertidas a Python
 
-**Documentation**: See [test/selenium-ide/README.md](selenium-ide/README.md)
+**Documentación**: Ver [test/selenium-ide/README.md](selenium-ide/README.md)
 
 ### Cypress (`test/cypress/`)
 
-**What it is**: Modern E2E testing framework with excellent developer experience, automatic waiting, and time-travel debugging.
+**Qué es**: Framework moderno de pruebas E2E con excelente experiencia de desarrollador, espera automática y depuración con viaje en el tiempo.
 
-**Key Features**:
-- ⚡ **Fast** execution with automatic waiting
-- 🐛 **Time-travel debugging** with snapshots
-- 📸 **Screenshots** and videos on failure
-- 🔄 **Automatic retries** for flaky tests
-- 🎯 **Custom commands** for common actions
+**Características Clave**:
+- ⚡ Ejecución **rápida** con espera automática
+- 🐛 **Depuración con viaje en el tiempo** con capturas
+- 📸 **Capturas de pantalla** y videos en fallas
+- 🔄 **Reintentos automáticos** para pruebas inestables
+- 🎯 **Comandos personalizados** para acciones comunes
 
-**Test Suites**:
-- `login.cy.js` - Comprehensive authentication tests
-- `employee-management.cy.js` - Employee CRUD with authorization
-- `liquidation-management.cy.js` - Liquidation workflows and reports
+**Suites de Pruebas**:
+- `login.cy.js` - Pruebas completas de autenticación
+- `employee-management.cy.js` - CRUD de empleados con autorización
+- `liquidation-management.cy.js` - Flujos de liquidación y reportes
 
-**Documentation**: See [test/cypress/README.md](cypress/README.md)
+**Documentación**: Ver [test/cypress/README.md](cypress/README.md)
 
-### Framework Comparison
+### SerenityBDD (`test/serenity-bdd/`)
 
-| Feature | Screenplay | Selenium IDE | Cypress |
-|---------|-----------|--------------|---------|
-| **Purpose** | Test architecture | Recording tool | E2E framework |
-| **Language** | Python | Browser + Python | JavaScript |
-| **Best For** | Maintainability | Quick tests | Production E2E |
-| **Learning Curve** | Medium | Low | Medium |
-| **CI/CD Ready** | ✅ | ✅ | ✅ |
+**Qué es**: Integración de BDD (Behavior-Driven Development) con pytest-bdd y reportes detallados tipo Serenity usando Allure.
 
-**Complete Documentation**: See [TESTING_FRAMEWORKS_OVERVIEW.md](TESTING_FRAMEWORKS_OVERVIEW.md)
+**Características Clave**:
+- 📝 **Gherkin**: Escenarios en lenguaje natural (español)
+- 🎭 **Patrón Screenplay**: Tareas y actores para pruebas mantenibles
+- 📊 **Reportes Allure**: Reportes HTML ricos con evidencia visual
+- 🧪 **Page Objects**: Encapsulación de interacciones con páginas web
 
-## Contributing
+**Archivos Feature**:
+- `login.feature` - Escenarios de inicio de sesión
+- `empleados.feature` - Gestión de empleados
+- `liquidaciones.feature` - Gestión de liquidaciones
 
-When adding new tests:
-1. Follow the naming convention: `test_<category>_<description>.py`
-2. Use AAA pattern with explicit comments for clarity
-3. Prefer `assertpy` for assertions when possible
-4. Ensure tests are isolated and can run independently
-5. Use mocks/fakes for external dependencies (database, APIs)
+**Documentación**: Ver [test/serenity-bdd/README.md](serenity-bdd/README.md)
 
-## Resources
+### Comparación de Frameworks
 
-- [pytest Documentation](https://docs.pytest.org/)
-- [assertpy Documentation](https://github.com/assertpy/assertpy)
-- [FIRST Principles](https://pragprog.com/magazines/2012-01/unit-tests-are-first)
-- [AAA Pattern](http://wiki.c2.com/?ArrangeActAssert)
+| Característica | Screenplay | Selenium IDE | Cypress | SerenityBDD |
+|----------------|------------|--------------|---------|-------------|
+| **Propósito** | Arquitectura de pruebas | Herramienta de grabación | Framework E2E | BDD + Reportes |
+| **Lenguaje** | Python | Navegador + Python | JavaScript | Python + Gherkin |
+| **Mejor Para** | Mantenibilidad | Pruebas rápidas | E2E de producción | BDD y documentación |
+| **Curva de Aprendizaje** | Media | Baja | Media | Media |
+| **Listo para CI/CD** | ✅ | ✅ | ✅ | ✅ |
+
+**Documentación Completa**: Ver [TESTING_FRAMEWORKS_OVERVIEW.md](TESTING_FRAMEWORKS_OVERVIEW.md)
+
+## Contribuir
+
+Al agregar nuevas pruebas:
+1. Seguir la convención de nombres: `test_<categoría>_<descripción>.py`
+2. Usar patrón AAA con comentarios explícitos para claridad
+3. Preferir `assertpy` para aserciones cuando sea posible
+4. Asegurar que las pruebas estén aisladas y puedan ejecutarse independientemente
+5. Usar mocks/fakes para dependencias externas (base de datos, APIs)
+
+## Recursos
+
+- [Documentación de pytest](https://docs.pytest.org/)
+- [Documentación de assertpy](https://github.com/assertpy/assertpy)
+- [Principios FIRST](https://pragprog.com/magazines/2012-01/unit-tests-are-first)
+- [Patrón AAA](http://wiki.c2.com/?ArrangeActAssert)
+- [pytest-bdd Documentation](https://pytest-bdd.readthedocs.io/)
+- [Allure Framework](https://docs.qameta.io/allure/)
