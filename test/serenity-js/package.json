@@ -1,0 +1,27 @@
+{
+  "name": "serenity-js-tests",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "cucumber-js --config cucumber.mjs",
+    "report:prepare": "serenity-bdd update --artifact net.serenity-bdd:serenity-cli:jar:2.6.0",
+    "report:java8": "serenity-bdd run --artifact net.serenity-bdd:serenity-cli:jar:2.6.0 --destination ./target/site/serenity --source ./target/site/serenity --features ./features --log warn",
+    "report:latest": "serenity-bdd run --destination ./target/site/serenity --source ./target/site/serenity --features ./features --log warn",
+    "test:report": "npm run test && npm run report:prepare && npm run report:java8"
+  },
+  "dependencies": {
+    "@cucumber/cucumber": "^10.0.0",
+    "@serenity-js/assertions": "^3.18.3",
+    "@serenity-js/console-reporter": "^3.18.3",
+    "@serenity-js/core": "^3.18.3",
+    "@serenity-js/cucumber": "^3.18.3",
+    "@serenity-js/playwright": "^3.18.3",
+    "@serenity-js/serenity-bdd": "^3.18.3",
+    "@serenity-js/web": "^3.18.3",
+    "playwright": "^1.48.2"
+  },
+  "devDependencies": {
+    "@serenity-bdd/cli": "^3.9.0"
+  }
+}
