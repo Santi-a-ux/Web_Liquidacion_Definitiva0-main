@@ -1,27 +1,29 @@
-# Test Suite Organization
+# Organización de la Suite de Pruebas
 
-This document describes the organization and structure of the test suite for the Web Liquidación Definitiva project.
+Este documento describe la organización y estructura de la suite de pruebas para el proyecto Web Liquidación Definitiva.
 
-## 🆕 NEW Testing Frameworks Added
+## 🆕 NUEVOS Frameworks de Pruebas Agregados
 
-In addition to the existing pytest suite, three new testing frameworks have been implemented:
+Además de la suite existente de pytest, se han implementado cuatro nuevos frameworks de pruebas:
 
-1. **Screenplay Pattern** (`test/screenplay/`) - Behavior-driven design pattern for maintainable tests
-2. **Selenium IDE** (`test/selenium-ide/`) - Browser automation with recordings and Python tests
-3. **Cypress** (`test/cypress/`) - Modern E2E testing framework with excellent DX
+1. **Patrón Screenplay** (`test/screenplay/`) - Patrón de diseño orientado al comportamiento para pruebas mantenibles
+2. **Selenium IDE** (`test/selenium-ide/`) - Automatización de navegador con grabaciones y pruebas en Python
+3. **Cypress** (`test/cypress/`) - Framework moderno de pruebas E2E con excelente experiencia de desarrollo
+4. **SerenityBDD** (`test/serenity-bdd/`) - Integración BDD con reportes detallados estilo Serenity
 
-📖 **See [TESTING_FRAMEWORKS_OVERVIEW.md](TESTING_FRAMEWORKS_OVERVIEW.md) for complete documentation**
+📖 **Ver [TESTING_FRAMEWORKS_OVERVIEW.md](TESTING_FRAMEWORKS_OVERVIEW.md) para documentación completa**
 
-## Test Status
-✅ **Pytest tests passing**: 208 passed, 13 deselected
-- Tests excluded by default (in pytest.ini): `test_faltantes.py`, `test_basedatos.py` (require database setup)
-✅ **Screenplay Pattern**: Example tests implemented
-✅ **Selenium IDE**: Login, employee, and liquidation test recordings created
-✅ **Cypress**: Comprehensive E2E test suite implemented
+## Estado de las Pruebas
+✅ **Pruebas pytest aprobadas**: 208 aprobadas, 13 deseleccionadas
+- Pruebas excluidas por defecto (en pytest.ini): `test_faltantes.py`, `test_basedatos.py` (requieren configuración de base de datos)
+✅ **Patrón Screenplay**: Pruebas de ejemplo implementadas
+✅ **Selenium IDE**: Grabaciones de pruebas de login, empleados y liquidaciones creadas
+✅ **Cypress**: Suite completa de pruebas E2E implementada
+✅ **SerenityBDD**: Integración con pytest-bdd y reportes Allure implementada
 
-## Running Tests
+## Ejecutar Pruebas
 
-### Pytest Tests (Unit & Integration)
+### Pruebas Pytest (Unitarias e Integración)
 
 ```bash
 # Run all pytest tests (uses pytest.ini configuration)
