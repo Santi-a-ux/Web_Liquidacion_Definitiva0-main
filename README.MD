@@ -204,7 +204,8 @@ El proyecto cuenta con una estrategia integral de pruebas que incluye:
 - Patrón Screenplay implementado
 
 **📚 Documentación de Pruebas:**
-- **[VALIDACION_CRITERIOS_PRUEBAS.md](VALIDACION_CRITERIOS_PRUEBAS.md)** - ⭐ **Validación completa de criterios (110/110 - 100%)**
+- **[RESUMEN_VALIDACION.md](RESUMEN_VALIDACION.md)** - 🎯 **Resumen ejecutivo (110/110 - 100%)**
+- **[VALIDACION_CRITERIOS_PRUEBAS.md](VALIDACION_CRITERIOS_PRUEBAS.md)** - ⭐ **Validación completa de criterios**
 - **[GUIA_PRESENTACION_PRUEBAS.md](GUIA_PRESENTACION_PRUEBAS.md)** - Guía completa para presentar evidencias de pruebas
 - **[test/README.md](test/README.md)** - Documentación técnica de frameworks
 - **[ANALISIS_PRUEBAS.md](ANALISIS_PRUEBAS.md)** - Análisis detallado de implementación
