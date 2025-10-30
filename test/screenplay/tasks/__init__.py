@@ -38,13 +38,14 @@ class Login(Task):
     
     def perform_as(self, actor: Any) -> None:
         """Perform the login task."""
-        from test.screenplay.interactions import Fill, Click, Open
+        from screenplay.interactions import Fill, Click, Open
         
         # Navigate to login page
         Open.browser_on("http://127.0.0.1:8080/login").perform_as(actor)
         
         # Fill credentials
-        Fill.field((By.NAME, "username"), self.username, "username field").perform_as(actor)
+        # La app usa 'id_usuario' como identificador numérico
+        Fill.field((By.NAME, "id_usuario"), str(self.username), "id_usuario field").perform_as(actor)
         Fill.field((By.NAME, "password"), self.password, "password field").perform_as(actor)
         
         # Submit
@@ -70,24 +71,41 @@ class AddEmployee(Task):
     
     def perform_as(self, actor: Any) -> None:
         """Perform the add employee task."""
-        from test.screenplay.interactions import Fill, Click, Open
+        from screenplay.interactions import Fill, Click, Open
         
         # Navigate to add employee page
         Open.browser_on("http://127.0.0.1:8080/agregar_usuario").perform_as(actor)
         
         # Fill employee form
+        # Campo requerido en la vista: id_usuario
+        if 'id_usuario' in self.employee_data:
+            Fill.field((By.NAME, "id_usuario"), str(self.employee_data['id_usuario'])).perform_as(actor)
+        
         if 'nombre' in self.employee_data:
             Fill.field((By.NAME, "nombre"), self.employee_data['nombre']).perform_as(actor)
         if 'apellido' in self.employee_data:
             Fill.field((By.NAME, "apellido"), self.employee_data['apellido']).perform_as(actor)
-        if 'documento' in self.employee_data:
-            Fill.field((By.NAME, "documento"), str(self.employee_data['documento'])).perform_as(actor)
-        if 'correo' in self.employee_data:
-            Fill.field((By.NAME, "correo"), self.employee_data['correo']).perform_as(actor)
+        # Compatibilidad: aceptar 'documento' o 'documento_identidad'
+        if 'documento_identidad' in self.employee_data:
+            Fill.field((By.NAME, "documento_identidad"), str(self.employee_data['documento_identidad'])).perform_as(actor)
+        elif 'documento' in self.employee_data:
+            Fill.field((By.NAME, "documento_identidad"), str(self.employee_data['documento'])).perform_as(actor)
+        
+        # Compatibilidad: aceptar 'correo' o 'correo_electronico'
+        if 'correo_electronico' in self.employee_data:
+            Fill.field((By.NAME, "correo_electronico"), self.employee_data['correo_electronico']).perform_as(actor)
+        elif 'correo' in self.employee_data:
+            Fill.field((By.NAME, "correo_electronico"), self.employee_data['correo']).perform_as(actor)
         if 'telefono' in self.employee_data:
             Fill.field((By.NAME, "telefono"), self.employee_data['telefono']).perform_as(actor)
         if 'salario' in self.employee_data:
             Fill.field((By.NAME, "salario"), str(self.employee_data['salario'])).perform_as(actor)
+        
+        # Fechas segun vista: fecha_ingreso (requerida), fecha_salida (opcional)
+        if 'fecha_ingreso' in self.employee_data:
+            Fill.field((By.NAME, "fecha_ingreso"), str(self.employee_data['fecha_ingreso'])).perform_as(actor)
+        if 'fecha_salida' in self.employee_data:
+            Fill.field((By.NAME, "fecha_salida"), str(self.employee_data['fecha_salida'])).perform_as(actor)
         
         # Submit form
         Click.on((By.CSS_SELECTOR, "button[type='submit']"), "submit button").perform_as(actor)
@@ -112,7 +130,7 @@ class CreateLiquidation(Task):
     
     def perform_as(self, actor: Any) -> None:
         """Perform the create liquidation task."""
-        from test.screenplay.interactions import Fill, Click, Open
+        from screenplay.interactions import Fill, Click, Open
         
         # Navigate to create liquidation page
         Open.browser_on("http://127.0.0.1:8080/agregar_liquidacion").perform_as(actor)
@@ -143,7 +161,7 @@ class ConsultEmployee(Task):
     
     def perform_as(self, actor: Any) -> None:
         """Perform the consult employee task."""
-        from test.screenplay.interactions import Fill, Click, Open
+        from screenplay.interactions import Fill, Click, Open
         
         # Navigate to consult page
         Open.browser_on("http://127.0.0.1:8080/consultar_usuario").perform_as(actor)

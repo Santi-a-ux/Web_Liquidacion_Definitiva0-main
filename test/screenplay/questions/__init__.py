@@ -41,7 +41,7 @@ class TheText(Question):
     
     def answered_by(self, actor: Any) -> str:
         """Get the text of the element."""
-        from test.screenplay.abilities import BrowseTheWeb
+        from screenplay.abilities import BrowseTheWeb
         driver = actor.using(BrowseTheWeb).get_driver()
         element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(self.locator)
@@ -75,7 +75,7 @@ class TheUrl(Question):
     
     def answered_by(self, actor: Any) -> str:
         """Get the current URL."""
-        from test.screenplay.abilities import BrowseTheWeb
+        from screenplay.abilities import BrowseTheWeb
         driver = actor.using(BrowseTheWeb).get_driver()
         url = driver.current_url
         
@@ -112,7 +112,7 @@ class TheElement(Question):
     
     def answered_by(self, actor: Any) -> bool:
         """Check if element is visible."""
-        from test.screenplay.abilities import BrowseTheWeb
+        from screenplay.abilities import BrowseTheWeb
         driver = actor.using(BrowseTheWeb).get_driver()
         
         try:

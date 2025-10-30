@@ -17,13 +17,14 @@
 Cypress.Commands.add('login', (username, password) => {
   const user = username || Cypress.env('adminUsername')
   const pass = password || Cypress.env('adminPassword')
-  
+
   cy.visit('/login')
-  cy.get('input[name="username"]').clear().type(user)
+  // El formulario real usa name="id_usuario" para el campo de usuario (numérico)
+  cy.get('input[name="id_usuario"]').clear().type(`${user}`)
   cy.get('input[name="password"]').clear().type(pass)
   cy.get('button[type="submit"]').click()
-  
-  // Wait for redirect away from login page
+
+  // Esperar redirección fuera de /login
   cy.url().should('not.include', '/login')
 })
 
@@ -72,7 +73,10 @@ Cypress.Commands.add('clearSession', () => {
  */
 Cypress.Commands.add('addEmployee', (employeeData) => {
   cy.visit('/agregar_usuario')
-  
+
+  if (employeeData.id_usuario) {
+    cy.get('input[name="id_usuario"]').clear().type(`${employeeData.id_usuario}`)
+  }
   if (employeeData.nombre) {
     cy.get('input[name="nombre"]').clear().type(employeeData.nombre)
   }
@@ -80,24 +84,24 @@ Cypress.Commands.add('addEmployee', (employeeData) => {
     cy.get('input[name="apellido"]').clear().type(employeeData.apellido)
   }
   if (employeeData.documento) {
-    cy.get('input[name="documento"]').clear().type(employeeData.documento)
+    cy.get('input[name="documento_identidad"]').clear().type(employeeData.documento)
   }
   if (employeeData.correo) {
-    cy.get('input[name="correo"]').clear().type(employeeData.correo)
+    cy.get('input[name="correo_electronico"]').clear().type(employeeData.correo)
   }
   if (employeeData.telefono) {
     cy.get('input[name="telefono"]').clear().type(employeeData.telefono)
   }
   if (employeeData.fecha_inicio) {
-    cy.get('input[name="fecha_inicio"]').clear().type(employeeData.fecha_inicio)
+    cy.get('input[name="fecha_ingreso"]').clear().type(employeeData.fecha_inicio)
   }
   if (employeeData.fecha_fin) {
-    cy.get('input[name="fecha_fin"]').clear().type(employeeData.fecha_fin)
+    cy.get('input[name="fecha_salida"]').clear().type(employeeData.fecha_fin)
   }
   if (employeeData.salario) {
-    cy.get('input[name="salario"]').clear().type(employeeData.salario)
+    cy.get('input[name="salario"]').clear().type(`${employeeData.salario}`)
   }
-  
+
   cy.get('button[type="submit"]').click()
 })
 

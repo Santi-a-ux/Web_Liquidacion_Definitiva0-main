@@ -40,7 +40,7 @@ class Click(Interaction):
     
     def perform_as(self, actor: Any) -> None:
         """Click the element."""
-        from test.screenplay.abilities import BrowseTheWeb
+        from screenplay.abilities import BrowseTheWeb
         driver = actor.using(BrowseTheWeb).get_driver()
         element = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable(self.locator)
@@ -71,7 +71,7 @@ class Fill(Interaction):
     
     def perform_as(self, actor: Any) -> None:
         """Fill the field with the value."""
-        from test.screenplay.abilities import BrowseTheWeb
+        from screenplay.abilities import BrowseTheWeb
         driver = actor.using(BrowseTheWeb).get_driver()
         element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(self.locator)
@@ -99,7 +99,7 @@ class Open(Interaction):
     
     def perform_as(self, actor: Any) -> None:
         """Navigate to the URL."""
-        from test.screenplay.abilities import BrowseTheWeb
+        from screenplay.abilities import BrowseTheWeb
         driver = actor.using(BrowseTheWeb).get_driver()
         driver.get(self.url)
     
@@ -127,7 +127,7 @@ class SendRequest(Interaction):
     
     def perform_as(self, actor: Any) -> None:
         """Send the HTTP request."""
-        from test.screenplay.abilities import MakeAPIRequests
+        from screenplay.abilities import MakeAPIRequests
         api = actor.using(MakeAPIRequests)
         
         if self.method == 'GET':

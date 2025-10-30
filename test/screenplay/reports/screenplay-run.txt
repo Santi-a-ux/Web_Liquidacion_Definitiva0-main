@@ -1,0 +1,14 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.6, pytest-8.4.2, pluggy-1.6.0
+rootdir: C:\Users\user\Desktop\Web_Liquidacion_Definitiva0-main
+configfile: pytest.ini
+plugins: anyio-4.9.0, ddtrace-2.3.0, Faker-37.5.3, html-4.1.1, metadata-3.1.1
+collected 25 items
+
+test\screenplay\test_screenplay_add_employee.py .                        [  4%]
+test\screenplay\test_screenplay_additional_examples.py ...............   [ 64%]
+test\screenplay\test_screenplay_examples.py ........                     [ 96%]
+test\screenplay\test_screenplay_real.py .                                [100%]
+
+=================================== PASSES ====================================
+============================= 25 passed in 17.54s =============================

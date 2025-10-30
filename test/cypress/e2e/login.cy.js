@@ -22,7 +22,7 @@ describe('Login Functionality', () => {
       cy.visit('/login')
       
       // Act
-      cy.get('input[name="username"]').type(Cypress.env('adminUsername'))
+  cy.get('input[name="id_usuario"]').type(Cypress.env('adminUsername'))
       cy.get('input[name="password"]').type(Cypress.env('adminPassword'))
       cy.get('button[type="submit"]').click()
       
@@ -37,7 +37,7 @@ describe('Login Functionality', () => {
       cy.visit('/login')
       
       // Act
-      cy.get('input[name="username"]').type(Cypress.env('assistantUsername'))
+  cy.get('input[name="id_usuario"]').type(Cypress.env('assistantUsername'))
       cy.get('input[name="password"]').type(Cypress.env('assistantPassword'))
       cy.get('button[type="submit"]').click()
       
@@ -72,7 +72,7 @@ describe('Login Functionality', () => {
       cy.visit('/login')
       
       // Act
-      cy.get('input[name="username"]').type('invalid_user')
+  cy.get('input[name="id_usuario"]').type('999999')
       cy.get('input[name="password"]').type('some_password')
       cy.get('button[type="submit"]').click()
       
@@ -94,7 +94,7 @@ describe('Login Functionality', () => {
       cy.visit('/login')
       
       // Act
-      cy.get('input[name="username"]').type(Cypress.env('adminUsername'))
+  cy.get('input[name="id_usuario"]').type(Cypress.env('adminUsername'))
       cy.get('input[name="password"]').type('wrong_password')
       cy.get('button[type="submit"]').click()
       
@@ -161,7 +161,7 @@ describe('Login Functionality', () => {
       cy.visit('/login')
       
       // Assert
-      cy.get('input[name="username"]').should('be.visible')
+      cy.get('input[name="id_usuario"]').should('be.visible')
       cy.get('input[name="password"]').should('be.visible')
       cy.get('button[type="submit"]').should('be.visible')
     })
@@ -171,7 +171,7 @@ describe('Login Functionality', () => {
       cy.visit('/login')
       
       // Assert
-      cy.get('input[name="password"]').should('have.attr', 'type', 'password')
+  cy.get('input[name="password"]').should('have.attr', 'type', 'password')
     })
     
   })

@@ -1,0 +1,5 @@
+test/screenplay/test_screenplay_add_employee.py: 1
+test/screenplay/test_screenplay_additional_examples.py: 15
+test/screenplay/test_screenplay_examples.py: 8
+test/screenplay/test_screenplay_real.py: 1
+

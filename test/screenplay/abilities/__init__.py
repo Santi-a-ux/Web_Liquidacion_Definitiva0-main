@@ -8,6 +8,7 @@ that enable actors to interact with the system.
 from typing import Any, Optional
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 import requests
 
 
@@ -27,6 +28,18 @@ class Ability:
         return self
 
 
+LAST_DRIVER: Optional[webdriver.Chrome] = None
+
+
+def set_last_driver(driver: Optional[webdriver.Chrome]) -> None:
+    global LAST_DRIVER
+    LAST_DRIVER = driver
+
+
+def get_last_driver() -> Optional[webdriver.Chrome]:
+    return LAST_DRIVER
+
+
 class BrowseTheWeb(Ability):
     """
     Ability to browse the web using Selenium WebDriver.
@@ -41,12 +54,25 @@ class BrowseTheWeb(Ability):
         """
         if driver is None:
             options = Options()
-            options.add_argument('--headless')
+            # Headless moderno (Chrome 109+)
+            options.add_argument('--headless=new')
             options.add_argument('--no-sandbox')
             options.add_argument('--disable-dev-shm-usage')
-            self.driver = webdriver.Chrome(options=options)
+            options.add_argument('--window-size=1280,800')
+
+            # Intentar usar webdriver-manager si está disponible
+            try:
+                from webdriver_manager.chrome import ChromeDriverManager
+                service = Service(ChromeDriverManager().install())
+                self.driver = webdriver.Chrome(service=service, options=options)
+            except Exception:
+                # Fallback: requiere chromedriver en PATH
+                self.driver = webdriver.Chrome(options=options)
+            # Registrar último driver para reportes
+            set_last_driver(self.driver)
         else:
             self.driver = driver
+            set_last_driver(self.driver)
     
     def get_driver(self) -> webdriver.Chrome:
         """Get the WebDriver instance."""
@@ -60,6 +86,7 @@ class BrowseTheWeb(Ability):
         """Close the browser."""
         if self.driver:
             self.driver.quit()
+            set_last_driver(None)
     
     def __del__(self):
         """Cleanup when ability is destroyed."""

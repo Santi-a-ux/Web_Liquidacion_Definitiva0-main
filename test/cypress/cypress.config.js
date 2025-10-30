@@ -44,10 +44,12 @@ module.exports = defineConfig({
     
     // Environment variables
     env: {
-      adminUsername: 'admin',
+      // Credenciales por defecto según la app Flask (ver templates/login.html)
+      // ID de usuario (numérico) y contraseña
+      adminUsername: '1',
       adminPassword: 'admin123',
-      assistantUsername: 'asistente',
-      assistantPassword: 'asistente123'
+      assistantUsername: '2',
+      assistantPassword: 'user123'
     },
     
     setupNodeEvents(on, config) {

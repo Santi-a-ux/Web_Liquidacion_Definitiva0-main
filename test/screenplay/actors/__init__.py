@@ -123,7 +123,8 @@ class AdminUser(Actor):
     
     def __init__(self):
         super().__init__("Administrator")
-        self.username = "admin"
+        # La app usa ID numérico como usuario
+        self.username = "1"  # compat (Login task lo enviará a id_usuario)
         self.password = "admin123"
 
 
@@ -132,5 +133,5 @@ class AssistantUser(Actor):
     
     def __init__(self):
         super().__init__("Assistant")
-        self.username = "asistente"
-        self.password = "asistente123"
+        self.username = "2"  # compat (Login task lo enviará a id_usuario)
+        self.password = "user123"
