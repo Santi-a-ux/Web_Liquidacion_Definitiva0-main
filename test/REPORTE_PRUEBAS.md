@@ -19,6 +19,87 @@ Este documento proporciona un análisis completo y detallado de todas las prueba
 
 ---
 
+## 📊 ESTADÍSTICAS PARA PRESENTACIÓN
+
+### Resumen Visual de Pruebas
+
+```
+┌─────────────────────────────────────────────────────┐
+│  TOTAL DE PRUEBAS: 397+ casos de prueba             │
+│  Distribuidas en 40 archivos de prueba              │
+└─────────────────────────────────────────────────────┘
+
+📦 PRUEBAS UNITARIAS E INTEGRACIÓN (Python/Pytest)
+   ├─ 222 casos de prueba (56%)
+   ├─ Controller: 92 pruebas (23%)
+   ├─ Flask/Web: 74 pruebas (19%)
+   └─ Otros: 56 pruebas (14%)
+
+🎭 PRUEBAS E2E Y PATRONES
+   ├─ Cypress: 43 pruebas (11%)
+   ├─ Screenplay: 26 pruebas (7%)
+   ├─ Selenium IDE: 6+ pruebas (2%)
+   └─ SerenityJS/BDD: varios escenarios
+```
+
+### 🔧 Frameworks y Herramientas Utilizadas
+
+| Framework/Herramienta | Cuándo se Utiliza | Casos de Prueba | Tipo |
+|----------------------|-------------------|-----------------|------|
+| **Pytest** | Pruebas unitarias e integración de toda la lógica Python | 222 | Unit/Integration |
+| **Cypress** | Pruebas E2E de flujos completos en navegador (login, CRUD empleados, liquidaciones) | 43 | E2E |
+| **Screenplay Pattern** | Patrón de diseño para pruebas E2E mantenibles con actores y tareas | 26 | E2E Pattern |
+| **Selenium WebDriver** | Automatización de navegador para pruebas grabadas con Selenium IDE | 6+ | E2E |
+| **Cucumber/Gherkin** | Escenarios BDD en lenguaje natural dentro de SerenityJS (.feature files) | varios | BDD |
+| **Playwright** | Motor de automatización para SerenityJS/Cucumber | N/A | E2E Engine |
+
+### 📈 Distribución por Tipo de Prueba
+
+| Tipo de Prueba | Cantidad | Porcentaje | Descripción |
+|----------------|----------|------------|-------------|
+| **Unitarias** | ~180 | 45% | Lógica de negocio aislada (calculadora, funciones) |
+| **Integración** | ~42 | 11% | Controlador + BD, Flask + sesiones |
+| **E2E (End-to-End)** | ~75 | 19% | Flujos completos de usuario en navegador |
+| **BDD/Gherkin** | varios | N/A | Escenarios en lenguaje natural |
+| **Cobertura adicional** | ~100 | 25% | Pruebas de cobertura y casos edge |
+
+### 🎯 Uso Específico de Herramientas
+
+#### Cucumber/Gherkin
+- **Ubicación:** `test/serenity-js/features/*.feature`
+- **Uso:** Definir escenarios de prueba en lenguaje natural (español)
+- **Ejemplo:** `features/login.feature` - Escenarios de inicio de sesión
+- **Ejecutor:** SerenityJS + Cucumber + Playwright
+
+#### Selenium WebDriver
+- **Ubicación:** `test/selenium-ide/`
+- **Uso:** Grabar y reproducir pruebas de navegador sin código
+- **Archivos:** `web-liquidacion-ide-tests.side`, `comprehensive-tests.side`
+- **Exportación:** Convertidas a Python en `python-tests/test_selenium_login.py`
+
+#### Cypress
+- **Ubicación:** `test/cypress/e2e/`
+- **Uso:** Pruebas E2E modernas con excelente experiencia de desarrollo
+- **Archivos:** `login.cy.js`, `employee-management.cy.js`, `liquidation-management.cy.js`
+- **Características:** Espera automática, time-travel debugging, screenshots
+
+#### Playwright
+- **Ubicación:** Integrado en SerenityJS
+- **Uso:** Motor de automatización para ejecutar pruebas Cucumber/BDD
+- **Ventaja:** Soporte multi-navegador (Chrome, Firefox, Safari, Edge)
+
+### 📊 Cobertura por Capa de Aplicación
+
+| Capa | Pruebas | Frameworks Utilizados |
+|------|---------|----------------------|
+| **Modelo** (Lógica de negocio) | 21 | Pytest |
+| **Controlador** (BD + Logic) | 92 | Pytest + Mocks |
+| **Vista Web** (Flask) | 74 | Pytest + Flask test client |
+| **Vista GUI/Consola** | 22 | Pytest + Kivy mocks |
+| **End-to-End** | 75+ | Cypress + Selenium + Screenplay + SerenityJS |
+
+---
+
 ## 🎯 DISTRIBUCIÓN DE PRUEBAS POR TIPO
 
 ### 1. PRUEBAS UNITARIAS Y DE INTEGRACIÓN (Python/Pytest)
