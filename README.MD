@@ -187,13 +187,29 @@ Esta herramienta automatiza todo ese proceso tedioso, cumpliendo con la legislac
 3. Haz clic en "Eliminar Liquidación".
 4. Si la liquidación se elimina correctamente, verás un mensaje de confirmación.
 
-## Pruebas Unitarias
+## Pruebas y Calidad de Código
 
 Para ejecutar las pruebas unitarias, utiliza el siguiente comando en el directorio raíz:
 
 ```bash
 python -m unittest discover tests mirar si funciona
 ```
+
+### 📊 Evidencias de Pruebas
+
+El proyecto cuenta con una estrategia integral de pruebas que incluye:
+- **250+ pruebas** automatizadas (unitarias, integración, E2E)
+- **85%+ de cobertura** de código reportada por SonarQube
+- Múltiples frameworks: pytest, Cypress, Selenium IDE, Serenity BDD
+- Patrón Screenplay implementado
+
+**📚 Documentación de Pruebas:**
+- **[GUIA_PRESENTACION_PRUEBAS.md](GUIA_PRESENTACION_PRUEBAS.md)** - Guía completa para presentar evidencias de pruebas
+- **[test/README.md](test/README.md)** - Documentación técnica de frameworks
+- **[ANALISIS_PRUEBAS.md](ANALISIS_PRUEBAS.md)** - Análisis detallado de implementación
+
+Para más información sobre las pruebas, consulta la carpeta `test/` y los documentos mencionados.
+
 ## Licencia
 
 Este proyecto está bajo la licencia MIT. Consulta el archivo LICENSE para obtener más detalles.
