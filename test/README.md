@@ -2,14 +2,29 @@
 
 This document describes the organization and structure of the test suite for the Web Liquidación Definitiva project.
 
+## 🆕 NEW Testing Frameworks Added
+
+In addition to the existing pytest suite, three new testing frameworks have been implemented:
+
+1. **Screenplay Pattern** (`test/screenplay/`) - Behavior-driven design pattern for maintainable tests
+2. **Selenium IDE** (`test/selenium-ide/`) - Browser automation with recordings and Python tests
+3. **Cypress** (`test/cypress/`) - Modern E2E testing framework with excellent DX
+
+📖 **See [TESTING_FRAMEWORKS_OVERVIEW.md](TESTING_FRAMEWORKS_OVERVIEW.md) for complete documentation**
+
 ## Test Status
-✅ **All tests passing**: 208 passed, 13 deselected
+✅ **Pytest tests passing**: 208 passed, 13 deselected
 - Tests excluded by default (in pytest.ini): `test_faltantes.py`, `test_basedatos.py` (require database setup)
+✅ **Screenplay Pattern**: Example tests implemented
+✅ **Selenium IDE**: Login, employee, and liquidation test recordings created
+✅ **Cypress**: Comprehensive E2E test suite implemented
 
 ## Running Tests
 
+### Pytest Tests (Unit & Integration)
+
 ```bash
-# Run all tests (uses pytest.ini configuration)
+# Run all pytest tests (uses pytest.ini configuration)
 python -m pytest
 
 # Run tests with verbose output
@@ -24,6 +39,41 @@ python -m pytest -k "test_controlador"
 
 # Include database tests (requires PostgreSQL setup)
 python -m pytest -k "not test_faltantes"
+```
+
+### Screenplay Pattern Tests
+
+```bash
+# Run screenplay examples
+python -m pytest test/screenplay/test_screenplay_examples.py -v
+
+# See test/screenplay/README.md for more details
+```
+
+### Selenium IDE Tests
+
+```bash
+# Run Python-converted Selenium tests
+python -m pytest test/selenium-ide/python-tests/ -v
+
+# Note: .side files can be opened in Selenium IDE browser extension
+# See test/selenium-ide/README.md for more details
+```
+
+### Cypress E2E Tests
+
+```bash
+# Install dependencies (first time only)
+cd test/cypress
+npm install
+
+# Open Cypress Test Runner (GUI)
+npm run cypress:open
+
+# Run headless (CI/CD)
+npm run cypress:run
+
+# See test/cypress/README.md for more details
 ```
 
 ## Test Organization
@@ -164,7 +214,70 @@ The project uses:
 - Complete migration to assertpy in all test files
 - Add AAA comments to remaining test files
 - Implement separate test database for integration tests
-- Consider E2E tests with Playwright for browser testing
+- ✅ **COMPLETED**: E2E tests with Screenplay, Selenium IDE, and Cypress
+
+## New Testing Frameworks
+
+### Screenplay Pattern (`test/screenplay/`)
+
+**What it is**: A user-centered design pattern for writing maintainable automated tests that focuses on what actors do, not how they do it.
+
+**Key Features**:
+- 👤 **Actors**: Represent users (Admin, Assistant)
+- 💪 **Abilities**: What actors can do (BrowseTheWeb, MakeAPIRequests)
+- 📋 **Tasks**: High-level goals (Login, AddEmployee, CreateLiquidation)
+- ⚡ **Interactions**: Low-level actions (Click, Fill, Open)
+- ❓ **Questions**: Verify system state (TheUrl, TheElement, TheText)
+
+**Documentation**: See [test/screenplay/README.md](screenplay/README.md)
+
+### Selenium IDE (`test/selenium-ide/`)
+
+**What it is**: A record-and-playback tool for browser automation that creates automated test scripts without coding.
+
+**Key Features**:
+- 🎥 **Record** user interactions in the browser
+- 📝 **Export** to Python, Java, C#, and other languages
+- 🔄 **Replay** tests across different browsers
+- 📦 **.side files**: Test recordings in JSON format
+
+**Test Suites**:
+- `login-tests.side` - Authentication tests
+- `employee-management.side` - CRUD operations
+- `liquidation-tests.side` - Liquidation workflows
+- `python-tests/` - Python-converted tests
+
+**Documentation**: See [test/selenium-ide/README.md](selenium-ide/README.md)
+
+### Cypress (`test/cypress/`)
+
+**What it is**: Modern E2E testing framework with excellent developer experience, automatic waiting, and time-travel debugging.
+
+**Key Features**:
+- ⚡ **Fast** execution with automatic waiting
+- 🐛 **Time-travel debugging** with snapshots
+- 📸 **Screenshots** and videos on failure
+- 🔄 **Automatic retries** for flaky tests
+- 🎯 **Custom commands** for common actions
+
+**Test Suites**:
+- `login.cy.js` - Comprehensive authentication tests
+- `employee-management.cy.js` - Employee CRUD with authorization
+- `liquidation-management.cy.js` - Liquidation workflows and reports
+
+**Documentation**: See [test/cypress/README.md](cypress/README.md)
+
+### Framework Comparison
+
+| Feature | Screenplay | Selenium IDE | Cypress |
+|---------|-----------|--------------|---------|
+| **Purpose** | Test architecture | Recording tool | E2E framework |
+| **Language** | Python | Browser + Python | JavaScript |
+| **Best For** | Maintainability | Quick tests | Production E2E |
+| **Learning Curve** | Medium | Low | Medium |
+| **CI/CD Ready** | ✅ | ✅ | ✅ |
+
+**Complete Documentation**: See [TESTING_FRAMEWORKS_OVERVIEW.md](TESTING_FRAMEWORKS_OVERVIEW.md)
 
 ## Contributing
 

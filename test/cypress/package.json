@@ -1,0 +1,26 @@
+{
+  "name": "web-liquidacion-cypress-tests",
+  "version": "1.0.0",
+  "description": "Cypress E2E tests for Web Liquidación Definitiva",
+  "main": "index.js",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:chrome": "cypress run --browser chrome",
+    "cypress:run:firefox": "cypress run --browser firefox",
+    "cypress:run:headed": "cypress run --headed",
+    "test": "cypress run",
+    "test:headed": "cypress run --headed --browser chrome"
+  },
+  "keywords": [
+    "cypress",
+    "e2e",
+    "testing",
+    "automation"
+  ],
+  "author": "Web Liquidacion Team",
+  "license": "MIT",
+  "devDependencies": {
+    "cypress": "^13.0.0"
+  }
+}

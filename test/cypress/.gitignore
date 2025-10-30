@@ -1,0 +1,17 @@
+# Cypress specific
+node_modules/
+screenshots/
+videos/
+downloads/
+
+# Test results
+cypress/results/
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

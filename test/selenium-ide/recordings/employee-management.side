@@ -1,0 +1,204 @@
+{
+  "id": "employee-management-suite",
+  "version": "2.0",
+  "name": "Web Liquidacion - Employee Management",
+  "url": "http://127.0.0.1:8080",
+  "tests": [{
+    "id": "add-employee-test",
+    "name": "Add New Employee",
+    "commands": [{
+      "id": "1",
+      "comment": "Navigate to add employee page",
+      "command": "open",
+      "target": "/agregar_usuario",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2",
+      "comment": "Enter employee first name",
+      "command": "type",
+      "target": "name=nombre",
+      "targets": [
+        ["name=nombre", "name"],
+        ["css=input[name='nombre']", "css:finder"]
+      ],
+      "value": "Juan"
+    }, {
+      "id": "3",
+      "comment": "Enter employee last name",
+      "command": "type",
+      "target": "name=apellido",
+      "targets": [
+        ["name=apellido", "name"]
+      ],
+      "value": "Pérez"
+    }, {
+      "id": "4",
+      "comment": "Enter document number",
+      "command": "type",
+      "target": "name=documento",
+      "targets": [
+        ["name=documento", "name"]
+      ],
+      "value": "1234567890"
+    }, {
+      "id": "5",
+      "comment": "Enter email",
+      "command": "type",
+      "target": "name=correo",
+      "targets": [
+        ["name=correo", "name"]
+      ],
+      "value": "juan.perez@example.com"
+    }, {
+      "id": "6",
+      "comment": "Enter phone",
+      "command": "type",
+      "target": "name=telefono",
+      "targets": [
+        ["name=telefono", "name"]
+      ],
+      "value": "3001234567"
+    }, {
+      "id": "7",
+      "comment": "Enter start date",
+      "command": "type",
+      "target": "name=fecha_inicio",
+      "targets": [
+        ["name=fecha_inicio", "name"]
+      ],
+      "value": "2024-01-15"
+    }, {
+      "id": "8",
+      "comment": "Enter end date",
+      "command": "type",
+      "target": "name=fecha_fin",
+      "targets": [
+        ["name=fecha_fin", "name"]
+      ],
+      "value": "2024-12-31"
+    }, {
+      "id": "9",
+      "comment": "Enter salary",
+      "command": "type",
+      "target": "name=salario",
+      "targets": [
+        ["name=salario", "name"]
+      ],
+      "value": "2500000"
+    }, {
+      "id": "10",
+      "comment": "Submit form",
+      "command": "click",
+      "target": "css=button[type='submit']",
+      "targets": [
+        ["css=button[type='submit']", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "11",
+      "comment": "Verify success message",
+      "command": "assertElementPresent",
+      "target": "css=.success-message",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "consult-employee-test",
+    "name": "Consult Employee Information",
+    "commands": [{
+      "id": "1",
+      "comment": "Navigate to consult employee page",
+      "command": "open",
+      "target": "/consultar_usuario",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2",
+      "comment": "Enter employee ID",
+      "command": "type",
+      "target": "name=id_usuario",
+      "targets": [
+        ["name=id_usuario", "name"]
+      ],
+      "value": "1234"
+    }, {
+      "id": "3",
+      "comment": "Click consult button",
+      "command": "click",
+      "target": "css=button[type='submit']",
+      "targets": [
+        ["css=button[type='submit']", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "4",
+      "comment": "Verify employee info displayed",
+      "command": "assertElementPresent",
+      "target": "css=.employee-info",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "modify-employee-test",
+    "name": "Modify Employee Data",
+    "commands": [{
+      "id": "1",
+      "comment": "Navigate to modify employee page",
+      "command": "open",
+      "target": "/modificar_usuario",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2",
+      "comment": "Enter employee ID",
+      "command": "type",
+      "target": "name=id_usuario",
+      "targets": [
+        ["name=id_usuario", "name"]
+      ],
+      "value": "1234"
+    }, {
+      "id": "3",
+      "comment": "Update salary",
+      "command": "type",
+      "target": "name=salario",
+      "targets": [
+        ["name=salario", "name"]
+      ],
+      "value": "3000000"
+    }, {
+      "id": "4",
+      "comment": "Submit changes",
+      "command": "click",
+      "target": "css=button[type='submit']",
+      "targets": [
+        ["css=button[type='submit']", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "5",
+      "comment": "Verify update success",
+      "command": "assertElementPresent",
+      "target": "css=.success-message",
+      "targets": [],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "employee-suite",
+    "name": "Employee Management Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": [
+      "add-employee-test",
+      "consult-employee-test",
+      "modify-employee-test"
+    ]
+  }],
+  "urls": [
+    "http://127.0.0.1:8080"
+  ],
+  "plugins": []
+}
