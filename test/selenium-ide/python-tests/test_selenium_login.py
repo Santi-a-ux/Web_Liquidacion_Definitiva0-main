@@ -16,7 +16,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 class SeleniumLoginTests(unittest.TestCase):
@@ -31,13 +33,14 @@ class SeleniumLoginTests(unittest.TestCase):
     def setUpClass(cls):
         """Set up Selenium WebDriver for all tests."""
         options = Options()
-        options.add_argument('--headless')  # Run in headless mode
+        options.add_argument('--headless=new')  # Headless mode (new headless for Chrome >=109)
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument('--disable-gpu')
-        
+
         try:
-            cls.driver = webdriver.Chrome(options=options)
+            service = Service(ChromeDriverManager().install())
+            cls.driver = webdriver.Chrome(service=service, options=options)
             cls.driver.implicitly_wait(10)
             cls.base_url = "http://127.0.0.1:8080"
         except Exception as e:
@@ -66,27 +69,27 @@ class SeleniumLoginTests(unittest.TestCase):
         self.driver.get(f"{self.base_url}/login")
         
         # Act - Enter admin credentials
-        username_field = self.driver.find_element(By.NAME, "username")
+        username_field = self.driver.find_element(By.NAME, "id_usuario")
         password_field = self.driver.find_element(By.NAME, "password")
         submit_button = self.driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
-        
+
         username_field.clear()
-        username_field.send_keys("admin")
-        
+        username_field.send_keys("1")
+
         password_field.clear()
         password_field.send_keys("admin123")
-        
+
         submit_button.click()
         
         # Assert - Wait for redirect to dashboard
         try:
             WebDriverWait(self.driver, 10).until(
-                lambda driver: "/dashboard" in driver.current_url or "/admin" in driver.current_url
+                lambda driver: "/login" not in driver.current_url
             )
-            # Successful login redirects away from login page
+            # Successful login redirects away from login page (to index '/')
             self.assertNotIn("/login", self.driver.current_url)
         except TimeoutException:
-            self.fail("Login did not redirect to dashboard")
+            self.fail("Login did not redirect away from /login")
     
     def test_assistant_login_success(self):
         """
@@ -100,16 +103,16 @@ class SeleniumLoginTests(unittest.TestCase):
         self.driver.get(f"{self.base_url}/login")
         
         # Act - Enter assistant credentials
-        username_field = self.driver.find_element(By.NAME, "username")
+        username_field = self.driver.find_element(By.NAME, "id_usuario")
         password_field = self.driver.find_element(By.NAME, "password")
         submit_button = self.driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
-        
+
         username_field.clear()
-        username_field.send_keys("asistente")
-        
+        username_field.send_keys("2")
+
         password_field.clear()
-        password_field.send_keys("asistente123")
-        
+        password_field.send_keys("user123")
+
         submit_button.click()
         
         # Assert - Successful login (redirects away from login)
@@ -134,16 +137,16 @@ class SeleniumLoginTests(unittest.TestCase):
         self.driver.get(f"{self.base_url}/login")
         
         # Act - Enter invalid credentials
-        username_field = self.driver.find_element(By.NAME, "username")
+        username_field = self.driver.find_element(By.NAME, "id_usuario")
         password_field = self.driver.find_element(By.NAME, "password")
         submit_button = self.driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
-        
+
         username_field.clear()
         username_field.send_keys("invalid_user")
-        
+
         password_field.clear()
         password_field.send_keys("wrong_password")
-        
+
         submit_button.click()
         
         # Assert - Should stay on login page or show error
@@ -154,15 +157,14 @@ class SeleniumLoginTests(unittest.TestCase):
         # Either still on login page OR has error message displayed
         current_url = self.driver.current_url
         page_source = self.driver.page_source.lower()
-        
+
         # Check for error indicators
         has_error = (
-            "error" in page_source or 
-            "invalid" in page_source or
-            "incorrect" in page_source or
+            "error" in page_source or
+            "credenciales incorrectas" in page_source or
             "/login" in current_url
         )
-        
+
         self.assertTrue(has_error, "No error indication found for invalid login")
     
     def test_empty_credentials(self):
@@ -197,12 +199,13 @@ class SeleniumNavigationTests(unittest.TestCase):
     def setUpClass(cls):
         """Set up Selenium WebDriver."""
         options = Options()
-        options.add_argument('--headless')
+        options.add_argument('--headless=new')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
-        
+
         try:
-            cls.driver = webdriver.Chrome(options=options)
+            service = Service(ChromeDriverManager().install())
+            cls.driver = webdriver.Chrome(service=service, options=options)
             cls.driver.implicitly_wait(10)
             cls.base_url = "http://127.0.0.1:8080"
         except Exception as e:
@@ -230,7 +233,7 @@ class SeleniumNavigationTests(unittest.TestCase):
         
         # Verify login form elements exist
         try:
-            self.driver.find_element(By.NAME, "username")
+            self.driver.find_element(By.NAME, "id_usuario")
             self.driver.find_element(By.NAME, "password")
             self.driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
         except NoSuchElementException as e:

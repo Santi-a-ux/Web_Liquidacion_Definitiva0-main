@@ -1,0 +1,378 @@
+{
+  "id": "web-liquidacion-ide-tests",
+  "version": "2.0",
+  "name": "Web Liquidación Definitiva - Selenium IDE",
+  "url": "http://127.0.0.1:8080",
+  "tests": [
+    {"id":"t01","name":"Login as Admin and open Admin Panel","commands":[
+      {"command":"setWindowSize","target":"1280x720","value":""},
+      {"command":"open","target":"/login","value":""},
+      {"command":"pause","target":"400","value":""},
+      {"command":"type","target":"css=#id_usuario","value":"1"},
+      {"command":"type","target":"css=#password","value":"admin123"},
+      {"command":"click","target":"css=button[type=\"submit\"]","value":""},
+      {"command":"pause","target":"700","value":""},
+      {"command":"open","target":"/admin_panel","value":""},
+      {"command":"pause","target":"700","value":""},
+      {"command":"verifyElementPresent","target":"css=body","value":""}
+    ]},
+    {"id":"t02","name":"Login as Assistant and try Admin Panel (denied)","commands":[
+      {"command":"open","target":"/logout","value":""},
+      {"command":"open","target":"/login","value":""},
+      {"command":"type","target":"css=#id_usuario","value":"2"},
+      {"command":"type","target":"css=#password","value":"user123"},
+      {"command":"click","target":"css=button[type=\"submit\"]","value":""},
+      {"command":"open","target":"/admin_panel","value":""},
+      {"command":"verifyElementPresent","target":"css=#id_usuario","value":""}
+    ]},
+    {"id":"t03","name":"Invalid login - wrong password","commands":[
+      {"command":"open","target":"/logout","value":""},
+      {"command":"open","target":"/login","value":""},
+      {"command":"type","target":"css=#id_usuario","value":"1"},
+      {"command":"type","target":"css=#password","value":"wrong"},
+      {"command":"click","target":"css=button[type=\"submit\"]","value":""},
+      {"command":"verifyElementPresent","target":"css=#id_usuario","value":""}
+    ]},
+    {"id":"t04","name":"Invalid login - unknown user","commands":[
+      {"command":"open","target":"/logout","value":""},
+      {"command":"open","target":"/login","value":""},
+      {"command":"type","target":"css=#id_usuario","value":"9999"},
+      {"command":"type","target":"css=#password","value":"nope"},
+      {"command":"click","target":"css=button[type=\"submit\"]","value":""},
+      {"command":"verifyElementPresent","target":"css=#id_usuario","value":""}
+    ]},
+    {"id":"t05","name":"Empty credentials validation","commands":[
+      {"command":"open","target":"/logout","value":""},
+      {"command":"open","target":"/login","value":""},
+      {"command":"click","target":"css=button[type=\"submit\"]","value":""},
+      {"command":"verifyElementPresent","target":"css=#id_usuario","value":""}
+    ]},
+
+    {"id":"t06","name":"Admin: Open Admin Panel","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""}
+    ]},
+    {"id":"t07","name":"Admin: Quick action - Usuarios list button exists","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/admin/usuarios","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"verifyElementPresent","target":"xpath=//h1[contains(normalize-space(.), 'Administración de Usuarios')]","value":""}
+    ]},
+    {"id":"t08","name":"Admin: Navigate to /admin/usuarios","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/admin/usuarios","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"verifyElementPresent","target":"xpath=//h1[contains(normalize-space(.), 'Administración de Usuarios')]","value":""}
+    ]},
+    {"id":"t09","name":"Admin: Navigate to /consultar_usuario","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/consultar_usuario","value":""},
+      {"command":"verifyElementPresent","target":"css=input[name=\"id_usuario\"]","value":""}
+    ]},
+    {"id":"t10","name":"Admin: Navigate to /agregar_usuario","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/agregar_usuario","value":""},
+      {"command":"verifyElementPresent","target":"css=form","value":""}
+    ]},
+    {"id":"t11","name":"Admin: Navigate to /modificar_usuario","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/modificar_usuario","value":""},
+      {"command":"verifyElementPresent","target":"css=form","value":""}
+    ]},
+    {"id":"t12","name":"Admin: Navigate to /agregar_liquidacion","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/agregar_liquidacion","value":""},
+      {"command":"verifyElementPresent","target":"css=form","value":""}
+    ]},
+    {"id":"t13","name":"Admin: Navigate to /auditoria","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/auditoria","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"verifyElementPresent","target":"css=body","value":""}
+    ]},
+    {"id":"t14","name":"Admin: Navigate to /reportes","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/reportes","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"verifyElementPresent","target":"css=body","value":""}
+    ]},
+    {"id":"t15","name":"Admin: Logout","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/logout","value":""},
+      {"command":"verifyElementPresent","target":"css=#id_usuario","value":""}
+    ]},
+
+    {"id":"t16","name":"Assistant: Access /admin_panel denied","commands":[
+      {"command":"open","target":"/logout","value":""},
+      {"command":"open","target":"/login","value":""},
+      {"command":"type","target":"css=#id_usuario","value":"2"},
+      {"command":"type","target":"css=#password","value":"user123"},
+      {"command":"click","target":"css=button[type=\"submit\"]","value":""},
+      {"command":"open","target":"/admin_panel","value":""},
+      {"command":"verifyElementPresent","target":"css=#id_usuario","value":""}
+    ]},
+    {"id":"t17","name":"Assistant: Access /admin/usuarios denied","commands":[
+      {"command":"open","target":"/logout","value":""},
+      {"command":"open","target":"/login","value":""},
+      {"command":"type","target":"css=#id_usuario","value":"2"},
+      {"command":"type","target":"css=#password","value":"user123"},
+      {"command":"click","target":"css=button[type=\"submit\"]","value":""},
+      {"command":"open","target":"/admin/usuarios","value":""},
+      {"command":"verifyElementPresent","target":"css=#id_usuario","value":""}
+    ]},
+    {"id":"t18","name":"Assistant: Access /reportes denied","commands":[
+      {"command":"open","target":"/logout","value":""},
+      {"command":"open","target":"/login","value":""},
+      {"command":"type","target":"css=#id_usuario","value":"2"},
+      {"command":"type","target":"css=#password","value":"user123"},
+      {"command":"click","target":"css=button[type=\"submit\"]","value":""},
+      {"command":"open","target":"/reportes","value":""},
+      {"command":"verifyElementPresent","target":"css=#id_usuario","value":""}
+    ]},
+    {"id":"t19","name":"Assistant: Logout","commands":[
+      {"command":"open","target":"/logout","value":""},
+      {"command":"open","target":"/login","value":""},
+      {"command":"type","target":"css=#id_usuario","value":"2"},
+      {"command":"type","target":"css=#password","value":"user123"},
+      {"command":"click","target":"css=button[type=\"submit\"]","value":""},
+      {"command":"open","target":"/logout","value":""},
+      {"command":"verifyElementPresent","target":"css=#id_usuario","value":""}
+    ]},
+
+    {"id":"t20","name":"Flow: Agregar -> Consultar","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/agregar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"nombre\"]","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/consultar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_usuario\"]","value":""}
+    ]},
+    {"id":"t21","name":"Flow: Agregar -> Modificar","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/agregar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"nombre\"]","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/modificar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=form","value":""}
+    ]},
+    {"id":"t22","name":"Flow: Agregar -> Eliminar Usuario","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/agregar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"nombre\"]","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/eliminar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_usuario\"]","value":""}
+    ]},
+
+    {"id":"t23","name":"Flow: Agregar -> Procesar Liquidación","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/agregar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"nombre\"]","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/agregar_liquidacion\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_usuario\"]","value":""}
+    ]},
+    {"id":"t24","name":"Flow: Agregar -> Remover Liquidación","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/agregar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"nombre\"]","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/eliminar_liquidacion\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_liquidacion\"]","value":""}
+    ]},
+
+    {"id":"t25","name":"Flow: Consultar -> Modificar","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/consultar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_usuario\"]","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/modificar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=form","value":""}
+    ]},
+    {"id":"t26","name":"Flow: Consultar -> Eliminar Usuario","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/consultar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_usuario\"]","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/eliminar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_usuario\"]","value":""}
+    ]},
+    {"id":"t27","name":"Flow: Consultar -> Procesar Liquidación","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/consultar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_usuario\"]","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/agregar_liquidacion\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_usuario\"]","value":""}
+    ]},
+    {"id":"t28","name":"Flow: Modificar -> Admin Panel","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/modificar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=form","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/admin_panel\"]","value":""},
+      {"command":"pause","target":"500","value":""},
+      {"command":"verifyElementPresent","target":"css=body","value":""}
+    ]},
+    {"id":"t29","name":"Flow: Eliminar Usuario -> Remover Liquidación","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/eliminar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_usuario\"]","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/eliminar_liquidacion\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_liquidacion\"]","value":""}
+    ]},
+    {"id":"t30","name":"Flow: Procesar Liquidación -> Reportes","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/agregar_liquidacion\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_usuario\"]","value":""},
+      {"command":"open","target":"/reportes","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"verifyElementPresent","target":"css=body","value":""}
+    ]},
+    {"id":"t31","name":"Flow: Admin Panel -> Usuarios list","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/admin/usuarios","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"verifyElementPresent","target":"xpath=//h1[contains(normalize-space(.), 'Administración de Usuarios')]","value":""}
+    ]},
+    {"id":"t32","name":"Flow: Admin Panel -> Auditoría","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/auditoria","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"verifyElementPresent","target":"css=body","value":""}
+    ]},
+    {"id":"t33","name":"Flow: Admin Panel -> Reportes","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/reportes","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"verifyElementPresent","target":"css=body","value":""}
+    ]},
+    {"id":"t34","name":"Login page elements present","commands":[
+      {"command":"open","target":"/logout","value":""},
+      {"command":"open","target":"/login","value":""},
+      {"command":"verifyElementPresent","target":"css=#id_usuario","value":""},
+      {"command":"verifyElementPresent","target":"css=#password","value":""},
+      {"command":"verifyElementPresent","target":"css=button[type=\"submit\"]","value":""}
+    ]}
+    ,
+    {"id":"t35","name":"Home shows main function buttons","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"verifyElementPresent","target":"css=a[href=\"/agregar_usuario\"]","value":""},
+      {"command":"verifyElementPresent","target":"css=a[href=\"/consultar_usuario\"]","value":""},
+      {"command":"verifyElementPresent","target":"css=a[href=\"/modificar_usuario\"]","value":""},
+      {"command":"verifyElementPresent","target":"css=a[href=\"/agregar_liquidacion\"]","value":""},
+      {"command":"verifyElementPresent","target":"css=a[href=\"/eliminar_usuario\"]","value":""},
+      {"command":"verifyElementPresent","target":"css=a[href=\"/eliminar_liquidacion\"]","value":""},
+      {"command":"verifyElementPresent","target":"css=a[href=\"/admin_panel\"]","value":""}
+    ]}
+    ,
+    {"id":"t36","name":"Home: Click Agregar -> agregar_usuario","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/agregar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=form","value":""}
+    ]}
+    ,
+    {"id":"t37","name":"Home: Click Consultar -> consultar_usuario","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/consultar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_usuario\"]","value":""}
+    ]}
+    ,
+    {"id":"t38","name":"Home: Click Modificar Empleado -> modificar_usuario","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/modificar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=form","value":""}
+    ]}
+    ,
+    {"id":"t39","name":"Home: Click Procesar Liquidación -> agregar_liquidacion","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/agregar_liquidacion\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_usuario\"]","value":""}
+    ]}
+    ,
+    {"id":"t40","name":"Home: Click Eliminar Usuario -> eliminar_usuario","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/eliminar_usuario\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_usuario\"]","value":""}
+    ]}
+    ,
+    {"id":"t41","name":"Home: Click Remover Liquidación -> eliminar_liquidacion","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/eliminar_liquidacion\"]","value":""},
+      {"command":"pause","target":"300","value":""},
+      {"command":"waitForElementPresent","target":"css=input[name=\"id_liquidacion\"]","value":""}
+    ]}
+    ,
+    {"id":"t42","name":"Home: Click Administrar Sistema -> admin_panel","commands":[
+      {"command":"run","target":"Login as Admin and open Admin Panel","value":""},
+      {"command":"open","target":"/","value":""},
+      {"command":"click","target":"css=a[href=\"/admin_panel\"]","value":""},
+      {"command":"pause","target":"500","value":""},
+      {"command":"verifyElementPresent","target":"css=body","value":""}
+    ]}
+  ],
+  "suites": [
+    {
+      "id": "suite-full",
+      "name": "Full Suite",
+      "persistSession": false,
+      "parallel": false,
+      "timeout": 60000,
+  "tests": ["t01","t02","t03","t04","t05","t06","t07","t08","t09","t10","t11","t12","t13","t14","t15","t16","t17","t18","t19","t20","t21","t22","t23","t24","t25","t26","t27","t28","t29","t30","t31","t32","t33","t34","t35","t36","t37","t38","t39","t40","t41","t42"]
+    },
+    {
+      "id": "suite-smoke",
+      "name": "Smoke",
+      "persistSession": false,
+      "parallel": false,
+      "timeout": 60000,
+      "tests": ["t01","t36","t37","t42"]
+    }
+  ],
+  "urls": ["http://127.0.0.1:8080"],
+  "plugins": []
+}
