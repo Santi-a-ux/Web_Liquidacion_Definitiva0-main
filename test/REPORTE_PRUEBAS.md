@@ -345,8 +345,8 @@ Según el archivo README.md existente:
 ### Archivos de Configuración
 - `pytest.ini` - Configuración de pytest, exclusiones, marcadores
 - `conftest.py` - Fixtures compartidas, mocks, configuración
-- `cypress.config.js` - Configuración de Cypress
-- `serenity.config.js` - Configuración de SerenityJS
+- `cypress/cypress.config.js` - Configuración de Cypress
+- `serenity-js/features/step_definitions/support/serenity.config.js` - Configuración de SerenityJS
 
 ### Exclusiones por Defecto
 Según `pytest.ini`, estas pruebas están excluidas por defecto:
