@@ -1,5 +1,9 @@
 # Organización de la Suite de Pruebas
 
+> **Nota**: Este documento está completamente en español. For English version, see the commit history or contact the maintainers.
+> 
+> **Spanish Quick Guide**: Ver también [GUIA_RAPIDA_ESPAÑOL.md](GUIA_RAPIDA_ESPAÑOL.md) para una guía rápida consolidada.
+
 Este documento describe la organización y estructura de la suite de pruebas para el proyecto Web Liquidación Definitiva.
 
 ## 🆕 NUEVOS Frameworks de Pruebas Agregados

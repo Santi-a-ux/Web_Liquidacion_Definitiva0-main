@@ -1,5 +1,9 @@
 # Selenium IDE Tests
 
+> **Español**: Ver [../GUIA_RAPIDA_ESPAÑOL.md](../GUIA_RAPIDA_ESPAÑOL.md) para ejemplos y documentación en español.
+> 
+> **Spanish**: See [../GUIA_RAPIDA_ESPAÑOL.md](../GUIA_RAPIDA_ESPAÑOL.md) for examples and documentation in Spanish.
+
 ## Overview
 
 This directory contains **Selenium IDE** test recordings and Python-converted tests for the Web Liquidación Definitiva application.
