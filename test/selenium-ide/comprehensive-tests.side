@@ -1,0 +1,1248 @@
+{
+  "id": "comprehensive-tests",
+  "version": "2.0",
+  "name": "Web Liquidación Definitiva - Suite Completa de Pruebas",
+  "url": "http://127.0.0.1:8080",
+  "tests": [
+    {
+      "id": "base-login-admin",
+      "name": "Base: Login Admin",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Configurar tamaño de ventana",
+          "command": "setWindowSize",
+          "target": "1280x720",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Abrir página de login",
+          "command": "open",
+          "target": "/login",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Esperar carga de página",
+          "command": "pause",
+          "target": "400",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Ingresar ID de usuario admin",
+          "command": "type",
+          "target": "css=#id_usuario",
+          "value": "1"
+        },
+        {
+          "id": "5",
+          "comment": "Ingresar contraseña admin",
+          "command": "type",
+          "target": "css=#password",
+          "value": "admin123"
+        },
+        {
+          "id": "6",
+          "comment": "Hacer clic en botón de login",
+          "command": "click",
+          "target": "css=button[type=\"submit\"]",
+          "value": ""
+        },
+        {
+          "id": "7",
+          "comment": "Esperar redirección",
+          "command": "pause",
+          "target": "700",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "base-login-assistant",
+      "name": "Base: Login Asistente",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Configurar tamaño de ventana",
+          "command": "setWindowSize",
+          "target": "1280x720",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Abrir página de login",
+          "command": "open",
+          "target": "/login",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Esperar carga de página",
+          "command": "pause",
+          "target": "400",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Ingresar ID de usuario asistente",
+          "command": "type",
+          "target": "css=#id_usuario",
+          "value": "2"
+        },
+        {
+          "id": "5",
+          "comment": "Ingresar contraseña asistente",
+          "command": "type",
+          "target": "css=#password",
+          "value": "user123"
+        },
+        {
+          "id": "6",
+          "comment": "Hacer clic en botón de login",
+          "command": "click",
+          "target": "css=button[type=\"submit\"]",
+          "value": ""
+        },
+        {
+          "id": "7",
+          "comment": "Esperar redirección",
+          "command": "pause",
+          "target": "700",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "login-01-admin-success",
+      "name": "Login 01: Admin Login Exitoso",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Ejecutar logout para limpiar sesión",
+          "command": "open",
+          "target": "/logout",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Realizar login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar que estamos en una página autenticada",
+          "command": "open",
+          "target": "/",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Verificar elementos del dashboard",
+          "command": "verifyElementPresent",
+          "target": "css=body",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "login-02-assistant-success",
+      "name": "Login 02: Asistente Login Exitoso",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Ejecutar logout para limpiar sesión",
+          "command": "open",
+          "target": "/logout",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Realizar login como asistente",
+          "command": "run",
+          "target": "Base: Login Asistente",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar que estamos en una página autenticada",
+          "command": "open",
+          "target": "/",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Verificar elementos del dashboard",
+          "command": "verifyElementPresent",
+          "target": "css=body",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "login-03-invalid-password",
+      "name": "Login 03: Contraseña Incorrecta",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Ejecutar logout",
+          "command": "open",
+          "target": "/logout",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Abrir página de login",
+          "command": "open",
+          "target": "/login",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Ingresar usuario válido",
+          "command": "type",
+          "target": "css=#id_usuario",
+          "value": "1"
+        },
+        {
+          "id": "4",
+          "comment": "Ingresar contraseña incorrecta",
+          "command": "type",
+          "target": "css=#password",
+          "value": "wrong_password"
+        },
+        {
+          "id": "5",
+          "comment": "Intentar login",
+          "command": "click",
+          "target": "css=button[type=\"submit\"]",
+          "value": ""
+        },
+        {
+          "id": "6",
+          "comment": "Verificar que seguimos en login",
+          "command": "verifyElementPresent",
+          "target": "css=#id_usuario",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "login-04-invalid-user",
+      "name": "Login 04: Usuario Inexistente",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Ejecutar logout",
+          "command": "open",
+          "target": "/logout",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Abrir página de login",
+          "command": "open",
+          "target": "/login",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Ingresar usuario inexistente",
+          "command": "type",
+          "target": "css=#id_usuario",
+          "value": "9999"
+        },
+        {
+          "id": "4",
+          "comment": "Ingresar cualquier contraseña",
+          "command": "type",
+          "target": "css=#password",
+          "value": "anypassword"
+        },
+        {
+          "id": "5",
+          "comment": "Intentar login",
+          "command": "click",
+          "target": "css=button[type=\"submit\"]",
+          "value": ""
+        },
+        {
+          "id": "6",
+          "comment": "Verificar que seguimos en login",
+          "command": "verifyElementPresent",
+          "target": "css=#id_usuario",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "login-05-empty-credentials",
+      "name": "Login 05: Credenciales Vacías",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Ejecutar logout",
+          "command": "open",
+          "target": "/logout",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Abrir página de login",
+          "command": "open",
+          "target": "/login",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Intentar login sin credenciales",
+          "command": "click",
+          "target": "css=button[type=\"submit\"]",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Verificar que seguimos en login",
+          "command": "verifyElementPresent",
+          "target": "css=#id_usuario",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "auth-01-admin-panel-access",
+      "name": "Auth 01: Admin Accede a Panel de Administración",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Navegar a admin panel",
+          "command": "open",
+          "target": "/admin_panel",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Esperar carga",
+          "command": "pause",
+          "target": "500",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Verificar acceso exitoso",
+          "command": "verifyElementPresent",
+          "target": "css=body",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "auth-02-assistant-admin-panel-denied",
+      "name": "Auth 02: Asistente NO Accede a Panel Admin",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Logout primero",
+          "command": "open",
+          "target": "/logout",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Login como asistente",
+          "command": "run",
+          "target": "Base: Login Asistente",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Intentar acceder a admin panel",
+          "command": "open",
+          "target": "/admin_panel",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Verificar que fue redirigido a login",
+          "command": "verifyElementPresent",
+          "target": "css=#id_usuario",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "nav-01-admin-usuarios",
+      "name": "Nav 01: Acceso a /admin/usuarios",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Navegar a admin usuarios",
+          "command": "open",
+          "target": "/admin/usuarios",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Esperar carga",
+          "command": "pause",
+          "target": "300",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Verificar título de página",
+          "command": "verifyElementPresent",
+          "target": "xpath=//h1[contains(normalize-space(.), 'Administración de Usuarios')]",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "nav-02-consultar-usuario",
+      "name": "Nav 02: Acceso a /consultar_usuario",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Navegar a consultar usuario",
+          "command": "open",
+          "target": "/consultar_usuario",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar formulario presente",
+          "command": "verifyElementPresent",
+          "target": "css=input[name=\"id_usuario\"]",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "nav-03-agregar-usuario",
+      "name": "Nav 03: Acceso a /agregar_usuario",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Navegar a agregar usuario",
+          "command": "open",
+          "target": "/agregar_usuario",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar formulario presente",
+          "command": "verifyElementPresent",
+          "target": "css=form",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "nav-04-modificar-usuario",
+      "name": "Nav 04: Acceso a /modificar_usuario",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Navegar a modificar usuario",
+          "command": "open",
+          "target": "/modificar_usuario",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar formulario presente",
+          "command": "verifyElementPresent",
+          "target": "css=form",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "nav-05-eliminar-usuario",
+      "name": "Nav 05: Acceso a /eliminar_usuario",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Navegar a eliminar usuario",
+          "command": "open",
+          "target": "/eliminar_usuario",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar formulario presente",
+          "command": "verifyElementPresent",
+          "target": "css=input[name=\"id_usuario\"]",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "nav-06-agregar-liquidacion",
+      "name": "Nav 06: Acceso a /agregar_liquidacion",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Navegar a agregar liquidación",
+          "command": "open",
+          "target": "/agregar_liquidacion",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar formulario presente",
+          "command": "verifyElementPresent",
+          "target": "css=form",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "nav-07-consultar-liquidacion",
+      "name": "Nav 07: Acceso a /consultar_liquidacion",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Navegar a consultar liquidación",
+          "command": "open",
+          "target": "/consultar_liquidacion",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar formulario presente",
+          "command": "verifyElementPresent",
+          "target": "css=input[name=\"id_liquidacion\"]",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "nav-08-eliminar-liquidacion",
+      "name": "Nav 08: Acceso a /eliminar_liquidacion",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Navegar a eliminar liquidación",
+          "command": "open",
+          "target": "/eliminar_liquidacion",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar formulario presente",
+          "command": "verifyElementPresent",
+          "target": "css=input[name=\"id_liquidacion\"]",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "nav-09-auditoria",
+      "name": "Nav 09: Acceso a /auditoria",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Navegar a auditoría",
+          "command": "open",
+          "target": "/auditoria",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Esperar carga",
+          "command": "pause",
+          "target": "300",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Verificar página cargada",
+          "command": "verifyElementPresent",
+          "target": "css=body",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "nav-10-reportes",
+      "name": "Nav 10: Acceso a /reportes",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Navegar a reportes",
+          "command": "open",
+          "target": "/reportes",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Esperar carga",
+          "command": "pause",
+          "target": "300",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Verificar página cargada",
+          "command": "verifyElementPresent",
+          "target": "css=body",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "nav-11-estadisticas",
+      "name": "Nav 11: Acceso a /estadisticas",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Navegar a estadísticas",
+          "command": "open",
+          "target": "/estadisticas",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Esperar carga",
+          "command": "pause",
+          "target": "300",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Verificar página cargada",
+          "command": "verifyElementPresent",
+          "target": "css=body",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "nav-12-logout",
+      "name": "Nav 12: Logout Funciona Correctamente",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Ejecutar logout",
+          "command": "open",
+          "target": "/logout",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar redirección a login",
+          "command": "verifyElementPresent",
+          "target": "css=#id_usuario",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "home-01-main-buttons",
+      "name": "Home 01: Botones Principales Presentes",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Ir a home",
+          "command": "open",
+          "target": "/",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Esperar carga",
+          "command": "pause",
+          "target": "300",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Verificar botón agregar usuario",
+          "command": "verifyElementPresent",
+          "target": "css=a[href=\"/agregar_usuario\"]",
+          "value": ""
+        },
+        {
+          "id": "5",
+          "comment": "Verificar botón consultar usuario",
+          "command": "verifyElementPresent",
+          "target": "css=a[href=\"/consultar_usuario\"]",
+          "value": ""
+        },
+        {
+          "id": "6",
+          "comment": "Verificar botón modificar usuario",
+          "command": "verifyElementPresent",
+          "target": "css=a[href=\"/modificar_usuario\"]",
+          "value": ""
+        },
+        {
+          "id": "7",
+          "comment": "Verificar botón agregar liquidación",
+          "command": "verifyElementPresent",
+          "target": "css=a[href=\"/agregar_liquidacion\"]",
+          "value": ""
+        },
+        {
+          "id": "8",
+          "comment": "Verificar botón admin panel",
+          "command": "verifyElementPresent",
+          "target": "css=a[href=\"/admin_panel\"]",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "home-02-click-agregar-usuario",
+      "name": "Home 02: Click en Agregar Usuario",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Ir a home",
+          "command": "open",
+          "target": "/",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Click en agregar usuario",
+          "command": "click",
+          "target": "css=a[href=\"/agregar_usuario\"]",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Esperar navegación",
+          "command": "pause",
+          "target": "300",
+          "value": ""
+        },
+        {
+          "id": "5",
+          "comment": "Verificar formulario presente",
+          "command": "waitForElementPresent",
+          "target": "css=form",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "home-03-click-consultar-usuario",
+      "name": "Home 03: Click en Consultar Usuario",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Ir a home",
+          "command": "open",
+          "target": "/",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Click en consultar usuario",
+          "command": "click",
+          "target": "css=a[href=\"/consultar_usuario\"]",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Esperar navegación",
+          "command": "pause",
+          "target": "300",
+          "value": ""
+        },
+        {
+          "id": "5",
+          "comment": "Verificar campo presente",
+          "command": "waitForElementPresent",
+          "target": "css=input[name=\"id_usuario\"]",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "home-04-click-modificar-usuario",
+      "name": "Home 04: Click en Modificar Usuario",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Ir a home",
+          "command": "open",
+          "target": "/",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Click en modificar usuario",
+          "command": "click",
+          "target": "css=a[href=\"/modificar_usuario\"]",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Esperar navegación",
+          "command": "pause",
+          "target": "300",
+          "value": ""
+        },
+        {
+          "id": "5",
+          "comment": "Verificar formulario presente",
+          "command": "waitForElementPresent",
+          "target": "css=form",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "home-05-click-agregar-liquidacion",
+      "name": "Home 05: Click en Agregar Liquidación",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Ir a home",
+          "command": "open",
+          "target": "/",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Click en agregar liquidación",
+          "command": "click",
+          "target": "css=a[href=\"/agregar_liquidacion\"]",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Esperar navegación",
+          "command": "pause",
+          "target": "300",
+          "value": ""
+        },
+        {
+          "id": "5",
+          "comment": "Verificar campo presente",
+          "command": "waitForElementPresent",
+          "target": "css=input[name=\"id_usuario\"]",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "home-06-click-admin-panel",
+      "name": "Home 06: Click en Admin Panel",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Login como admin",
+          "command": "run",
+          "target": "Base: Login Admin",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Ir a home",
+          "command": "open",
+          "target": "/",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Click en admin panel",
+          "command": "click",
+          "target": "css=a[href=\"/admin_panel\"]",
+          "value": ""
+        },
+        {
+          "id": "4",
+          "comment": "Esperar navegación",
+          "command": "pause",
+          "target": "500",
+          "value": ""
+        },
+        {
+          "id": "5",
+          "comment": "Verificar página cargada",
+          "command": "verifyElementPresent",
+          "target": "css=body",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "protected-01-agregar-usuario-sin-login",
+      "name": "Protected 01: Agregar Usuario sin Login Redirige",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Ejecutar logout",
+          "command": "open",
+          "target": "/logout",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Intentar acceder sin login",
+          "command": "open",
+          "target": "/agregar_usuario",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar redirección a login",
+          "command": "verifyElementPresent",
+          "target": "css=#id_usuario",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "protected-02-consultar-usuario-sin-login",
+      "name": "Protected 02: Consultar Usuario sin Login Redirige",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Ejecutar logout",
+          "command": "open",
+          "target": "/logout",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Intentar acceder sin login",
+          "command": "open",
+          "target": "/consultar_usuario",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar redirección a login",
+          "command": "verifyElementPresent",
+          "target": "css=#id_usuario",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "protected-03-modificar-usuario-sin-login",
+      "name": "Protected 03: Modificar Usuario sin Login Redirige",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Ejecutar logout",
+          "command": "open",
+          "target": "/logout",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Intentar acceder sin login",
+          "command": "open",
+          "target": "/modificar_usuario",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar redirección a login",
+          "command": "verifyElementPresent",
+          "target": "css=#id_usuario",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "protected-04-agregar-liquidacion-sin-login",
+      "name": "Protected 04: Agregar Liquidación sin Login Redirige",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Ejecutar logout",
+          "command": "open",
+          "target": "/logout",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Intentar acceder sin login",
+          "command": "open",
+          "target": "/agregar_liquidacion",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar redirección a login",
+          "command": "verifyElementPresent",
+          "target": "css=#id_usuario",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "protected-05-admin-panel-sin-login",
+      "name": "Protected 05: Admin Panel sin Login Redirige",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "Ejecutar logout",
+          "command": "open",
+          "target": "/logout",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "Intentar acceder sin login",
+          "command": "open",
+          "target": "/admin_panel",
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "Verificar redirección a login",
+          "command": "verifyElementPresent",
+          "target": "css=#id_usuario",
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "suites": [
+    {
+      "id": "suite-all",
+      "name": "Suite Completa (Todas las Pruebas)",
+      "persistSession": false,
+      "parallel": false,
+      "timeout": 60000,
+      "tests": [
+        "login-01-admin-success",
+        "login-02-assistant-success",
+        "login-03-invalid-password",
+        "login-04-invalid-user",
+        "login-05-empty-credentials",
+        "auth-01-admin-panel-access",
+        "auth-02-assistant-admin-panel-denied",
+        "nav-01-admin-usuarios",
+        "nav-02-consultar-usuario",
+        "nav-03-agregar-usuario",
+        "nav-04-modificar-usuario",
+        "nav-05-eliminar-usuario",
+        "nav-06-agregar-liquidacion",
+        "nav-07-consultar-liquidacion",
+        "nav-08-eliminar-liquidacion",
+        "nav-09-auditoria",
+        "nav-10-reportes",
+        "nav-11-estadisticas",
+        "nav-12-logout",
+        "home-01-main-buttons",
+        "home-02-click-agregar-usuario",
+        "home-03-click-consultar-usuario",
+        "home-04-click-modificar-usuario",
+        "home-05-click-agregar-liquidacion",
+        "home-06-click-admin-panel",
+        "protected-01-agregar-usuario-sin-login",
+        "protected-02-consultar-usuario-sin-login",
+        "protected-03-modificar-usuario-sin-login",
+        "protected-04-agregar-liquidacion-sin-login",
+        "protected-05-admin-panel-sin-login"
+      ]
+    },
+    {
+      "id": "suite-login",
+      "name": "Suite Login (Solo Autenticación)",
+      "persistSession": false,
+      "parallel": false,
+      "timeout": 30000,
+      "tests": [
+        "login-01-admin-success",
+        "login-02-assistant-success",
+        "login-03-invalid-password",
+        "login-04-invalid-user",
+        "login-05-empty-credentials"
+      ]
+    },
+    {
+      "id": "suite-smoke",
+      "name": "Suite Smoke (Pruebas Críticas)",
+      "persistSession": false,
+      "parallel": false,
+      "timeout": 30000,
+      "tests": [
+        "login-01-admin-success",
+        "auth-01-admin-panel-access",
+        "nav-01-admin-usuarios",
+        "nav-03-agregar-usuario",
+        "nav-06-agregar-liquidacion",
+        "nav-12-logout"
+      ]
+    },
+    {
+      "id": "suite-navigation",
+      "name": "Suite Navegación (Acceso a Páginas)",
+      "persistSession": false,
+      "parallel": false,
+      "timeout": 45000,
+      "tests": [
+        "nav-01-admin-usuarios",
+        "nav-02-consultar-usuario",
+        "nav-03-agregar-usuario",
+        "nav-04-modificar-usuario",
+        "nav-05-eliminar-usuario",
+        "nav-06-agregar-liquidacion",
+        "nav-07-consultar-liquidacion",
+        "nav-08-eliminar-liquidacion",
+        "nav-09-auditoria",
+        "nav-10-reportes",
+        "nav-11-estadisticas"
+      ]
+    },
+    {
+      "id": "suite-security",
+      "name": "Suite Seguridad (Protección de Rutas)",
+      "persistSession": false,
+      "parallel": false,
+      "timeout": 30000,
+      "tests": [
+        "auth-01-admin-panel-access",
+        "auth-02-assistant-admin-panel-denied",
+        "protected-01-agregar-usuario-sin-login",
+        "protected-02-consultar-usuario-sin-login",
+        "protected-03-modificar-usuario-sin-login",
+        "protected-04-agregar-liquidacion-sin-login",
+        "protected-05-admin-panel-sin-login"
+      ]
+    }
+  ],
+  "urls": [
+    "http://127.0.0.1:8080"
+  ],
+  "plugins": []
+}
