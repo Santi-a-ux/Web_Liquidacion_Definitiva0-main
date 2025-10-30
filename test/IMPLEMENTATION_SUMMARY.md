@@ -1,10 +1,15 @@
 # Implementation Summary: Testing Frameworks
 
+> **Español**: Ver [GUIA_RAPIDA_ESPAÑOL.md](GUIA_RAPIDA_ESPAÑOL.md) para una guía completa en español.
+> 
+> **Spanish**: See [GUIA_RAPIDA_ESPAÑOL.md](GUIA_RAPIDA_ESPAÑOL.md) for a complete Spanish guide.
+
 ## Overview
-Successfully implemented three testing frameworks for the Web Liquidación Definitiva project:
+Successfully implemented four testing frameworks for the Web Liquidación Definitiva project:
 1. **Screenplay Pattern** - Maintainable test architecture
 2. **Selenium IDE** - Browser test recording
 3. **Cypress** - Modern E2E testing
+4. **SerenityBDD** - BDD integration with Allure reports
 
 ## Files Created
 

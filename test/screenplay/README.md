@@ -1,5 +1,9 @@
 # Screenplay Pattern Implementation
 
+> **Español**: Ver [../GUIA_RAPIDA_ESPAÑOL.md](../GUIA_RAPIDA_ESPAÑOL.md) para ejemplos y documentación en español.
+> 
+> **Spanish**: See [../GUIA_RAPIDA_ESPAÑOL.md](../GUIA_RAPIDA_ESPAÑOL.md) for examples and documentation in Spanish.
+
 ## Overview
 
 The **Screenplay pattern** is a user-centered approach to writing automated acceptance tests. It focuses on **what** actors (users) do to accomplish their goals, rather than **how** they interact with the system at a technical level.

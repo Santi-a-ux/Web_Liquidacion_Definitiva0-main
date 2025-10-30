@@ -1,5 +1,9 @@
 # Cypress E2E Tests
 
+> **Español**: Ver [../GUIA_RAPIDA_ESPAÑOL.md](../GUIA_RAPIDA_ESPAÑOL.md) para ejemplos y documentación en español.
+> 
+> **Spanish**: See [../GUIA_RAPIDA_ESPAÑOL.md](../GUIA_RAPIDA_ESPAÑOL.md) for examples and documentation in Spanish.
+
 ## Overview
 
 This directory contains **Cypress** end-to-end tests for the Web Liquidación Definitiva application.

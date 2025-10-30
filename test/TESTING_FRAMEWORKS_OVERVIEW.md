@@ -1,9 +1,14 @@
 # Testing Frameworks Overview
 
-This document provides an overview of the three testing frameworks implemented in this project:
+> **Español**: Ver [GUIA_RAPIDA_ESPAÑOL.md](GUIA_RAPIDA_ESPAÑOL.md) para una guía completa en español que incluye SerenityBDD.
+> 
+> **Spanish**: See [GUIA_RAPIDA_ESPAÑOL.md](GUIA_RAPIDA_ESPAÑOL.md) for a complete Spanish guide including SerenityBDD.
+
+This document provides an overview of the testing frameworks implemented in this project:
 1. **Screenplay Pattern** - Behavior-driven design pattern
 2. **Selenium IDE** - Browser automation and recording
 3. **Cypress** - Modern E2E testing framework
+4. **SerenityBDD** - BDD integration with detailed reports
 
 ---
 

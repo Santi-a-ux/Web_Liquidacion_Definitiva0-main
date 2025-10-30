@@ -1,6 +1,10 @@
 # Getting Started with the New Testing Frameworks
 
-This guide provides practical examples for using each of the three testing frameworks.
+> **Español**: Ver [GUIA_RAPIDA_ESPAÑOL.md](GUIA_RAPIDA_ESPAÑOL.md) para una guía completa en español.
+> 
+> **Spanish**: See [GUIA_RAPIDA_ESPAÑOL.md](GUIA_RAPIDA_ESPAÑOL.md) for a complete Spanish guide.
+
+This guide provides practical examples for using each of the testing frameworks.
 
 ---
 
