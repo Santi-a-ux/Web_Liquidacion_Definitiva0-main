@@ -81,25 +81,25 @@ Una tabla o diagrama que muestre:
 **Qué mostrar:**
 ```
 📊 Resultados de Pruebas:
-- Total de pruebas implementadas: 250+
+- Total de pruebas implementadas: 347+
 - Pruebas unitarias (pytest): 208 tests
-- Pruebas E2E (Cypress): 42 tests
+- Pruebas E2E (Cypress): 103 tests
 - Escenarios BDD (Serenity): 27 escenarios
 - Grabaciones Selenium IDE: 9 casos
 - Ejemplos Screenplay: 8 patrones
 ```
 
 **Cómo explicarlo:**
-> "Se implementaron más de 250 casos de prueba distribuidos en diferentes niveles. La base es pytest con 208 pruebas unitarias y de integración, complementadas con 42 pruebas E2E en Cypress, 27 escenarios BDD, y ejemplos de Selenium IDE y Screenplay."
+> "Se implementaron más de 347 casos de prueba distribuidos en diferentes niveles. La base es pytest con 208 pruebas unitarias y de integración, complementadas con 103 pruebas E2E en Cypress, 27 escenarios BDD, y ejemplos de Selenium IDE y Screenplay."
 
 #### **Diapositiva 3B: Distribución de Pruebas**
 
 **Qué mostrar:**
 Un gráfico circular o de barras mostrando:
 - 60% Unitarias/Integración (pytest)
-- 25% E2E (Cypress)
-- 10% BDD (Serenity)
-- 5% Otros (Selenium, Screenplay)
+- 30% E2E (Cypress)
+- 8% BDD (Serenity)
+- 2% Otros (Selenium, Screenplay)
 
 **Ubicación de evidencias:**
 - `test/` - Directorio principal
@@ -133,23 +133,29 @@ Un gráfico circular o de barras mostrando:
 📁 Ubicación: test/cypress/
 
 📝 Suites implementadas:
-1. login.cy.js - Pruebas de autenticación (7 tests)
+1. login.cy.js - Pruebas de autenticación (29 tests)
    - Login exitoso (admin/asistente)
    - Credenciales inválidas
    - Validación de campos vacíos
    - Logout
+   - Comandos personalizados
+   - Validaciones de UI
 
-2. employee-management.cy.js - Gestión de empleados (20 tests)
+2. employee-management.cy.js - Gestión de empleados (26 tests)
    - Agregar empleado
    - Consultar empleado
    - Modificar empleado
    - Eliminar empleado
+   - Validaciones de formularios
+   - Casos edge
 
-3. liquidation-management.cy.js - Liquidaciones (15 tests)
+3. liquidation-management.cy.js - Liquidaciones (48 tests)
    - Crear liquidación
    - Consultar liquidación
    - Ver reportes
    - Permisos por rol
+   - Cálculos de liquidación
+   - Exportación de datos
 ```
 
 **Capturas recomendadas:**
@@ -162,7 +168,7 @@ Un gráfico circular o de barras mostrando:
 - `test/cypress/e2e/*.cy.js` - Archivos de prueba
 
 **Cómo explicarlo:**
-> "Se implementaron 42 pruebas E2E con Cypress organizadas en 3 suites principales: autenticación, gestión de empleados y gestión de liquidaciones. Cada suite valida los flujos críticos del usuario desde el login hasta las operaciones CRUD."
+> "Se implementaron 103 pruebas E2E con Cypress organizadas en 3 suites principales: autenticación (29 tests), gestión de empleados (26 tests), y gestión de liquidaciones (48 tests). Cada suite valida exhaustivamente los flujos críticos del usuario desde el login hasta las operaciones CRUD, incluyendo validaciones de UI, casos edge, y manejo de errores."
 
 ---
 
@@ -344,7 +350,7 @@ Definición:
 desde el inicio hasta el final, simulando el comportamiento real"
 
 ✅ Frameworks E2E en el proyecto:
-1. Cypress (42 tests)
+1. Cypress (103 tests)
    - Navegador real
    - Interacciones automáticas
    - Screenshots y videos
@@ -357,7 +363,7 @@ desde el inicio hasta el final, simulando el comportamiento real"
    - E2E con enfoque BDD
    - Reportes ejecutivos
 
-Total de pruebas E2E: 78+ casos
+Total de pruebas E2E: 139+ casos
 ```
 
 **Flujos E2E cubiertos:**
@@ -368,7 +374,7 @@ Total de pruebas E2E: 78+ casos
 ```
 
 **Cómo explicarlo:**
-> "Las pruebas E2E validan que todo el sistema funciona correctamente desde la perspectiva del usuario. Implementamos 78+ casos E2E usando tres herramientas complementarias: Cypress para pruebas automatizadas modernas, Selenium IDE para grabaciones rápidas, y Serenity BDD para pruebas orientadas a requisitos de negocio."
+> "Las pruebas E2E validan que todo el sistema funciona correctamente desde la perspectiva del usuario. Implementamos 139+ casos E2E usando tres herramientas complementarias: Cypress para pruebas automatizadas modernas (103 tests), Selenium IDE para grabaciones rápidas (9 casos), y Serenity BDD para pruebas orientadas a requisitos de negocio (27 escenarios)."
 
 **Ubicación de evidencias:**
 - `test/cypress/e2e/*.cy.js`
@@ -813,7 +819,7 @@ Workflow típico:
 🏆 Logros del Proyecto de Pruebas
 
 ✅ Cobertura de pruebas: 85%+ (meta: 80%)
-✅ Total de pruebas: 250+
+✅ Total de pruebas: 347+
 ✅ Frameworks implementados: 5
    - pytest (unitarias/integración)
    - Cypress (E2E)
@@ -838,7 +844,7 @@ Workflow típico:
 ```
 
 **Cómo explicarlo:**
-> "Se implementó una estrategia integral de pruebas que superó las metas establecidas. El proyecto cuenta con más de 250 pruebas automatizadas, una cobertura superior al 85%, y múltiples frameworks que garantizan la calidad desde diferentes perspectivas. Todo está documentado y automatizado."
+> "Se implementó una estrategia integral de pruebas que superó las metas establecidas. El proyecto cuenta con más de 347 pruebas automatizadas, una cobertura superior al 85%, y múltiples frameworks que garantizan la calidad desde diferentes perspectivas. Todo está documentado y automatizado."
 
 #### **Diapositiva 13B: Beneficios y Próximos Pasos**
 
@@ -1016,7 +1022,7 @@ Antes de tu presentación, verifica:
 - [ ] **Diapositivas creadas**: Todas las secciones cubiertas
 - [ ] **Capturas de pantalla**: Todas las evidencias recopiladas
 - [ ] **Código funcional**: Puedes ejecutar las pruebas en vivo si es necesario
-- [ ] **Números verificados**: 250+ tests, 85% coverage, etc.
+- [ ] **Números verificados**: 347+ tests, 85% coverage, etc.
 - [ ] **Documentación revisada**: Links y referencias correctas
 - [ ] **Tiempo estimado**: 15-20 minutos (ajustar según requerimientos)
 - [ ] **Backup plan**: PDF de la presentación por si falla la conexión
