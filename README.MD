@@ -208,28 +208,28 @@ Web_Liquidacion_Definitiva0-main/
 
 ### Agregar Empleado
 
-1. Navega a `http://127.0.0.1:5000/agregar_usuario`.
+1. Navega a `http://127.0.0.1:8080/agregar_usuario`.
 2. Llena el formulario con la información del empleado.
 3. Haz clic en "Agregar Empleado".
 4. Si el empleado se agrega correctamente, verás un mensaje de confirmación en la página.
 
 ### Crear Liquidación
 
-1. Navega a `http://127.0.0.1:5000/agregar_liquidacion`.
+1. Navega a `http://127.0.0.1:8080/agregar_liquidacion`.
 2. Ingresa el ID del empleado para el cual deseas crear la liquidación.
 3. Haz clic en "Crear Liquidación".
 4. Si la liquidación se crea correctamente, verás un mensaje de confirmación con el total a pagar y serás redirigido a la página principal.
 
 ### Consultar Empleado
 
-1. Navega a `http://127.0.0.1:5000/consultar_usuario`.
+1. Navega a `http://127.0.0.1:8080/consultar_usuario`.
 2. Ingresa el ID del empleado que deseas consultar.
 3. Haz clic en "Consultar".
 4. Si el empleado existe, verás su información y la de su liquidación.
 
 ### Eliminar Empleado
 
-1. Navega a `http://127.0.0.1:5000/eliminar_usuario`.
+1. Navega a `http://127.0.0.1:8080/eliminar_usuario`.
 2. Ingresa el ID del empleado que deseas eliminar.
 3. Haz clic en "Eliminar Empleado".
 4. Si el empleado se elimina correctamente, verás un mensaje de confirmación.
@@ -237,7 +237,7 @@ Web_Liquidacion_Definitiva0-main/
 
 ### Eliminar Liquidación
 
-1. Navega a `http://127.0.0.1:5000/eliminar_liquidacion`.
+1. Navega a `http://127.0.0.1:8080/eliminar_liquidacion`.
 2. Ingresa el ID de la liquidación que deseas eliminar.
 3. Haz clic en "Eliminar Liquidación".
 4. Si la liquidación se elimina correctamente, verás un mensaje de confirmación.
